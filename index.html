@@ -1,31 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yuma Kakuya — Builder</title>
   <meta name="description" content="Indie hacker building tools for app developers. Creator of Sorted.Tools." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=DM+Mono:wght@300;400&display=swap"
+    rel="stylesheet" />
   <style>
     :root {
-      --bg:       #080808;
-      --bg2:      #0e0e0e;
-      --bg3:      #161616;
-      --gold:     #d4ae5c;
+      --bg: #080808;
+      --bg2: #0e0e0e;
+      --bg3: #161616;
+      --gold: #d4ae5c;
       --gold-dim: #8a6830;
-      --gold-glow:rgba(212,174,92,0.18);
-      --violet:   #a98ff0;
-      --violet-dim:#5a4a90;
-      --text:     #e2ddd6;
+      --gold-glow: rgba(212, 174, 92, 0.18);
+      --violet: #a98ff0;
+      --violet-dim: #5a4a90;
+      --text: #e2ddd6;
       --text-dim: #8a8480;
       --text-sub: #5e5a56;
-      --border:   #272727;
-      --font-serif:'Cormorant Garamond', Georgia, serif;
+      --border: #272727;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
       --font-mono: 'DM Mono', 'Courier New', monospace;
     }
-    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-    html { scroll-behavior:smooth; }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       background: var(--bg);
@@ -39,264 +52,661 @@
 
     /* Subtle grain */
     body::before {
-      content:'';
-      position:fixed; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      opacity:0.025; pointer-events:none; z-index:9999;
-    }
-    /* Gold-top gradient line */
-    body::after {
-      content:'';
-      position:fixed; top:0; left:0; right:0; height:1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      z-index:200;
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 9999;
     }
 
-    .container { max-width:740px; margin:0 auto; padding:0 28px; }
+    /* Gold-top gradient line */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      z-index: 200;
+    }
+
+    .container {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
 
     /* Nav */
     nav {
       padding: 20px 28px;
-      display: flex; align-items:center; justify-content:space-between;
-      max-width:740px; margin:0 auto;
-      position:sticky; top:0; z-index:100;
-      background: rgba(8,8,8,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 740px;
+      margin: 0 auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(8, 8, 8, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
     }
+
     .nav-logo {
-      font-family:var(--font-serif);
-      font-size:22px; font-weight:300;
-      color:var(--gold);
-      letter-spacing:0.08em;
+      font-family: var(--font-serif);
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: 0.08em;
     }
-    .nav-links { display:flex; gap:20px; }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
     .nav-links a {
-      font-size:10px; letter-spacing:0.25em; text-transform:uppercase;
-      color:var(--text-dim); text-decoration:none;
-      transition:color 0.2s;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
     }
-    .nav-links a:hover { color:var(--gold); }
+
+    .nav-links a:hover {
+      color: var(--gold);
+    }
 
     /* Hero */
-    .hero { padding:80px 0 56px; border-bottom:1px solid var(--border); }
+    .hero {
+      padding: 80px 0 56px;
+      border-bottom: 1px solid var(--border);
+    }
 
     .hero-eyebrow {
-      font-size:10px; letter-spacing:0.4em; text-transform:uppercase;
-      color:var(--gold-dim); margin-bottom:16px;
-      opacity:0; animation: rise 0.6s 0.2s forwards;
+      font-size: 10px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: rise 0.6s 0.2s forwards;
     }
 
-    @keyframes rise { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
 
     .hero-name {
-      font-family:var(--font-serif);
+      font-family: var(--font-serif);
       font-size: clamp(52px, 10vw, 96px);
-      font-weight:300;
-      line-height:1;
-      letter-spacing:0.04em;
-      color:var(--text);
-      margin-bottom:4px;
-      opacity:0; animation: rise 0.7s 0.4s forwards;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      color: var(--text);
+      margin-bottom: 4px;
+      opacity: 0;
+      animation: rise 0.7s 0.4s forwards;
     }
+
     .hero-name em {
-      font-style:italic;
-      color:var(--gold);
+      font-style: italic;
+      color: var(--gold);
     }
 
     .hero-sub {
-      font-family:var(--font-mono);
-      font-size:11px; letter-spacing:0.3em; text-transform:uppercase;
-      color:var(--text-dim); margin-bottom:28px;
-      opacity:0; animation: rise 0.6s 0.6s forwards;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: rise 0.6s 0.6s forwards;
     }
 
     .hero-desc {
-      font-size:14px; line-height:2; color:var(--text);
-      max-width:480px;
-      opacity:0; animation: rise 0.6s 0.8s forwards;
+      font-size: 14px;
+      line-height: 2;
+      color: var(--text);
+      max-width: 480px;
+      opacity: 0;
+      animation: rise 0.6s 0.8s forwards;
     }
-    .hero-desc .hl { color:var(--gold); font-style:italic; }
+
+    .hero-desc .hl {
+      color: var(--gold);
+      font-style: italic;
+    }
 
     /* Divider */
     .rule {
-      display:flex; align-items:center; gap:12px;
-      margin:32px 0;
-      color:var(--text-dim); font-size:10px; letter-spacing:0.2em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 32px 0;
+      color: var(--text-dim);
+      font-size: 10px;
+      letter-spacing: 0.2em;
     }
-    .rule::before, .rule::after {
-      content:''; flex:1; height:1px;
+
+    .rule::before,
+    .rule::after {
+      content: '';
+      flex: 1;
+      height: 1px;
       background: linear-gradient(90deg, transparent, var(--border));
     }
-    .rule::before { background: linear-gradient(90deg, var(--border), transparent); }
+
+    .rule::before {
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
 
     /* Section */
     .section {
-      padding:48px 0; border-bottom:1px solid var(--border);
-      opacity:0; transform:translateY(12px);
+      padding: 48px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(12px);
       transition: opacity 0.7s ease, transform 0.7s ease;
     }
-    .section.visible { opacity:1; transform:none; }
 
-    .sec-eyebrow { font-size:9px; letter-spacing:0.4em; color:var(--gold-dim); text-transform:uppercase; margin-bottom:6px; }
-    .sec-title {
-      font-family:var(--font-serif);
-      font-size:42px; font-weight:300;
-      color:var(--text); margin-bottom:28px;
-      letter-spacing:0.03em;
+    .section.visible {
+      opacity: 1;
+      transform: none;
     }
-    .sec-title em { color:var(--gold); font-style:italic; }
+
+    .sec-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .sec-title {
+      font-family: var(--font-serif);
+      font-size: 42px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 28px;
+      letter-spacing: 0.03em;
+    }
+
+    .sec-title em {
+      color: var(--gold);
+      font-style: italic;
+    }
 
     /* Stats */
-    .stats { display:flex; gap:32px; flex-wrap:wrap; margin-bottom:32px; }
-    .stat-val {
-      font-family:var(--font-serif);
-      font-size:52px; font-weight:300;
-      color:var(--gold); line-height:1;
+    .stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
     }
-    .stat-lbl { font-size:9px; letter-spacing:0.25em; color:var(--text-dim); text-transform:uppercase; margin-top:4px; }
-    @media(max-width:600px){
-      body { font-size:14px; }
-      .card-desc, .about-text { font-size:14px; line-height:2; }
-      .tool-row, .series-row { font-size:13px; padding:11px 14px; }
-      .tag { font-size:10px; }
-      .badge { font-size:9px; }
-      .sec-eyebrow, .prog-meta, .footer-txt { font-size:10px; }
-      .sg-title { font-size:10px; }
-      .si { font-size:13px; }
-      .lh { font-size:10px; }
+
+    .stat-val {
+      font-family: var(--font-serif);
+      font-size: 52px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    @media(max-width:600px) {
+      body {
+        font-size: 14px;
+      }
+
+      .card-desc,
+      .about-text {
+        font-size: 14px;
+        line-height: 2;
+      }
+
+      .tool-row,
+      .series-row {
+        font-size: 13px;
+        padding: 11px 14px;
+      }
+
+      .tag {
+        font-size: 10px;
+      }
+
+      .badge {
+        font-size: 9px;
+      }
+
+      .sec-eyebrow,
+      .prog-meta,
+      .footer-txt {
+        font-size: 10px;
+      }
+
+      .sg-title {
+        font-size: 10px;
+      }
+
+      .si {
+        font-size: 13px;
+      }
+
+      .lh {
+        font-size: 10px;
+      }
     }
 
     /* About */
-    .about-text { font-size:14px; line-height:2.1; color:var(--text); max-width:560px; }
-    .about-text .hl { color:var(--gold); }
+    .about-text {
+      font-size: 14px;
+      line-height: 2.1;
+      color: var(--text);
+      max-width: 560px;
+    }
+
+    .about-text .hl {
+      color: var(--gold);
+    }
 
     /* Cards */
-    .cards { display:grid; gap:1px; background:var(--border); border:1px solid var(--border); }
+    .cards {
+      display: grid;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
     .card {
-      background:var(--bg2); padding:28px 28px 28px 32px;
-      position:relative; overflow:hidden;
+      background: var(--bg2);
+      padding: 28px 28px 28px 32px;
+      position: relative;
+      overflow: hidden;
       transition: background 0.3s;
       cursor: default;
     }
-    .card:hover { background:var(--bg3); }
+
+    .card:hover {
+      background: var(--bg3);
+    }
+
     .card::before {
-      content:''; position:absolute; top:0; left:0;
-      width:2px; height:100%;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
       background: linear-gradient(180deg, var(--gold-dim), transparent);
       transition: background 0.3s;
     }
+
     .card:hover::before {
       background: linear-gradient(180deg, var(--gold), var(--gold-dim));
     }
 
-    .card-head { display:flex; align-items:baseline; gap:14px; margin-bottom:12px; }
-    .card-name {
-      font-family:var(--font-serif);
-      font-size:32px; font-weight:300;
-      color:var(--text); letter-spacing:0.05em;
+    .card-head {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      margin-bottom: 12px;
     }
-    .card-name em { color:var(--gold); font-style:italic; }
-    .badge {
-      font-family:var(--font-mono);
-      font-size:8px; letter-spacing:0.3em; padding:3px 9px;
-      border:1px solid; text-transform:uppercase;
-    }
-    .b-building { color:var(--gold); border-color:var(--gold-dim); }
-    .b-coming   { color:var(--text-dim); border-color:var(--border); }
 
-    .card-desc { font-size:13px; line-height:1.9; color:var(--text); margin-bottom:16px; }
-    .card-desc .hl { color:var(--gold); }
+    .card-name {
+      font-family: var(--font-serif);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+
+    .card-name em {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      padding: 3px 9px;
+      border: 1px solid;
+      text-transform: uppercase;
+    }
+
+    .b-building {
+      color: var(--gold);
+      border-color: var(--gold-dim);
+    }
+
+    .b-coming {
+      color: var(--text-dim);
+      border-color: var(--border);
+    }
+
+    .card-desc {
+      font-size: 13px;
+      line-height: 1.9;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .card-desc .hl {
+      color: var(--gold);
+    }
 
     /* Tool list */
-    .tool-list { display:grid; gap:0; border:1px solid var(--border); margin-bottom:16px; }
-    .tool-row {
-      display:flex; align-items:center; gap:12px;
-      padding:10px 14px; border-bottom:1px solid var(--border);
-      font-size:12px;
+    .tool-list {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
     }
-    .tool-row:last-child { border-bottom:none; }
-    .tool-num { font-family:var(--font-serif); font-size:20px; color:var(--text-dim); min-width:24px; font-weight:300; }
-    .tool-name { color:var(--text); flex:1; }
-    .tool-status { font-size:8px; letter-spacing:0.2em; text-transform:uppercase; }
-    .ts-next    { color:var(--gold); }
-    .ts-planned { color:var(--text-dim); }
+
+    .tool-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .tool-row:last-child {
+      border-bottom: none;
+    }
+
+    .tool-num {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: var(--text-dim);
+      min-width: 24px;
+      font-weight: 300;
+    }
+
+    .tool-name {
+      color: var(--text);
+      flex: 1;
+    }
+
+    .tool-status {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .ts-next {
+      color: var(--gold);
+    }
+
+    .ts-planned {
+      color: var(--text-dim);
+    }
 
     /* Progress */
-    .prog-wrap { margin-bottom:16px; }
-    .prog-meta { display:flex; justify-content:space-between; font-size:9px; color:var(--text-dim); margin-bottom:5px; letter-spacing:0.15em; text-transform:uppercase; }
-    .prog-bar  { height:1px; background:var(--border); }
-    .prog-fill { height:100%; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); width:0; transition:width 1.4s ease; }
-    .section.visible .prog-fill { width:var(--w); }
+    .prog-wrap {
+      margin-bottom: 16px;
+    }
+
+    .prog-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--text-dim);
+      margin-bottom: 5px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .prog-bar {
+      height: 1px;
+      background: var(--border);
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+      width: 0;
+      transition: width 1.4s ease;
+    }
+
+    .section.visible .prog-fill {
+      width: var(--w);
+    }
 
     /* Series */
-    .series { display:grid; gap:0; border:1px solid var(--border); }
-    .series-row {
-      display:flex; align-items:center; gap:12px;
-      padding:10px 14px; border-bottom:1px solid var(--border);
-      font-size:12px;
+    .series {
+      display: grid;
+      gap: 0;
+      border: 1px solid var(--border);
     }
-    .series-row:last-child { border-bottom:none; }
-    .s-num { font-family:var(--font-serif); font-size:22px; color:var(--gold-dim); min-width:30px; font-weight:300; }
-    .s-label { flex:1; color:var(--text); }
-    .s-status { font-size:8px; letter-spacing:0.2em; text-transform:uppercase; }
-    .ss-active { color:var(--gold); }
-    .ss-next   { color:var(--violet); }
-    .ss-later  { color:var(--text-dim); }
+
+    .series-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .series-row:last-child {
+      border-bottom: none;
+    }
+
+    .s-num {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      color: var(--gold-dim);
+      min-width: 30px;
+      font-weight: 300;
+    }
+
+    .s-label {
+      flex: 1;
+      color: var(--text);
+    }
+
+    .s-status {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .ss-active {
+      color: var(--gold);
+    }
+
+    .ss-next {
+      color: var(--violet);
+    }
+
+    .ss-later {
+      color: var(--text-dim);
+    }
 
     /* Redacted */
     .redact {
-      margin-top:12px;
-      padding:14px 16px;
-      border:1px solid var(--border);
-      display:flex; align-items:center; gap:12px;
+      margin-top: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
+
     .redact-line {
-      font-family:var(--font-mono);
-      font-size:10px; letter-spacing:0.2em; color:var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
     }
+
     .redact-bar {
-      width:100%; height:1px;
+      width: 100%;
+      height: 1px;
       background: linear-gradient(90deg, var(--gold-dim), transparent);
-      margin-top:10px;
+      margin-top: 10px;
     }
 
     /* Stack */
-    .stack-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
-    .sg { background:var(--bg2); padding:20px; }
-    .sg-title { font-size:9px; letter-spacing:0.3em; color:var(--gold-dim); text-transform:uppercase; margin-bottom:12px; }
-    .si { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text); margin-bottom:8px; transition:color 0.2s; }
-    .si:hover { color:var(--gold); }
-    .si::before { content:'—'; color:var(--gold-dim); font-size:10px; }
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .sg {
+      background: var(--bg2);
+      padding: 20px;
+    }
+
+    .sg-title {
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .si {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text);
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .si:hover {
+      color: var(--gold);
+    }
+
+    .si::before {
+      content: '—';
+      color: var(--gold-dim);
+      font-size: 10px;
+    }
 
     /* Links */
-    .link-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px; background:var(--border); border:1px solid var(--border); }
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
     .link-card {
-      display:flex; align-items:center; gap:12px; padding:16px 18px;
-      background:var(--bg2); text-decoration:none; color:var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--bg2);
+      text-decoration: none;
+      color: var(--text);
       transition: background 0.2s, color 0.2s;
     }
-    .link-card:hover { background:var(--bg3); color:var(--gold); }
-    .li { font-size:16px; min-width:20px; text-align:center; color:var(--gold-dim); transition:color 0.2s; }
-    .link-card:hover .li { color:var(--gold); }
-    .ln { font-size:12px; color:var(--text); }
-    .lh { font-size:9px; letter-spacing:0.1em; margin-top:2px; color:var(--text-dim); }
+
+    .link-card:hover {
+      background: var(--bg3);
+      color: var(--gold);
+    }
+
+    .li {
+      font-size: 16px;
+      min-width: 20px;
+      text-align: center;
+      color: var(--gold-dim);
+      transition: color 0.2s;
+    }
+
+    .link-card:hover .li {
+      color: var(--gold);
+    }
+
+    .ln {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .lh {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      margin-top: 2px;
+      color: var(--text-dim);
+    }
 
     /* Tags */
-    .tags { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
-    .tag { font-size:8px; letter-spacing:0.2em; color:var(--text-dim); border:1px solid var(--border); padding:3px 8px; text-transform:uppercase; }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .tag {
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 3px 8px;
+      text-transform: uppercase;
+    }
 
     /* Footer */
-    .footer { padding:36px 0; text-align:center; }
-    .footer-txt { font-size:9px; letter-spacing:0.25em; color:var(--text-dim); text-transform:uppercase; }
-    .footer-txt .hl { color:var(--gold-dim); }
+    .footer {
+      padding: 36px 0;
+      text-align: center;
+    }
 
-    @media(max-width:600px){
-      .stats{gap:20px;}
-      .link-grid{grid-template-columns:1fr 1fr;}
+    .footer-txt {
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .footer-txt .hl {
+      color: var(--gold-dim);
+    }
+
+    @media(max-width:600px) {
+      .stats {
+        gap: 20px;
+      }
+
+      .link-grid {
+        grid-template-columns: 1fr 1fr;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <nav>
@@ -331,9 +741,18 @@
       <div class="sec-title">The <em>story</em></div>
 
       <div class="stats">
-        <div><div class="stat-val">25</div><div class="stat-lbl">Years in business</div></div>
-        <div><div class="stat-val">3</div><div class="stat-lbl">Products in pipeline</div></div>
-        <div><div class="stat-val">$0</div><div class="stat-lbl">Runtime cost</div></div>
+        <div>
+          <div class="stat-val">25</div>
+          <div class="stat-lbl">Years in business</div>
+        </div>
+        <div>
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Products in pipeline</div>
+        </div>
+        <div>
+          <div class="stat-val">$0</div>
+          <div class="stat-lbl">Runtime cost</div>
+        </div>
       </div>
 
       <p class="about-text">
@@ -341,7 +760,8 @@
         management, communication, and problem-solving
         in the most unforgiving environment possible.<br><br>
         After bankruptcy, I started over —
-        this time building <span class="hl">AI-powered tools</span> under my own label <span class="hl">AXIS.</span><br><br>
+        this time building <span class="hl">AI-powered tools</span> under my own label <span
+          class="hl">AXIS.</span><br><br>
         The business knowledge most developers lack?
         That's what I've been living for 25 years.
         Now I'm packaging it into software.
@@ -356,7 +776,8 @@
       <div class="cards">
 
         <!-- Sorted.Tools -->
-        <div class="card" style="cursor:pointer;" onclick="window.open('https://yumakakuya.github.io/sorted-tools/','_blank')">
+        <div class="card" style="cursor:pointer;"
+          onclick="window.open('https://yumakakuya.github.io/sorted-tools/','_blank')">
           <div class="card-head">
             <div class="card-name">Sorted.<em>Tools</em></div>
             <span class="badge b-coming">Coming Soon</span>
@@ -403,7 +824,9 @@
 
           <div class="prog-wrap">
             <div class="prog-meta"><span>Series 1 progress</span><span>0 / 5 shipped</span></div>
-            <div class="prog-bar"><div class="prog-fill" style="--w:0%"></div></div>
+            <div class="prog-bar">
+              <div class="prog-fill" style="--w:0%"></div>
+            </div>
           </div>
 
           <div class="series">
@@ -425,10 +848,56 @@
           </div>
         </div>
 
-        <!-- AXIOM. -->
+        <!-- Veto.. -->
         <div class="card">
           <div class="card-head">
-            <div class="card-name">AXIOM.</div>
+            <div class="card-name">Veto. is an open-source suite of production-ready skills, agents, and reference
+              materials specifically designed to enhance Claude Code for modern Apple platform development (iOS, macOS,
+              watchOS, and tvOS). Developed by Charles Wiltgen, it acts as a specialized knowledge layer that bridges
+              the gap between general AI coding advice and strict Apple-specific best practices.
+
+              Core Capabilities and Features
+              Veto. currently includes over 100 skills and 25 autonomous agents that automate complex iOS development
+              tasks:
+
+              Swift 6 & Concurrency: Deep knowledge of strict concurrency, actors, @MainActor, and data race prevention.
+              It helps developers reach -strict-concurrency=complete by identifying isolation errors the compiler might
+              miss.
+
+              App Store Readiness: Audits codebases for "App Store Blockers," including missing Privacy Manifests,
+              accessibility issues (VoiceOver/Dynamic Type), Human Interface Guideline (HIG) compliance, and security
+              gaps.
+
+              Systematic Debugging: Specialized agents, such as the crash-analyzer, parse .ips or .crash files to
+              identify patterns like null pointers or watchdog terminations. Environment diagnostics help solve
+              mysterious build failures in minutes rather than hours.
+
+              Modern Frameworks: Deep coverage for SwiftUI (navigation architecture, adaptive layouts), SwiftData,
+              StoreKit 2, and Apple Intelligence (on-device AI with Foundation Models).
+
+              Performance and Methodology
+              Tested Development: Skills are validated using a Test-Driven Development (TDD) approach and
+              red/green/refactor cycles to ensure accuracy under production pressure.
+
+              Dynamic Knowledge: Unlike static model training data, Veto. is manually updated with insights from current
+              WWDC sessions and fresh Apple documentation.
+
+              Tool Integration: It functions entirely within the Claude Code terminal. Developers can discover skills by
+              typing / or use specific commands like /Veto.:audit-concurrency and /Veto.:status.
+
+              Integration with Multiplatform Projects
+              While biased toward iOS, Veto. supports multiplatform development for macOS and other xOS devices. It can
+              be paired with other tools like XcodebuildMCP to maintain build consistency across platforms via rules in
+              a CLAUDE.md file.
+
+              Installation and Community
+              Veto. is free and available via GitHub or the Claude Code plugin marketplace:
+
+              Marketplace Install: /plugin marketplace add CharlesWiltgen/Veto.
+
+              Official Documentation: charleswiltgen.github.io/Veto./
+
+              Community: The project has its own subreddit at r/Veto.dev for feedback and updates.</div>
             <span class="badge b-coming">Coming</span>
           </div>
           <p class="card-desc">Something is in motion. Details when it's ready.</p>
@@ -497,19 +966,32 @@
       <div class="link-grid">
         <a class="link-card" href="https://x.com/KakuyaYuma" target="_blank" rel="noopener">
           <span class="li">𝕏</span>
-          <div><div class="ln">X / Twitter</div><div class="lh">@KakuyaYuma</div></div>
+          <div>
+            <div class="ln">X / Twitter</div>
+            <div class="lh">@KakuyaYuma</div>
+          </div>
         </a>
         <a class="link-card" href="https://github.com/Yumakakuya" target="_blank" rel="noopener">
           <span class="li">⌥</span>
-          <div><div class="ln">GitHub</div><div class="lh">Yumakakuya</div></div>
+          <div>
+            <div class="ln">GitHub</div>
+            <div class="lh">Yumakakuya</div>
+          </div>
         </a>
-        <a class="link-card" href="https://www.linkedin.com/in/%E4%BE%91%E7%A3%A8-%E8%A7%92%E8%B0%B7-a28ab63b4" target="_blank" rel="noopener">
+        <a class="link-card" href="https://www.linkedin.com/in/%E4%BE%91%E7%A3%A8-%E8%A7%92%E8%B0%B7-a28ab63b4"
+          target="_blank" rel="noopener">
           <span class="li">in</span>
-          <div><div class="ln">LinkedIn</div><div class="lh">侑磨・角谷</div></div>
+          <div>
+            <div class="ln">LinkedIn</div>
+            <div class="lh">侑磨・角谷</div>
+          </div>
         </a>
         <a class="link-card" href="mailto:yuma@axis.com">
           <span class="li">✉</span>
-          <div><div class="ln">Email</div><div class="lh">AXIS.</div></div>
+          <div>
+            <div class="ln">Email</div>
+            <div class="lh">AXIS.</div>
+          </div>
         </a>
       </div>
     </section>
@@ -522,9 +1004,10 @@
 
   <script>
     const obs = new IntersectionObserver(es => es.forEach(e => {
-      if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); }
+      if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
     }), { threshold: 0.08 });
     document.querySelectorAll('.section').forEach(s => obs.observe(s));
   </script>
 </body>
+
 </html>
