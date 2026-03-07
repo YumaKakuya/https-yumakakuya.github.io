@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowork Task Builder | Sorted. Tools</title>
+    <meta name="description" content="Generate precise Claude Cowork delegation prompts for file organization. Not a prompt list — a prompt builder.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #13131f; --surface-lighter: #1c1c2e;
+            --border: #2a2a3e; --accent: #00e5ff; --accent-dim: rgba(0,229,255,0.1);
+            --accent2: #ff6b35; --text: #e8e8f0; --muted: #666; --green: #00ff9d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html {
+            height: 100%; background-color: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5;
+            user-select: none; -webkit-user-select: none; overflow-x: hidden;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none; z-index: 9998;
+        }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes scanline { 0%{top:-10%} 100%{top:110%} }
+        .hidden { display: none !important; }
+
+        /* SPLASH */
+        #splash-screen {
+            position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg);
+            display:flex; flex-direction:column; justify-content:center; align-items:center;
+            z-index:9999; overflow:hidden;
+        }
+        .splash-scan {
+            position:absolute; top:-10%; left:0; right:0; height:80px;
+            background:linear-gradient(transparent,rgba(0,229,255,0.03),transparent);
+            animation:scanline 3s linear infinite;
+        }
+        .splash-brand { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:4px; color:var(--muted); margin-bottom:16px; }
+        .splash-title { font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:700; letter-spacing:2px; color:#fff; margin-bottom:8px; }
+        .splash-title span { color:var(--accent); }
+        .splash-sub { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:3px; margin-bottom:8px; opacity:0.7; }
+        .splash-tagline { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#555; letter-spacing:2px; margin-bottom:48px; }
+        .splash-tagline em { color:#777; font-style:normal; }
+        .splash-cursor { display:inline-block; width:8px; height:14px; background:var(--accent); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:4px; }
+        .splash-btn {
+            padding:14px 48px; background:transparent; border:1px solid var(--accent); color:var(--accent);
+            font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:3px;
+            cursor:pointer; transition:0.2s; position:relative; overflow:hidden;
+        }
+        .splash-btn::before {
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(0,229,255,0.1),transparent); transition:0.4s;
+        }
+        .splash-btn:hover::before { left:100%; }
+        .splash-btn:hover { background:rgba(0,229,255,0.08); box-shadow:0 0 20px rgba(0,229,255,0.2); }
+        .splash-version { position:absolute; bottom:24px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
+
+        /* APP */
+        #app-container { display:none; opacity:0; min-height:100vh; flex-direction:column; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:var(--bg); }
+        ::-webkit-scrollbar-thumb { background:#222; border-radius:2px; }
+
+        header {
+            padding:14px 30px; border-bottom:1px solid var(--border);
+            background:rgba(10,10,15,0.9); position:sticky; top:0; z-index:100;
+            display:flex; justify-content:space-between; align-items:center;
+            backdrop-filter:blur(20px);
+        }
+        .brand { font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700; letter-spacing:1px; color:#fff; display:flex; align-items:center; gap:8px; }
+        .brand span { color:var(--accent); }
+        .brand-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blink 2s ease-in-out infinite; }
+        .header-meta { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
+
+        .main-content { flex:1; max-width:820px; margin:0 auto; width:100%; padding:28px 20px; }
+
+        .series-nav { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:24px; display:flex; align-items:center; gap:8px; overflow-x:auto; }
+        .series-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; white-space:nowrap; }
+        .series-tag { font-size:10px; padding:5px 11px; border-radius:20px; white-space:nowrap; font-weight:600; border:1px solid var(--border); color:#444; font-family:'IBM Plex Mono',monospace; }
+        .series-tag.active { background:rgba(0,229,255,0.08); border-color:var(--accent); color:var(--accent); }
+        .series-arrow { color:#222; font-size:11px; flex-shrink:0; }
+
+        .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:16px; overflow:hidden; }
+        .card-header { padding:12px 18px; border-bottom:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+        .dot { width:6px; height:6px; border-radius:50%; }
+        .card-body { padding:16px 18px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .full { grid-column:1/-1; }
+
+        label { display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+        label .note { font-size:9px; color:#444; text-transform:none; letter-spacing:0; font-family:'Inter',sans-serif; margin-left:6px; }
+
+        input[type="text"], select, textarea {
+            width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px;
+            color:var(--text); padding:10px 12px; font-size:13px; font-family:'Inter',sans-serif; transition:border-color 0.2s;
+        }
+        textarea { resize:vertical; min-height:70px; user-select:text; -webkit-user-select:text; }
+        input[type="text"]:focus, select:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(0,229,255,0.08); }
+        input::placeholder, textarea::placeholder { color:#333; }
+        select option { background:var(--surface); }
+
+        .tags { display:flex; flex-wrap:wrap; gap:6px; }
+        .tag-btn { padding:6px 13px; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--muted); font-size:11px; font-family:'IBM Plex Mono',monospace; letter-spacing:1px; cursor:pointer; transition:0.15s; }
+        .tag-btn.selected { border-color:var(--accent); color:var(--accent); background:rgba(0,229,255,0.07); }
+        .tag-btn:hover:not(.selected) { border-color:#444; color:#aaa; }
+
+        .generate-btn {
+            width:100%; margin-top:8px; padding:16px; background:transparent;
+            border:1px solid var(--accent); color:var(--accent);
+            font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:3px;
+            cursor:pointer; transition:0.2s; border-radius:8px; position:relative; overflow:hidden;
+        }
+        .generate-btn:disabled { border-color:#222; color:#333; cursor:not-allowed; }
+        .generate-btn:not(:disabled)::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(0,229,255,0.1),transparent); transition:0.5s; }
+        .generate-btn:not(:disabled):hover::before { left:100%; }
+        .generate-btn:not(:disabled):hover { background:rgba(0,229,255,0.06); box-shadow:0 0 20px rgba(0,229,255,0.15); }
+
+        .result-header-bar { background:rgba(0,229,255,0.05); border:1px solid rgba(0,229,255,0.2); border-radius:8px; padding:10px 16px; margin-bottom:16px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:1px; }
+        .terminal-window { background:#050508; border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+        .terminal-bar { background:var(--surface); padding:8px 14px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+        .terminal-bar::before { content:''; display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent); }
+        .result-box { padding:20px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.7; color:#c8d8e8; white-space:pre-wrap; word-break:break-word; max-height:520px; overflow-y:auto; user-select:text; -webkit-user-select:text; }
+        .action-row { display:flex; gap:10px; flex-direction:column; }
+        .copy-btn-large { width:100%; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'IBM Plex Mono',monospace; padding:16px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px; letter-spacing:3px; transition:0.2s; }
+        .copy-btn-large:hover { background:rgba(0,229,255,0.06); box-shadow:0 0 20px rgba(0,229,255,0.15); }
+        .back-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:12px; border-radius:8px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; letter-spacing:2px; width:100%; transition:0.2s; }
+        .back-btn:hover { border-color:#444; color:#aaa; }
+
+        footer { text-align:center; padding:28px; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:10px; border-top:1px solid var(--border); margin-top:auto; letter-spacing:1px; }
+        .gate-hint { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--accent2); margin-top:8px; display:none; letter-spacing:1px; }
+        @media (max-width:600px) { .card-body { grid-template-columns:1fr; } }
+
+        /* ONBOARD HINT */
+        .onboard-hint {
+            background:rgba(0,229,255,0.04); border:1px solid rgba(0,229,255,0.15);
+            border-radius:8px; padding:14px 16px; margin-bottom:20px;
+            font-family:'IBM Plex Mono',monospace; font-size:11px; color:#aaa;
+            line-height:1.7; position:relative; letter-spacing:0.3px;
+        }
+        .onboard-hint strong { color:var(--accent); }
+        .onboard-close {
+            position:absolute; top:10px; right:14px; background:none; border:none;
+            color:var(--muted); font-size:14px; cursor:pointer; padding:0 4px;
+        }
+        .onboard-close:hover { color:var(--text); }
+
+        /* SOFT WARNINGS */
+        .soft-warn {
+            font-family:'IBM Plex Mono',monospace; font-size:10px; color:#ff9d3a;
+            margin-top:5px; display:none; letter-spacing:0.5px; line-height:1.5;
+        }
+
+        /* SAFETY BAR */
+        .safety-bar {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            padding:10px 16px; margin-bottom:16px; display:flex; align-items:center;
+            justify-content:space-between; gap:12px;
+        }
+        .safety-bar-left { display:flex; align-items:center; gap:10px; }
+        .safety-dot { width:9px; height:9px; border-radius:50%; background:#444; flex-shrink:0; transition:0.3s; }
+        .safety-dot.green  { background:var(--green);  box-shadow:0 0 8px var(--green); }
+        .safety-dot.yellow { background:#ffcc00; box-shadow:0 0 8px rgba(255,204,0,0.5); }
+        .safety-dot.red    { background:#ff4d4d; box-shadow:0 0 8px rgba(255,77,77,0.5); }
+        .safety-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; }
+        .safety-check-btn {
+            background:transparent; border:1px solid var(--border); color:var(--muted);
+            font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1px;
+            padding:5px 10px; border-radius:4px; cursor:pointer; white-space:nowrap; transition:0.2s;
+        }
+        .safety-check-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+        /* SAFETY REPORT */
+        .safety-report {
+            background:var(--surface); border:1px solid var(--border); border-radius:8px;
+            padding:14px 16px; margin-bottom:16px; display:none;
+        }
+        .safety-report-header {
+            font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted);
+            letter-spacing:2px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;
+        }
+        .safety-report-item { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+        .safety-report-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
+        .safety-report-text { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#aaa; letter-spacing:0.3px; line-height:1.5; }
+        .safety-report-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:12px; padding:0; }
+        .safety-report-close:hover { color:var(--text); }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="splash-scan"></div>
+        <div class="splash-brand fade-in">Sorted. Tools — Cowork Series</div>
+        <div class="splash-title fade-in" style="animation-delay:0.1s">TASK<span>_</span>BUILDER<span class="splash-cursor"></span></div>
+        <div class="splash-sub fade-in" style="animation-delay:0.2s">FILE ORGANIZATION EDITION</div>
+        <div class="splash-tagline fade-in" style="animation-delay:0.25s">Not a prompt list. <em>A prompt builder.</em></div>
+        <button class="splash-btn fade-in" style="animation-delay:0.35s" onclick="startApp()">INITIALIZE SYSTEM</button>
+        <div class="splash-version">v1.0.0 — FREE RELEASE</div>
+    </div>
+
+    <div id="app-container">
+        <header>
+            <div class="brand"><div class="brand-dot"></div>Sorted<span>.</span>&nbsp;Tools</div>
+            <div class="header-meta">COWORK TASK BUILDER&nbsp;&nbsp;|&nbsp;&nbsp;FILE ORG</div>
+        </header>
+
+        <main class="main-content">
+            <div id="form-view">
+
+                <div class="series-nav">
+                    <span class="series-label">COWORK /</span>
+                    <span class="series-tag active">01 File Org ◀</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">02 Research</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">03 Data Extract</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">04 Report Gen</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">05 Inbox Mgmt</span>
+                </div>
+
+                <div class="onboard-hint" id="onboardHint">
+                    <button class="onboard-close" onclick="document.getElementById('onboardHint').style.display='none'" title="Close">✕</button>
+                    <strong>One quick tip.</strong> You can write folder descriptions and custom rules in any language — English tends to give the most precise results, but start with whatever feels natural.
+                </div>
+
+                <div class="safety-bar" id="safetyBar">
+                    <div class="safety-bar-left">
+                        <div class="safety-dot" id="safetyDot"></div>
+                        <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+                    </div>
+                    <button class="safety-check-btn" onclick="toggleSafetyReport()">SAFETY CHECK ▾</button>
+                </div>
+
+                <div class="safety-report" id="safetyReport">
+                    <div class="safety-report-header">
+                        <span>SAFETY CHECK REPORT</span>
+                        <button class="safety-report-close" onclick="toggleSafetyReport()">✕</button>
+                    </div>
+                    <div id="safetyReportItems"></div>
+                </div>
+
+                <div class="card" style="border-top:3px solid var(--accent);">
+                    <div class="card-header"><div class="dot" style="background:var(--accent)"></div>TASK SETUP</div>
+                    <div class="card-body">
+                        <div>
+                            <label>Task Type</label>
+                            <select id="taskType" onchange="checkGate()">
+                                <option value="">── Select ──</option>
+                                <option value="sort">File Organization & Classification</option>
+                                <option value="rename">Batch Rename</option>
+                                <option value="extract">Data Extraction & Aggregation</option>
+                                <option value="report">Report Generation from Files</option>
+                                <option value="clean">Duplicate Removal & Cleanup</option>
+                                <option value="custom">Custom (describe below)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Target Folder<span class="note">What folder will Cowork access?</span></label>
+                            <select id="folderType" onchange="checkGate()">
+                                <option value="">── Select ──</option>
+                                <option value="downloads">Downloads folder</option>
+                                <option value="desktop">Desktop</option>
+                                <option value="documents">Documents folder</option>
+                                <option value="project">Project folder</option>
+                                <option value="photos">Photos / Images folder</option>
+                                <option value="receipts">Receipts / Expense folder</option>
+                                <option value="custom">Other (describe below)</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>Describe the folder contents<span class="note">What's inside and roughly how many files?</span></label>
+                            <input type="text" id="folderDesc" placeholder="e.g. 3 years of invoices, screenshots, and Excel files mixed together. ~500 files. The more specific, the better." oninput="checkGate()">
+                            <div class="soft-warn" id="folderDescWarn">💬 Try to be more specific — file types, quantity, or current state. The more detail, the better the result.</div>
+                            <div class="soft-warn" id="folderDescTaskWarn">💬 This field is for describing the folder, not giving instructions. Save task instructions for the Custom Instructions field below.</div>
+                        </div>
+                        <div class="full">
+                            <label>File Types (select all that apply)</label>
+                            <div class="tags" id="filetype-tags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-top:3px solid #ffcc00;">
+                    <div class="card-header"><div class="dot" style="background:#ffcc00"></div>ORGANIZATION RULES</div>
+                    <div class="card-body">
+                        <div>
+                            <label>Sort Method</label>
+                            <select id="sortMethod">
+                                <option value="type">By file type (PDF / Images / Excel / etc.)</option>
+                                <option value="date">By date (Year / Month)</option>
+                                <option value="project">By project or client name</option>
+                                <option value="content">By content (AI-inferred categories)</option>
+                                <option value="custom">Custom (see instructions below)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Naming Convention<span class="note">Optional</span></label>
+                            <input type="text" id="namingRule" placeholder="e.g. YYYYMMDD_description_vN">
+                        </div>
+                        <div class="full">
+                            <label>Exclusions / Protected Items<span class="note">Files Cowork must NOT touch</span></label>
+                            <input type="text" id="excludeRule" placeholder="e.g. system folder, .env files, anything from 2023 or earlier. Tip: 'do not touch X' is clearer than 'everything except X'." oninput="checkGate()">
+                            <div class="soft-warn" id="excludeRuleWarn">💬 'Do not touch X' is clearer than 'anything except X'. Example: system folder, .env files, data from 2023 or earlier.</div>
+                        </div>
+                        <div class="full">
+                            <label>Custom Instructions<span class="note">Additional rules or special handling</span></label>
+                            <textarea id="customRule" placeholder="e.g. Sort invoices by client name. Move duplicates to _duplicate. Do not move files older than 2022. The more specific, the better." oninput="checkGate()"></textarea>
+                            <div class="soft-warn" id="customRuleWarn">💬 Try to be more specific. Vague instructions like 'organize properly' or 'do your best' may produce unpredictable results.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-top:3px solid #ff6b35;">
+                    <div class="card-header"><div class="dot" style="background:#ff6b35"></div>OUTPUT &amp; SAFETY</div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>Deliverables (select all that apply)</label>
+                            <div class="tags" id="output-tags"></div>
+                        </div>
+                        <div>
+                            <label>Safety Level</label>
+                            <select id="safetyLevel" onchange="checkGate()">
+                                <option value="strict">Confirm before every action (recommended)</option>
+                                <option value="moderate">Confirm destructive actions only</option>
+                                <option value="auto">Auto-execute (no confirmation)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Schedule</label>
+                            <select id="schedule">
+                                <option value="once">Run once</option>
+                                <option value="daily">Daily (recurring Cowork task)</option>
+                                <option value="weekly">Weekly (recurring Cowork task)</option>
+                                <option value="monthly">Monthly (recurring Cowork task)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gate-hint" id="gateHint">⚠ Select a Task Type, Target Folder, and describe the contents to continue</div>
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>GENERATE COWORK PROMPT</button>
+            </div>
+
+            <div id="result-view" class="hidden">
+                <div class="result-header-bar">&gt; STATUS: PROMPT READY — PASTE INTO CLAUDE COWORK AND DELEGATE.</div>
+                <div class="terminal-window">
+                    <div class="terminal-bar">cowork_task_prompt.txt — Read Only</div>
+                    <div class="result-box" id="output"></div>
+                </div>
+                <div class="action-row">
+                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="back-btn" onclick="backToForm()">← BUILD ANOTHER PROMPT</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            © 2026 Sorted. Tools — Cowork Series. Free Release.<br>
+            File Org → Research → Data Extract → <strong style="color:var(--accent)">Report Gen</strong> → Inbox Mgmt
+        </footer>
+    </div>
+
+    <script>
+        const appContainer = document.getElementById('app-container');
+        const formView = document.getElementById('form-view');
+        const resultView = document.getElementById('result-view');
+        const generateBtn = document.getElementById('generateBtn');
+
+        function startApp() {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.style.display = 'none';
+                appContainer.style.display = 'flex';
+                appContainer.classList.add('fade-in');
+                checkGate();
+            }, 500);
+        }
+
+        function processGeneration() {
+            formView.classList.add('fade-out');
+            setTimeout(() => {
+                formView.classList.add('hidden');
+                formView.classList.remove('fade-out');
+                generatePromptText();
+                resultView.classList.remove('hidden');
+                resultView.classList.add('fade-in');
+                window.scrollTo(0,0);
+            }, 400);
+        }
+
+        function backToForm() {
+            resultView.classList.add('fade-out');
+            setTimeout(() => {
+                resultView.classList.add('hidden');
+                resultView.classList.remove('fade-out');
+                formView.classList.remove('hidden');
+                formView.classList.add('fade-in');
+                window.scrollTo(0,0);
+            }, 400);
+        }
+
+        const selectedFileTypes = new Set();
+        const selectedOutputs = new Set();
+
+        function renderTags(id, opts, set, cb) {
+            const c = document.getElementById(id);
+            c.innerHTML = '';
+            opts.forEach(o => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'tag-btn' + (set.has(o.value) ? ' selected' : '');
+                b.textContent = o.label;
+                b.onclick = () => {
+                    set.has(o.value) ? set.delete(o.value) : set.add(o.value);
+                    b.classList.toggle('selected');
+                    if (cb) cb();
+                };
+                c.appendChild(b);
+            });
+        }
+
+        renderTags('filetype-tags', [
+            {value:'PDF',label:'PDF'},
+            {value:'Images (JPG/PNG)',label:'Images'},
+            {value:'Excel / CSV',label:'Excel/CSV'},
+            {value:'Word / Text',label:'Word/TXT'},
+            {value:'Video',label:'Video'},
+            {value:'ZIP Archives',label:'ZIP'},
+            {value:'Code files',label:'Code'},
+            {value:'Other',label:'Other'},
+        ], selectedFileTypes, checkGate);
+
+        renderTags('output-tags', [
+            {value:'Create subfolders and move files',label:'Subfolders'},
+            {value:'Write an organization report in Markdown',label:'Report (.md)'},
+            {value:'Export a file list to Excel',label:'Excel file list'},
+            {value:'Show a preview plan before executing',label:'Preview plan'},
+            {value:'Save an execution log as a text file',label:'Execution log'},
+        ], selectedOutputs, checkGate);
+
+        const VAGUE_WORDS = [
+            'whatever', 'anything', 'somehow', 'sort of', 'kind of',
+            'i dunno', 'idk', 'not sure', 'just do it', 'figure it out',
+            'use your judgment', 'up to you', 'your call', 'as you like',
+            'as you see fit', 'randomly', 'freestyle', 'any way',
+            'however you want', 'just wing it'
+        ];
+
+        const TASK_INSTRUCTION_WORDS = [
+            'could you', 'can you', 'i want you to',
+            'make sure to', 'go ahead and', 'i need you to',
+            'would you', 'do this for me', 'please do',
+            'please find', 'please sort', 'please organize',
+            'please rename', 'please move'
+        ];
+
+        const EXCLUDE_VAGUE = [
+            'idk', 'not sure', 'whatever', 'anything', 'everything',
+            'nothing', 'n/a', 'none', 'no idea', 'up to you'
+        ];
+
+        const CUSTOM_VAGUE = [
+            'whatever', 'anything', 'somehow', 'just do it',
+            'figure it out', 'use your judgment', 'up to you',
+            'your call', 'as you like', 'as you see fit',
+            'appropriately', 'properly', 'correctly', 'perfectly',
+            'neatly', 'nicely', 'well', 'good', 'fine',
+            'just wing it', 'freestyle', 'however you want',
+            'make it work', 'do your best', 'as needed',
+            'as appropriate', 'accordingly', 'suitably'
+        ];
+
+        function checkGate() {
+            const desc = document.getElementById('folderDesc').value.trim();
+            const excl = document.getElementById('excludeRule').value.trim().toLowerCase();
+            const cust = document.getElementById('customRule').value.trim().toLowerCase();
+            const descLower = desc.toLowerCase();
+
+            // folderDesc: vague word check
+            const descVague = VAGUE_WORDS.some(w => descLower.includes(w));
+            const descShort = desc.length > 0 && desc.length < 15;
+            const showDescWarn = descVague || descShort;
+            document.getElementById('folderDescWarn').style.display = showDescWarn ? 'block' : 'none';
+
+            // folderDesc: task instruction check
+            const descTask = TASK_INSTRUCTION_WORDS.some(w => descLower.includes(w));
+            document.getElementById('folderDescTaskWarn').style.display = descTask ? 'block' : 'none';
+
+            // excludeRule: vague check
+            const exclVague = excl.length > 0 && EXCLUDE_VAGUE.some(w => excl.includes(w));
+            document.getElementById('excludeRuleWarn').style.display = exclVague ? 'block' : 'none';
+
+            // customRule: vague check
+            const custVague = cust.length > 0 && CUSTOM_VAGUE.some(w => cust.includes(w));
+            document.getElementById('customRuleWarn').style.display = custVague ? 'block' : 'none';
+
+            const ok = document.getElementById('taskType').value &&
+                       document.getElementById('folderType').value &&
+                       desc.length >= 5;
+            generateBtn.disabled = !ok;
+            document.getElementById('gateHint').style.display = ok ? 'none' : 'block';
+
+            updateSafetyBar();
+        }
+
+        function toggleSafetyReport() {
+            const report = document.getElementById('safetyReport');
+            if (report.style.display === 'block') {
+                report.style.display = 'none';
+            } else {
+                buildSafetyReport();
+                report.style.display = 'block';
+            }
+        }
+
+        function buildSafetyReport() {
+            const desc = document.getElementById('folderDesc').value.trim();
+            const excl = document.getElementById('excludeRule').value.trim().toLowerCase();
+            const cust = document.getElementById('customRule').value.trim().toLowerCase();
+            const safety = document.getElementById('safetyLevel').value;
+
+            const items = [];
+
+            // folderDesc evaluation
+            const descVague = VAGUE_WORDS.some(w => desc.toLowerCase().includes(w));
+            const descShort = desc.length > 0 && desc.length < 15;
+            if (descShort || descVague) {
+                items.push({ icon: '⚠️', text: 'Folder description is too short or vague.' });
+            } else if (desc.length === 0) {
+                items.push({ icon: '💡', text: 'Folder description: not yet entered.' });
+            } else {
+                items.push({ icon: '✅', text: 'Folder description looks specific.' });
+            }
+
+            // excludeRule evaluation
+            const exclVague = excl.length > 0 && EXCLUDE_VAGUE.some(w => excl.includes(w));
+            if (exclVague) {
+                items.push({ icon: '⚠️', text: 'Exclusion rules may be ambiguous.' });
+            } else if (excl.length === 0) {
+                items.push({ icon: '💡', text: 'Exclusion rules: not specified (optional).' });
+            } else {
+                items.push({ icon: '✅', text: 'Exclusion rules look clear.' });
+            }
+
+            // customRule evaluation
+            const custVague = cust.length > 0 && CUSTOM_VAGUE.some(w => cust.includes(w));
+            if (custVague) {
+                items.push({ icon: '⚠️', text: 'Custom instructions are too vague.' });
+            } else if (cust.length === 0) {
+                items.push({ icon: '💡', text: 'Custom instructions: not specified (optional).' });
+            } else {
+                items.push({ icon: '✅', text: 'Custom instructions look specific.' });
+            }
+
+            // safetyLevel evaluation
+            if (safety === 'auto') {
+                items.push({ icon: '⚠️', text: 'Safety level: Auto-execute (no confirmation)' });
+            } else {
+                items.push({ icon: '✅', text: 'Safety level: Confirm before executing (recommended)' });
+            }
+
+            const container = document.getElementById('safetyReportItems');
+            container.innerHTML = items.map(i =>
+                `<div class="safety-report-item"><span class="safety-report-icon">${i.icon}</span><span class="safety-report-text">${i.text}</span></div>`
+            ).join('');
+        }
+
+        function updateSafetyBar() {
+            const desc = document.getElementById('folderDesc').value.trim();
+            const excl = document.getElementById('excludeRule').value.trim().toLowerCase();
+            const cust = document.getElementById('customRule').value.trim().toLowerCase();
+            const safety = document.getElementById('safetyLevel').value;
+            const dot = document.getElementById('safetyDot');
+            const label = document.getElementById('safetyLabel');
+
+            if (!desc) {
+                dot.className = 'safety-dot';
+                label.textContent = 'Waiting for input...';
+                return;
+            }
+
+            const issues = [];
+            const descLowerSB = desc.toLowerCase();
+            const descVague = VAGUE_WORDS.some(w => descLowerSB.includes(w));
+            const descShort = desc.length < 15;
+            const descTask  = TASK_INSTRUCTION_WORDS.some(w => descLowerSB.includes(w));
+            if (descVague || descShort || descTask) issues.push('folder description');
+
+            const exclVague = excl.length > 0 && EXCLUDE_VAGUE.some(w => excl.includes(w));
+            if (exclVague) issues.push('exclusion rules');
+
+            const custVague = cust.length > 0 && CUSTOM_VAGUE.some(w => cust.includes(w));
+            if (custVague) issues.push('custom instructions');
+
+            if (safety === 'auto') issues.push('safety level');
+
+            const hardIssues = issues.filter(i => i !== 'safety level');
+            if (issues.length === 0) {
+                dot.className = 'safety-dot green';
+                label.textContent = 'ALL CLEAR  — Ready to generate';
+            } else if (hardIssues.length === 0) {
+                dot.className = 'safety-dot yellow';
+                label.textContent = 'REVIEW SUGGESTED  — Auto-execute is enabled';
+            } else if (issues.length <= 1) {
+                dot.className = 'safety-dot yellow';
+                label.textContent = 'REVIEW SUGGESTED  — Please check your inputs';
+            } else {
+                dot.className = 'safety-dot red';
+                label.textContent = `INPUT ISSUES  — ${issues.length} issue(s) found`;
+            }
+        }
+
+        const getVal = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+        const sanitize = s => s.replace(/[<>"']/g, '');
+
+        const SAFETY = {
+            strict: [
+                'Before executing ANY file operation (move, rename, delete), output a complete plan and wait for explicit approval.',
+                'Do NOT proceed until the user types "OK" or "proceed".',
+                'Mark every irreversible operation (delete, overwrite) with ⚠️ WARNING in the plan.',
+            ],
+            moderate: [
+                'For destructive operations (delete, overwrite), pause and request approval.',
+                'For non-destructive operations (copy, create folder, rename), proceed automatically.',
+                'Log all actions taken.',
+            ],
+            auto: [
+                'Execute all operations automatically without pausing.',
+                'Log every action to execution_log.txt in the target folder.',
+                'If a critical error occurs, pause and report immediately.',
+            ],
+        };
+
+        const SCHEDULE = {
+            once:    'Run this task once only.',
+            daily:   'Set up as a recurring Cowork scheduled task — run daily at 09:00.',
+            weekly:  'Set up as a recurring Cowork scheduled task — run every Monday at 09:00.',
+            monthly: 'Set up as a recurring Cowork scheduled task — run on the 1st of every month at 09:00.',
+        };
+
+        const SORT = {
+            type:    'Organize by file type. Create subfolders: /PDF, /Images, /Excel-CSV, /Word-Text, /Video, /Archives, /Code, /Other.',
+            date:    'Organize by date. Create subfolders by year and month: /YYYY/MM/. Use creation date; fall back to last-modified if unavailable.',
+            project: 'Organize by project or client name. Infer names from file names and content. Create one subfolder per project.',
+            content: 'Organize by content. Read file names and contents to infer categories. Use descriptive subfolder names.',
+            custom:  'Follow the custom organization rules in the CUSTOM INSTRUCTIONS section.',
+        };
+
+        const TASK_LABEL = { sort:'File Organization & Classification', rename:'Batch File Rename', extract:'Data Extraction & Aggregation', report:'Report Generation from Files', clean:'Duplicate Removal & Cleanup', custom:'Custom File Task' };
+        const FOLDER_LABEL = { downloads:'Downloads folder', desktop:'Desktop', documents:'Documents folder', project:'Project folder', photos:'Photos / Images folder', receipts:'Receipts / Expense folder', custom:'custom folder (see description)' };
+
+        function generatePromptText() {
+            const taskType    = getVal('taskType');
+            const folderType  = getVal('folderType');
+            const folderDesc  = sanitize(getVal('folderDesc'));
+            const sortMethod  = getVal('sortMethod');
+            const namingRule  = sanitize(getVal('namingRule'));
+            const excludeRule = sanitize(getVal('excludeRule'));
+            const customRule  = sanitize(getVal('customRule'));
+            const safetyLevel = getVal('safetyLevel');
+            const schedule    = getVal('schedule');
+            const fileTypes   = Array.from(selectedFileTypes);
+            const outputs     = Array.from(selectedOutputs);
+            const taskLabel   = TASK_LABEL[taskType] || 'File Task';
+            const folderLabel = FOLDER_LABEL[folderType] || 'target folder';
+            const safety      = SAFETY[safetyLevel] || SAFETY.strict;
+
+            let t = '';
+            t += `# COWORK TASK PROMPT\n# Generated by Sorted. Tools — Cowork Task Builder v1.0.0\n# -------------------------------------------------------\n\n`;
+            t += `## OBJECTIVE\nThe information provided in this prompt is used solely for executing this task. Do not retain or reference it beyond this session.\n\nYou are a precise file management agent. Your task is:\n"${taskLabel} for the ${folderLabel}."\nComplete this task fully and autonomously according to the rules below.\n${SCHEDULE[schedule] || SCHEDULE.once}\n\n`;
+            t += `## SCOPE\n- Target: ${folderLabel}\n- Folder description: ${folderDesc}\n`;
+            t += fileTypes.length ? `- File types in scope: ${fileTypes.join(', ')}\n` : `- File types in scope: All file types\n`;
+            if (excludeRule) t += `- EXCLUDED / PROTECTED: ${excludeRule}\n`;
+            t += `\n`;
+            t += `## ORGANIZATION METHOD\n${SORT[sortMethod] || SORT.type}\n`;
+            if (namingRule) t += `\nNaming convention:\n  Rule: ${namingRule}\n  Example: "invoice_march.pdf" → "20260301_invoice.pdf"\n`;
+            if (customRule) t += `\nCUSTOM INSTRUCTIONS (override defaults where conflicting):\n${customRule}\n`;
+            t += `\n`;
+            if (outputs.length) {
+                t += `## DELIVERABLES\nIn addition to organizing, produce the following:\n`;
+                outputs.forEach((o,i) => { t += `${i+1}. ${o}\n`; });
+                t += `Save all outputs to the root of the target folder.\n\n`;
+            }
+            t += `## CONSTRAINTS\n- Do NOT access or modify files outside the target folder.\n- Do NOT permanently delete any file — move to _trash/ or _duplicates/ first.\n- Do NOT touch system files, hidden files (starting with .), or config files.\n`;
+            if (excludeRule) t += `- STRICTLY respect protected items: ${excludeRule}\n`;
+            t += `\n`;
+            t += `## SAFETY & EXECUTION RULES\n`;
+            safety.forEach((s,i) => { t += `${i+1}. ${s}\n`; });
+            t += `\n`;
+            t += `## VALIDATION\nBefore finishing, verify:\n(a) All in-scope files have been processed\n(b) No files were permanently deleted\n(c) Protected items were untouched\n(d) All deliverables created and saved\n(e) Final summary output (see format below)\n(f) If any instruction conflicts with the folder description or custom rules, pause and request clarification before proceeding\n\n`;
+            t += `## FINAL SUMMARY FORMAT\nEnd the task with:\n\n---\nTASK COMPLETE\n- Files processed  : [N]\n- Folders created  : [N]\n- Files renamed    : [N]\n- Files moved      : [N]\n- Duplicates found : [N]\n- Issues / skipped : [list any]\n---\n\n`;
+            t += `## ERROR HANDLING\nDo not guess. Do not assume. When in doubt, list the ambiguity and ask before proceeding.\n\n`;
+            t += `# -------------------------------------------------------\n# Generated with Sorted. Tools — Cowork Task Builder v1.0.0\n# Powered by Sorted. Cowork Series | sorted.tools\n`;
+
+            document.getElementById('output').textContent = t;
+        }
+
+        function copyText(btn) {
+            const orig = btn.innerText;
+            navigator.clipboard.writeText(document.getElementById('output').textContent).then(() => {
+                btn.innerText = '✅ COPIED — PASTE INTO CLAUDE COWORK';
+                btn.style.cssText = 'background:rgba(0,255,157,0.1);border-color:#00ff9d;color:#00ff9d';
+                setTimeout(() => { btn.innerText = orig; btn.style.cssText = ''; }, 2500);
+            }).catch(() => {
+                btn.innerText = '⚠️ Copy failed — please use HTTPS';
+                setTimeout(() => { btn.innerText = orig; }, 3000);
+            });
+        }
+    </script>
+</body>
+</html>
