@@ -292,11 +292,12 @@
       background:var(--bg2); text-decoration:none; color:var(--text);
       transition: background 0.2s, color 0.2s;
     }
+    .link-card > div { min-width:0; }
     .link-card:hover { background:var(--bg3); color:var(--gold); }
     .li { font-size:16px; min-width:20px; text-align:center; color:var(--gold-dim); transition:color 0.2s; }
     .link-card:hover .li { color:var(--gold); }
     .ln { font-size:12px; color:var(--text); }
-    .lh { font-size:9px; letter-spacing:0.1em; margin-top:2px; color:var(--text-dim); }
+    .lh { font-size:9px; letter-spacing:0.1em; margin-top:2px; color:var(--text-dim); word-break:break-all; }
 
     /* Tags */
     .tags { display:flex; flex-wrap:wrap; gap:6px; margin:12px 0; }
@@ -304,7 +305,7 @@
 
     /* Footer */
     .footer { padding:36px 0; text-align:center; }
-    .footer-txt { font-size:9px; letter-spacing:0.25em; color:var(--text-dim); text-transform:uppercase; }
+    .footer-txt { font-size:9px; letter-spacing:0.25em; color:var(--text-dim); text-transform:uppercase; word-break:break-all; }
     .footer-txt .hl { color:var(--gold-dim); }
 
     @media(max-width:600px){
