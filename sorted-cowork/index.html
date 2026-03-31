@@ -100,6 +100,62 @@
         .series-tag.active { background:rgba(0,229,255,0.08); border-color:var(--accent); color:var(--accent); }
         .series-arrow { color:#222; font-size:11px; flex-shrink:0; }
 
+        .tool-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+            gap:12px;
+            margin-bottom:20px;
+        }
+        .tool-card {
+            display:block;
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:8px;
+            padding:14px;
+            text-decoration:none;
+            color:var(--text);
+            transition:0.2s;
+        }
+        .tool-card:hover {
+            border-color:#444;
+            background:var(--surface-lighter);
+            transform:translateY(-1px);
+        }
+        .tool-card.planned {
+            cursor:default;
+            color:var(--muted);
+        }
+        .tool-card.planned:hover {
+            border-color:var(--border);
+            background:var(--surface);
+            transform:none;
+        }
+        .tool-card.active {
+            border-color:var(--accent);
+            background:rgba(0,229,255,0.08);
+        }
+        .tool-card-kicker {
+            display:block;
+            font-family:'IBM Plex Mono',monospace;
+            font-size:10px;
+            color:var(--muted);
+            letter-spacing:1px;
+            text-transform:uppercase;
+            margin-bottom:8px;
+        }
+        .tool-card-title {
+            display:block;
+            font-family:'IBM Plex Mono',monospace;
+            font-size:13px;
+            margin-bottom:8px;
+        }
+        .tool-card-desc {
+            display:block;
+            font-size:12px;
+            line-height:1.6;
+            color:var(--muted);
+        }
+
         .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:16px; overflow:hidden; }
         .card-header { padding:12px 18px; border-bottom:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); display:flex; align-items:center; gap:8px; }
         .dot { width:6px; height:6px; border-radius:50%; }
@@ -225,17 +281,32 @@
         <main class="main-content">
             <div id="form-view">
 
-                <div class="series-nav">
-                    <span class="series-label">COWORK /</span>
-                    <span class="series-tag active">01 File Org ◀</span>
-                    <span class="series-arrow">→</span>
-                    <span class="series-tag">02 Research</span>
-                    <span class="series-arrow">→</span>
-                    <span class="series-tag">03 Data Extract</span>
-                    <span class="series-arrow">→</span>
-                    <span class="series-tag">04 Report Gen</span>
-                    <span class="series-arrow">→</span>
-                    <span class="series-tag">05 Inbox Mgmt</span>
+                <div class="tool-grid">
+                    <a class="tool-card active" href="/sorted-cowork/">
+                        <span class="tool-card-kicker">Cowork / Tool 01 / Live</span>
+                        <span class="tool-card-title">File Org Builder</span>
+                        <span class="tool-card-desc">Current live tool for file organization and cleanup workflows.</span>
+                    </a>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Cowork / Tool 02 / Planned</span>
+                        <span class="tool-card-title">Research</span>
+                        <span class="tool-card-desc">Task prompt builder for research delegation. Not public yet.</span>
+                    </div>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Cowork / Tool 03 / Planned</span>
+                        <span class="tool-card-title">Data Extract</span>
+                        <span class="tool-card-desc">Structured extraction workflow builder. Not public yet.</span>
+                    </div>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Cowork / Tool 04 / Planned</span>
+                        <span class="tool-card-title">Report Gen</span>
+                        <span class="tool-card-desc">Reporting task builder for recurring output. Not public yet.</span>
+                    </div>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Cowork / Tool 05 / Planned</span>
+                        <span class="tool-card-title">Inbox Mgmt</span>
+                        <span class="tool-card-desc">Inbox sorting and reply workflow builder. Not public yet.</span>
+                    </div>
                 </div>
 
                 <div class="onboard-hint" id="onboardHint">

@@ -15,25 +15,22 @@ No consultants. No fluff. Just prompts that work.
 
 | Tool | What it does |
 |------|-------------|
-| 🎯 [ASO Prompt Generator](https://YOUR_NAME.github.io/sorted-tools) | App Store keyword strategy & metadata prompts |
-| 💰 [Pricing Strategy Generator](https://YOUR_NAME.github.io/sorted-tools) | Competitive pricing prompts for indie apps |
-| 📣 [Press Release Builder](https://YOUR_NAME.github.io/sorted-tools) | PR-ready copy structure in minutes |
-| 🗂 [Pitch Deck Prompter](https://YOUR_NAME.github.io/sorted-tools) | Investor narrative scaffolding |
-| 📊 [Competitor Analysis Generator](https://YOUR_NAME.github.io/sorted-tools) | Market positioning prompts |
+| 💸 [Revenue Forecast](https://yumakakuya.github.io/sorted-tools/) | Revenue forecast and business-plan prompt generator |
+| 💰 [Pricing Strategy](https://yumakakuya.github.io/sorted-pricing-strategy/) | Competitive pricing prompts for indie apps |
+| 📊 [Competitor Research](https://yumakakuya.github.io/sorted-competitor-research/) | Market positioning and competitor analysis prompts |
+| 🤝 [Cowork Task Builder](https://yumakakuya.github.io/sorted-cowork/) | Claude Cowork delegation prompt builder |
+| 🛠 [RuleForge](https://yumakakuya.github.io/sorted-ruleforge/) | Free AGENTS.md prompt generator |
 
-→ **[View all tools](https://YOUR_NAME.github.io/sorted-tools)**
+Limited-time free release is live now for the tools above.
+
+→ **[View all tools](https://yumakakuya.github.io/sorted-tools/)**
 
 ---
 
 ## Pro — Sorted.ToolsPro
 
-The paid version adds what free can't cover:
-
-- **Rejection Defense** — App Store appeal letters that actually work
-- **Revenue Forecasting** — Project growth before you launch
-- **Full Launch Packet** — Everything above, in one generation
-
-→ **[Sorted.ToolsPro on the App Store](#)** *(coming soon)*
+Selected ToolsPro builders are currently open as a public free release.
+Paid packaging will return after the release window closes.
 
 ---
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Yuma Kakuya — Builder</title>
-  <meta name="description" content="Indie hacker building tools for app developers. Creator of Sorted.Tools." />
+  <meta name="description" content="Indie hacker building tools for app developers. Limited-time free release now live for Sorted.Tools and Sorted.Cowork." />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-12F25EZ0PG"></script>
   <script>
@@ -236,6 +236,7 @@
     .tool-name { color:var(--text); flex:1; }
     .tool-status { font-size:8px; letter-spacing:0.2em; text-transform:uppercase; }
     .ts-next    { color:var(--gold); }
+    .ts-live    { color:#00ff9d; }
     .ts-planned { color:var(--text-dim); }
 
     /* Progress */
@@ -334,11 +335,8 @@
       <h1 class="hero-name">Yuma<em>Kakuya</em></h1>
       <div class="hero-sub">Indie Hacker · Shipping in Public · Japan</div>
       <p class="hero-desc">
-        25年の飲食業、倒産、破産、そして再起。<br>
-        <span class="hl">経験がツールになった。</span><br><br>
-        Building software tools with AI —
-        because the <span class="hl">business side of apps</span>
-        is exactly what most developers lack.
+        25 years in hospitality. Bankruptcy. A full restart.<br>
+        <span class="hl">Now that experience is shipping as software.</span>
       </p>
     </section>
 
@@ -372,75 +370,58 @@
 
       <div class="cards">
 
-        <!-- Sorted.ToolsPro -->
-        <div class="card" style="cursor:pointer;" onclick="window.open('https://sorted-portal.vercel.app','_blank')">
+        <!-- Sorted.RevenueForecast -->
+        <div class="card" style="cursor:pointer;" onclick="window.open('https://yumakakuya.github.io/sorted-tools/','_blank')">
           <div class="card-head">
-            <div class="card-name">Sorted.<em>ToolsPro</em></div>
-            <span class="badge b-coming">Portal</span>
+            <div class="card-name">Sorted.<em>RevenueForecast</em></div>
+            <span class="badge b-live">Free</span>
           </div>
           <p class="card-desc">
-            AI prompt toolkit for indie app developers. Form in, prompt out.
-            <span class="hl">Revenue forecasts. ASO. Pitch decks. Pricing. Competitor research.</span>
-            $14.99 one-time (per tool).
+            Revenue forecast and business-plan prompt generator for indie app developers.
+            <span class="hl">Estimate growth, pricing logic, and launch economics before you ship.</span>
           </p>
-
           <div class="tags">
-            <span class="tag">Series 1 of 3</span>
-            <span class="tag">$14.99 one-time (per tool)</span>
+            <span class="tag">Series 1 / Tool 01</span>
+            <span class="tag">Limited-time free</span>
             <span class="tag">Local-first</span>
           </div>
+          <a href="https://yumakakuya.github.io/sorted-tools/" target="_blank" rel="noopener" class="card-cta" onclick="event.stopPropagation()">Open Tool →</a>
+        </div>
 
-          <div class="tool-list">
-            <div class="tool-row">
-              <span class="tool-num">01</span>
-              <span class="tool-name">Revenue Forecast</span>
-              <span class="tool-status ts-next">Dropping soon</span>
-            </div>
-            <div class="tool-row">
-              <span class="tool-num">02</span>
-              <span class="tool-name">ASO Optimizer</span>
-              <span class="tool-status ts-planned">Planned</span>
-            </div>
-            <div class="tool-row">
-              <span class="tool-num">03</span>
-              <span class="tool-name">Pitch Deck Architect</span>
-              <span class="tool-status ts-planned">Planned</span>
-            </div>
-            <div class="tool-row">
-              <span class="tool-num">04</span>
-              <span class="tool-name">Pricing Strategist</span>
-              <span class="tool-status ts-planned">Planned</span>
-            </div>
-            <div class="tool-row">
-              <span class="tool-num">05</span>
-              <span class="tool-name">Competitor Research</span>
-              <span class="tool-status ts-planned">Planned</span>
-            </div>
+        <!-- Sorted.PricingStrategy -->
+        <div class="card" style="cursor:pointer;" onclick="window.open('https://yumakakuya.github.io/sorted-pricing-strategy/','_blank')">
+          <div class="card-head">
+            <div class="card-name">Sorted.<em>PricingStrategy</em></div>
+            <span class="badge b-live">Free</span>
           </div>
+          <p class="card-desc">
+            Pricing strategy prompt generator for paid apps, subscriptions, and hybrid models.
+            <span class="hl">Model positioning, price anchors, and monetization tradeoffs in one flow.</span>
+          </p>
+          <div class="tags">
+            <span class="tag">Series 1 / Tool 04</span>
+            <span class="tag">Limited-time free</span>
+            <span class="tag">Local-first</span>
+          </div>
+          <a href="https://yumakakuya.github.io/sorted-pricing-strategy/" target="_blank" rel="noopener" class="card-cta" onclick="event.stopPropagation()">Open Tool →</a>
+        </div>
 
-          <div class="prog-wrap">
-            <div class="prog-meta"><span>Series 1 progress</span><span>0 / 5 shipped</span></div>
-            <div class="prog-bar"><div class="prog-fill" style="--w:0%"></div></div>
+        <!-- Sorted.CompetitorResearch -->
+        <div class="card" style="cursor:pointer;" onclick="window.open('https://yumakakuya.github.io/sorted-competitor-research/','_blank')">
+          <div class="card-head">
+            <div class="card-name">Sorted.<em>CompetitorResearch</em></div>
+            <span class="badge b-live">Free</span>
           </div>
-
-          <div class="series">
-            <div class="series-row">
-              <span class="s-num">S1</span>
-              <span class="s-label">Pre-launch — strategy & planning tools</span>
-              <span class="s-status ss-active">Active</span>
-            </div>
-            <div class="series-row">
-              <span class="s-num">S2</span>
-              <span class="s-label">Submission, review & launch strategy</span>
-              <span class="s-status ss-next">Next</span>
-            </div>
-            <div class="series-row">
-              <span class="s-num">S3</span>
-              <span class="s-label">Growth, retention & update strategy</span>
-              <span class="s-status ss-later">Planned</span>
-            </div>
+          <p class="card-desc">
+            Competitor research and positioning prompt generator for app categories and niches.
+            <span class="hl">Map rivals, compare pricing, and find whitespace before release.</span>
+          </p>
+          <div class="tags">
+            <span class="tag">Series 1 / Tool 05</span>
+            <span class="tag">Limited-time free</span>
+            <span class="tag">Local-first</span>
           </div>
-          <a href="https://sorted-portal.vercel.app" target="_blank" rel="noopener" class="card-cta" onclick="event.stopPropagation()">Upgrade →</a>
+          <a href="https://yumakakuya.github.io/sorted-competitor-research/" target="_blank" rel="noopener" class="card-cta" onclick="event.stopPropagation()">Open Tool →</a>
         </div>
 
         <!-- Sorted.Cowork -->
@@ -452,19 +433,12 @@
           <p class="card-desc">
             Prompt toolkit for Claude Cowork users. Form in, delegation prompt out.
             <span class="hl">File organization. Task automation. Structured instructions.</span>
-            Built for non-coders who want Cowork to actually work. Free release available now.
+            Built for non-coders who want Cowork to actually work. Full public release is open now for a limited time.
           </p>
           <div class="tags">
             <span class="tag">Cowork Series</span>
-            <span class="tag">Free</span>
+            <span class="tag">Limited-time free</span>
             <span class="tag">Local-first</span>
-          </div>
-          <div class="tool-list">
-            <div class="tool-row">
-              <span class="tool-num">01</span>
-              <span class="tool-name">File Org Builder</span>
-              <span class="tool-status ts-next">v1.0.0 Live</span>
-            </div>
           </div>
           <a href="https://yumakakuya.github.io/sorted-cowork/" target="_blank" rel="noopener" class="card-cta" onclick="event.stopPropagation()">Try Free →</a>
         </div>

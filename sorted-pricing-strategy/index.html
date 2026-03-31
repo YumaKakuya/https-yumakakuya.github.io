@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Strategy Free | Sorted. Tools</title>
+
+    <!-- Google Fonts: preconnect + load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS VARIABLES — Sorted. Design System
+           ============================================ */
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+            --red: #ff6b6b;
+            --red-dim: rgba(255, 107, 107, 0.1);
+            --yellow: #ffcc00;
+            --yellow-dim: rgba(255, 204, 0, 0.1);
+            --purple: #a29bfe;
+            --purple-dim: rgba(162, 155, 254, 0.15);
+            --teal: #00cec9;
+            --teal-dim: rgba(0, 206, 201, 0.1);
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body, html {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Subtle radial glow background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 10% -10%, rgba(0, 255, 157, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 90% 110%, rgba(162, 155, 254, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-12px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .fade-in {
+            animation: fadeUp 0.45s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+
+        .fade-out {
+            animation: fadeDown 0.35s ease forwards;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================
+           SPLASH SCREEN
+           ============================================ */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        /* Scanline overlay */
+        #splash::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 157, 0.015) 2px,
+                rgba(0, 255, 157, 0.015) 4px
+            );
+            pointer-events: none;
+        }
+
+        .splash-brand {
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            animation: fadeUp 0.6s ease forwards;
+        }
+
+        .splash-brand .dot {
+            color: var(--accent);
+        }
+
+        .splash-sub {
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 4px;
+            animation: fadeUp 0.6s 0.15s ease both;
+        }
+
+        .splash-btn {
+            margin-top: 56px;
+            padding: 14px 48px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s 0.4s ease both;
+        }
+
+        .splash-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.3s ease;
+        }
+
+        .splash-btn:hover::before {
+            transform: translateX(0);
+        }
+
+        .splash-btn:hover {
+            color: #000;
+        }
+
+        .splash-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           HEADER — sticky
+           ============================================ */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 32px;
+            background: rgba(10, 10, 15, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .brand .dot {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .header-right {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-tool-name {
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        .header-version {
+            color: var(--muted);
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            padding: 20px 32px 0;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tool-card {
+            display: block;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 15px;
+            color: var(--text);
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-1px);
+            background: rgba(255,255,255,0.04);
+            border-color: #444;
+        }
+
+        .tool-card.planned {
+            color: var(--muted);
+            cursor: default;
+        }
+
+        .tool-card.planned:hover {
+            transform: none;
+            background: rgba(255,255,255,0.02);
+            border-color: var(--border);
+        }
+
+        .tool-card.active {
+            border-color: #a29bfe;
+            background: rgba(162, 155, 254, 0.15);
+        }
+
+        .tool-card.live {
+            border-color: rgba(0, 255, 157, 0.24);
+        }
+
+        .tool-card-kicker {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 7px;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .tool-card-title {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .tool-card-desc {
+            display: block;
+            font-size: 12px;
+            line-height: 1.6;
+            color: var(--muted);
+        }
+
+        /* ============================================
+           SERIES NAV BAR
+           ============================================ */
+        .series-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 0 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .series-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .series-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 18px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            cursor: default;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+            text-decoration: none;
+        }
+
+        .series-tab.done {
+            color: #666;
+        }
+
+        .series-tab.active {
+            color: #a29bfe;
+            border-bottom-color: #a29bfe;
+            background: rgba(162, 155, 254, 0.15);
+        }
+
+        .series-tab.upcoming {
+            color: #555;
+        }
+
+        /* ============================================
+           SAFETY BAR
+           ============================================ */
+        .safety-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 32px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .safety-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #555;
+            transition: background 0.3s;
+        }
+
+        .safety-dot.green {
+            background: var(--accent);
+            box-shadow: 0 0 6px rgba(0, 255, 157, 0.4);
+        }
+
+        .safety-dot.yellow {
+            background: var(--yellow);
+            box-shadow: 0 0 6px rgba(255, 204, 0, 0.4);
+        }
+
+        .safety-dot.red {
+            background: var(--red);
+            box-shadow: 0 0 6px rgba(255, 107, 107, 0.4);
+        }
+
+        .safety-label {
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .safety-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .safety-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ============================================
+           SAFETY REPORT (readiness checklist)
+           ============================================ */
+        .safety-report {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            line-height: 2;
+            color: var(--muted);
+        }
+
+        .safety-report .check-ok {
+            color: var(--accent);
+        }
+
+        .safety-report .check-fail {
+            color: var(--red);
+        }
+
+        .safety-report .check-warn {
+            color: var(--yellow);
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        #app {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main {
+            max-width: 860px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 32px 24px 60px;
+        }
+
+        /* ============================================
+           FORM CARDS
+           ============================================ */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: #3a3a50;
+        }
+
+        .card-header {
+            padding: 13px 22px;
+            background: var(--surface-lighter);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .card-header-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-body {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .req {
+            color: var(--red);
+            margin-left: 3px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: #08080f;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-dim);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #333350;
+        }
+
+        select option {
+            background: #0f0f1c;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        /* Price input row with currency selector */
+        .price-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .price-row select {
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .price-row input {
+            flex: 1;
+        }
+
+        /* ============================================
+           TAGS (multi-select buttons)
+           ============================================ */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .tag-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tag-btn:hover {
+            border-color: #3a3a50;
+            color: var(--text);
+        }
+
+        .tag-btn.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tag-btn.active-purple {
+            background: var(--purple-dim);
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        /* ============================================
+           SOFT-WARN (vague word detection)
+           ============================================ */
+        .soft-warn {
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--yellow);
+            font-family: 'JetBrains Mono', monospace;
+            display: none;
+        }
+
+        .soft-warn.visible {
+            display: block;
+        }
+
+        /* ============================================
+           FORM ACTIONS
+           ============================================ */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .generate-btn {
+            flex: 1;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 24px rgba(0, 255, 157, 0.15);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .reset-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ============================================
+           RESULT VIEW
+           ============================================ */
+        #resultView {
+            display: none;
+        }
+
+        .result-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-status::before {
+            content: '>';
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Terminal window */
+        .terminal {
+            background: #04040a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .terminal-bar {
+            background: var(--surface-lighter);
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .t-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .prompt-length {
+            margin-left: auto;
+            color: var(--accent);
+            font-size: 10px;
+        }
+
+        .result-box {
+            padding: 28px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #b0b0d0;
+            white-space: pre-wrap;
+            height: 500px;
+            overflow-y: auto;
+            font-size: 12.5px;
+            line-height: 1.7;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .result-box::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .result-box::-webkit-scrollbar-thumb {
+            background: #2a2a40;
+            border-radius: 3px;
+        }
+
+        /* Result action buttons */
+        .result-actions {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .copy-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .copy-btn:hover {
+            box-shadow: 0 0 32px rgba(0, 255, 157, 0.2);
+        }
+
+        .back-btn {
+            width: 100%;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .back-btn:hover {
+            border-color: #3a3a50;
+            color: var(--text);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--muted);
+            font-size: 11px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 640px) {
+            .card-body {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 12px 16px;
+            }
+
+            .main {
+                padding: 20px 16px 40px;
+            }
+
+            .series-nav {
+                padding: 0 16px;
+            }
+
+            .series-tab {
+                padding: 10px 12px;
+                font-size: 10px;
+            }
+
+            .safety-bar {
+                padding: 10px 16px;
+            }
+
+            .safety-report {
+                padding: 12px 16px;
+            }
+
+            .price-row {
+                flex-direction: column;
+            }
+
+            .price-row select {
+                width: 100%;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     SPLASH SCREEN
+     ============================================ -->
+<div id="splash">
+    <div class="splash-brand">Sorted<span class="dot">.</span></div>
+    <div class="splash-sub">PRICING STRATEGIST</div>
+    <button class="splash-btn" onclick="startApp()"><span>INITIALIZE SYSTEM</span></button>
+</div>
+
+<!-- ============================================
+     APP CONTAINER
+     ============================================ -->
+<div id="app">
+
+    <!-- HEADER -->
+    <header>
+        <div class="brand">Sorted<span class="dot">.</span> Tools <span class="badge">FREE</span></div>
+        <div class="header-right">
+            <span class="header-tool-name">PRICING STRATEGIST</span>
+            <span class="header-version">v1.0.0 / FREE</span>
+        </div>
+    </header>
+
+    <!-- SERIES NAV -->
+    <div class="tool-grid">
+        <a class="tool-card live" href="/sorted-tools/">
+            <span class="tool-card-kicker">Series 1 / Tool 01 / Live</span>
+            <span class="tool-card-title">Revenue Forecast</span>
+            <span class="tool-card-desc">Open the revenue and business-plan builder.</span>
+        </a>
+        <div class="tool-card planned">
+            <span class="tool-card-kicker">Series 1 / Tool 02 / Planned</span>
+            <span class="tool-card-title">ASO Optimizer</span>
+            <span class="tool-card-desc">Not public yet.</span>
+        </div>
+        <div class="tool-card planned">
+            <span class="tool-card-kicker">Series 1 / Tool 03 / Planned</span>
+            <span class="tool-card-title">Pitch Deck</span>
+            <span class="tool-card-desc">Not public yet.</span>
+        </div>
+        <div class="tool-card active">
+            <span class="tool-card-kicker">Series 1 / Tool 04 / Live</span>
+            <span class="tool-card-title">Pricing Strategy</span>
+            <span class="tool-card-desc">Current tool.</span>
+        </div>
+        <a class="tool-card live" href="/sorted-competitor-research/">
+            <span class="tool-card-kicker">Series 1 / Tool 05 / Live</span>
+            <span class="tool-card-title">Competitor Research</span>
+            <span class="tool-card-desc">Open the competitor and positioning builder.</span>
+        </a>
+    </div>
+
+    <!-- SAFETY BAR -->
+    <div class="safety-bar">
+        <div class="safety-dot" id="safetyDot"></div>
+        <span class="safety-label" id="safetyLabel">入力待ち...</span>
+        <button class="safety-btn" id="safetyBtn" onclick="toggleReadinessReport()">READINESS CHECK &#9660;</button>
+    </div>
+
+    <!-- SAFETY REPORT (hidden by default) -->
+    <div class="safety-report hidden" id="safetyReport"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main" id="formView">
+
+        <!-- ==========================================
+             CARD 1: PRODUCT INFO
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #00ff9d;">
+            <div class="card-header">
+                <div class="dot" style="background: #00ff9d;"></div>
+                <div class="card-header-label">プロダクト情報</div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <label>アプリ / サービス名 <span class="req">&#9733;必須</span></label>
+                    <input type="text" id="appName" placeholder="例: FitTracker Pro、MealPlan SaaS">
+                </div>
+                <div>
+                    <label>カテゴリ</label>
+                    <select id="category">
+                        <option>モバイルアプリ（iOS/Android）</option>
+                        <option>Web SaaS</option>
+                        <option>デスクトップアプリ</option>
+                        <option>デジタルコンテンツ</option>
+                        <option>プラグイン / 拡張機能</option>
+                        <option>フィジカルプロダクト</option>
+                        <option>その他</option>
+                    </select>
+                </div>
+                <div>
+                    <label>プラットフォーム</label>
+                    <select id="platform">
+                        <option>iOS のみ</option>
+                        <option>iOS &amp; Android</option>
+                        <option>Android のみ</option>
+                        <option>Web アプリ / SaaS</option>
+                        <option>クロスプラットフォーム</option>
+                    </select>
+                </div>
+                <div>
+                    <label>開発ステージ</label>
+                    <select id="stage">
+                        <option>未リリース（価格未定）</option>
+                        <option>リリース直前</option>
+                        <option>リリース済み・修正中</option>
+                        <option>スケールフェーズ</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>コアバリュー（価値提案） <span class="req">&#9733;必須</span></label>
+                    <input type="text" id="coreValue" placeholder="例: AI写真認識で忙しいビジネスパーソンが3秒以内にカロリーを記録できる">
+                    <div class="soft-warn" id="coreValueVagueWarn"></div>
+                </div>
+                <div>
+                    <label>年間ターゲットユーザー数</label>
+                    <input type="text" id="targetUsers" placeholder="例: 1,280ユーザー（3年目）">
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 2: CURRENT PRICING HYPOTHESIS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #a29bfe;">
+            <div class="card-header">
+                <div class="dot" style="background: #a29bfe;"></div>
+                <div class="card-header-label">現在の価格仮説</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>マネタイズモデル（複数選択可）</label>
+                    <div class="tags" id="model-tags"></div>
+                </div>
+                <div class="full">
+                    <label>想定価格 <span class="req">&#9733;必須</span></label>
+                    <div class="price-row">
+                        <select id="priceCurrency">
+                            <option value="&yen;">&yen; JPY</option>
+                            <option value="$">$ USD</option>
+                            <option value="&euro;">&euro; EUR</option>
+                        </select>
+                        <input type="text" id="price" placeholder="例: 480">
+                    </div>
+                </div>
+                <div>
+                    <label>価格設定の根拠</label>
+                    <select id="basis">
+                        <option>直感（リサーチなし）</option>
+                        <option>競合の価格をベンチマーク</option>
+                        <option>ユニットエコノミクス（LTV/CAC）逆算</option>
+                        <option>ユーザーインタビュー/アンケート</option>
+                        <option>市場調査レポート</option>
+                    </select>
+                </div>
+                <div>
+                    <label>最大の懸念点</label>
+                    <select id="concern">
+                        <option>安すぎて安っぽいと思われる</option>
+                        <option>高すぎて買ってもらえない</option>
+                        <option>サブスクか買い切りかで迷っている</option>
+                        <option>地域によって価格を変えるべきか</option>
+                        <option>プラットフォーム手数料（30%）の手残り</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 3: MARKET & COMPETITORS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #ff6b6b;">
+            <div class="card-header">
+                <div class="dot" style="background: #ff6b6b;"></div>
+                <div class="card-header-label">市場 &amp; 競合</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>競合の価格設定</label>
+                    <textarea id="compPrice" placeholder="例: Anki=無料、Duolingo=無料/¥1,100/月、ChatGPT=$20/月"></textarea>
+                    <div class="soft-warn" id="compPriceVagueWarn"></div>
+                </div>
+                <div>
+                    <label>ターゲットの支払い意欲（WTP）</label>
+                    <select id="wtp">
+                        <option>高い（エンジニア・プロ層。ツールに払う文化あり）</option>
+                        <option>中程度（就業者。仕事上の必要性に左右される）</option>
+                        <option>低め（学生・価格に敏感な層）</option>
+                    </select>
+                </div>
+                <div>
+                    <label>主要ターゲット市場</label>
+                    <select id="region">
+                        <option>日本メイン</option>
+                        <option>グローバル（全世界）</option>
+                        <option>アジア圏</option>
+                        <option>北米・欧州</option>
+                        <option>欧州のみ</option>
+                        <option>東南アジア（価格感度高め）</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>特記事項</label>
+                    <input type="text" id="extra" placeholder="例: 初月¥300のローンチ割引を予定">
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 4: BUSINESS CONSTRAINTS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #ffcc00;">
+            <div class="card-header">
+                <div class="dot" style="background: #ffcc00;"></div>
+                <div class="card-header-label">ビジネス制約</div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <label>売上目標</label>
+                    <input type="text" id="revenue" placeholder="例: 初年度¥10,000 → 3年目¥500,000+">
+                </div>
+                <div>
+                    <label>損益分岐点</label>
+                    <input type="text" id="bep" placeholder="例: 29ユニット（Apple Developer ¥15,000基準）">
+                </div>
+                <div>
+                    <label>ランニングコスト</label>
+                    <select id="opex">
+                        <option>ゼロ（サーバーレス/ローカルのみ）</option>
+                        <option>変動費あり（API利用等）</option>
+                        <option>固定費あり（サーバー・DB等）</option>
+                    </select>
+                </div>
+                <div>
+                    <label>コンテンツ更新頻度</label>
+                    <select id="updateFreq">
+                        <option>年1回（スローアップデート）</option>
+                        <option>半年1回（IAP対応）</option>
+                        <option>毎月1回（コスト管理兼ねる）</option>
+                        <option>不定期（コンテンツ公開時に販売）</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>避けたいシナリオ</label>
+                    <textarea id="avoidScenario" placeholder="例: 買い切りユーザーがサブスクへの移行に抵抗する。既存ユーザーを離反させずにLTVを上げたい。"></textarea>
+                    <div class="soft-warn" id="avoidScenarioVagueWarn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 5: OUTPUT SETTINGS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #00cec9;">
+            <div class="card-header">
+                <div class="dot" style="background: #00cec9;"></div>
+                <div class="card-header-label">出力設定</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>出力オプション（複数選択可）</label>
+                    <div class="tags" id="output-tags"></div>
+                </div>
+                <div>
+                    <label>評価モード</label>
+                    <select id="evaluationMode">
+                        <option value="ON">ON（辛口評価を含む）</option>
+                        <option value="OFF">OFF（数字と戦略のみ）</option>
+                    </select>
+                </div>
+                <div>
+                    <label>補足メモ</label>
+                    <input type="text" id="notes" placeholder="例: App Store 30%手数料は考慮済み">
+                    <div class="soft-warn" id="notesVagueWarn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <div class="form-actions">
+            <button class="generate-btn" id="generateBtn" disabled onclick="processGeneration()">価格戦略プロンプトを生成</button>
+            <button class="reset-btn" onclick="resetForm()">フォームをリセット</button>
+        </div>
+
+    </main>
+
+    <!-- ============================================
+         RESULT VIEW
+         ============================================ -->
+    <main class="main" id="resultView">
+        <div class="result-status">STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.</div>
+
+        <div class="terminal">
+            <div class="terminal-bar">
+                <div class="t-dot" style="background: #ff5f57;"></div>
+                <div class="t-dot" style="background: #febc2e;"></div>
+                <div class="t-dot" style="background: #28c840;"></div>
+                <span style="margin-left: 8px;">pricing_strategy_prompt.txt &mdash; Read Only</span>
+                <span class="prompt-length" id="promptLength"></span>
+            </div>
+            <div class="result-box" id="output"></div>
+        </div>
+
+        <div class="result-actions">
+            <button class="copy-btn" onclick="copyText(this)">&#128203; プロンプトをクリップボードにコピー</button>
+            <button class="back-btn" onclick="goBack()">新しいプロンプトを作成</button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>&copy; 2026 Sorted. Tools &mdash; Limited Free Release.</footer>
+
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+    /* ==========================================
+       CONSTANTS
+       ========================================== */
+    const LANG = "Japanese";
+    const STORAGE_KEY = 'sorted_pricing_jp_form';
+
+    /* ==========================================
+       VAGUE / INSTRUCTION WORD LISTS
+       ========================================== */
+    const VAGUE_WORDS = [
+        'いい感じ', 'てきとう', '適当', 'よしなに', 'なんか', 'いろいろ',
+        'よくわからない', 'ざっくり', 'すごい', 'めっちゃ', '完璧に',
+        'なんとなく', 'とりあえず', 'うまくやって', 'お任せ'
+    ];
+
+    const INSTRUCTION_WORDS = [
+        'してください', '作って', '考えて', 'やって', '出して',
+        '書いて', '教えて', 'お願い', '生成して', '提案して',
+        '分析して', '設計して'
+    ];
+
+    /* ==========================================
+       TAG DATA
+       ========================================== */
+    const MODEL_OPTS = [
+        '買い切り', '月額サブスク', '年額サブスク',
+        'フリーミアム', 'コンテンツIAP', 'バンドル販売', 'B2B法人契約', 'トライアル後有料'
+    ];
+
+    const OUTPUT_OPTS = [
+        '最適価格帯の根拠あり提案',
+        'モデル比較（3パターン）',
+        '心理的価格設定の手法',
+        'ユニットエコノミクス（LTV/CAC）',
+        '地域別価格切り分け戦略',
+        'プライスアンカリング設計',
+        '値上げリスクの少ない時期と方法'
+    ];
+
+    const selectedModels = new Set();
+    const selectedOutputs = new Set();
+
+    /* ==========================================
+       SANITIZE — exact PRO tools copy
+       ========================================== */
+    function sanitize(str) {
+        if (typeof str !== 'string') return '';
+        return str
+            .normalize('NFKC')
+            .replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+            .replace(/\u301C/g, '\uFF5E')
+            .replace(/\u2014/g, '\u2015')
+            .replace(/&[#a-zA-Z0-9]+;/g, '')
+            .replace(/[<>]/g, '')
+            .replace(/ignore previous instructions/gi, '')
+            .replace(/forget all instructions/gi, '')
+            .replace(/disregard previous/gi, '')
+            .replace(/\u3000/g, ' ')
+            .replace(/ {2,}/g, ' ')
+            .replace(/([！？!?])\1{2,}/g, '$1')
+            .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF\u2015]/g, '')
+            .trim();
+    }
+
+    /* ==========================================
+       HELPERS
+       ========================================== */
+    function getVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return '';
+        return sanitize(el.value || '');
+    }
+
+    /* ==========================================
+       RENDER TAGS
+       ========================================== */
+    function renderTags(containerId, opts, set, activeClass) {
+        const container = document.getElementById(containerId);
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            btn.textContent = opt;
+            btn.type = 'button';
+            btn.onclick = () => {
+                if (set.has(opt)) {
+                    set.delete(opt);
+                    btn.className = 'tag-btn';
+                } else {
+                    set.add(opt);
+                    btn.className = 'tag-btn ' + activeClass;
+                }
+                updateSafetyBar();
+                debounceSave();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    renderTags('model-tags', MODEL_OPTS, selectedModels, 'active-purple');
+    renderTags('output-tags', OUTPUT_OPTS, selectedOutputs, 'active');
+
+    /* ==========================================
+       GATE CHECK (required fields)
+       ========================================== */
+    function checkGate1() {
+        const appName = getVal('appName');
+        const coreValue = getVal('coreValue');
+        const price = getVal('price');
+        return appName.length >= 3 && coreValue.length >= 3 && price.length >= 1;
+    }
+
+    /* ==========================================
+       SAFETY BAR — status indicator
+       ========================================== */
+    function updateSafetyBar() {
+        const dot = document.getElementById('safetyDot');
+        const label = document.getElementById('safetyLabel');
+        const btn = document.getElementById('generateBtn');
+
+        const appName = getVal('appName');
+        const coreValue = getVal('coreValue');
+        const price = getVal('price');
+
+        // Gray: empty
+        if (appName.length === 0 && coreValue.length === 0 && price.length === 0) {
+            dot.className = 'safety-dot';
+            label.textContent = '入力待ち...';
+            btn.disabled = true;
+            return;
+        }
+
+        // Red: required fields missing
+        if (!checkGate1()) {
+            dot.className = 'safety-dot red';
+            label.textContent = '未完了 — 必須項目が不足';
+            btn.disabled = true;
+            return;
+        }
+
+        // Check recommended fields for green
+        const compPrice = getVal('compPrice');
+        const revenue = getVal('revenue');
+        const bep = getVal('bep');
+        const avoidScenario = getVal('avoidScenario');
+        const hasModels = selectedModels.size > 0;
+        const hasOutputs = selectedOutputs.size > 0;
+
+        const optionalFilled =
+            compPrice.length > 0 &&
+            revenue.length > 0 &&
+            bep.length > 0 &&
+            avoidScenario.length > 0 &&
+            hasModels &&
+            hasOutputs;
+
+        if (optionalFilled) {
+            // Green: all filled
+            dot.className = 'safety-dot green';
+            label.textContent = '準備完了 — 高精度プロンプトの生成が可能';
+            btn.disabled = false;
+        } else {
+            // Yellow: required ok, optional missing
+            dot.className = 'safety-dot yellow';
+            label.textContent = '生成可能 — 推奨項目を埋めると精度向上';
+            btn.disabled = false;
+        }
+    }
+
+    /* ==========================================
+       READINESS REPORT
+       ========================================== */
+    let reportVisible = false;
+
+    function toggleReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        reportVisible = !reportVisible;
+        if (reportVisible) {
+            buildReadinessReport();
+            report.classList.remove('hidden');
+        } else {
+            report.classList.add('hidden');
+        }
+    }
+
+    function buildReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        const checks = [
+            { label: 'アプリ / サービス名（3文字以上）', ok: getVal('appName').length >= 3, required: true },
+            { label: 'コアバリュー（3文字以上）', ok: getVal('coreValue').length >= 3, required: true },
+            { label: '想定価格', ok: getVal('price').length >= 1, required: true },
+            { label: 'マネタイズモデル選択済み', ok: selectedModels.size > 0, required: false },
+            { label: '競合の価格設定', ok: getVal('compPrice').length > 0, required: false },
+            { label: '売上目標', ok: getVal('revenue').length > 0, required: false },
+            { label: '損益分岐点', ok: getVal('bep').length > 0, required: false },
+            { label: '避けたいシナリオ', ok: getVal('avoidScenario').length > 0, required: false },
+            { label: '出力オプション選択済み', ok: selectedOutputs.size > 0, required: false },
+        ];
+
+        let html = '';
+        checks.forEach(c => {
+            const icon = c.ok ? '[OK]' : (c.required ? '[未入力]' : '[空欄]');
+            const cls = c.ok ? 'check-ok' : (c.required ? 'check-fail' : 'check-warn');
+            const tag = c.required ? '（必須）' : '（推奨）';
+            html += `<div class="${cls}">${icon} ${c.label}${tag}</div>`;
+        });
+
+        report.innerHTML = html;
+    }
+
+    /* ==========================================
+       VAGUE WORD DETECTION
+       ========================================== */
+    function checkVague(inputId, warnId) {
+        const val = (document.getElementById(inputId)?.value || '').toLowerCase();
+        const warn = document.getElementById(warnId);
+        if (!warn) return;
+
+        const found = [];
+        VAGUE_WORDS.forEach(w => {
+            if (val.includes(w)) found.push('「' + w + '」');
+        });
+        INSTRUCTION_WORDS.forEach(w => {
+            if (val.includes(w)) found.push('「' + w + '」');
+        });
+
+        if (found.length > 0) {
+            warn.textContent = '// 曖昧・指示語を検出: ' + found.join(', ') + ' — より具体的に記述すると出力精度が向上します';
+            warn.classList.add('visible');
+        } else {
+            warn.classList.remove('visible');
+        }
+    }
+
+    /* ==========================================
+       INPUT EVENT LISTENERS
+       ========================================== */
+    const ALL_FIELD_IDS = [
+        'appName', 'category', 'platform', 'stage', 'coreValue', 'targetUsers',
+        'price', 'priceCurrency', 'basis', 'concern',
+        'compPrice', 'wtp', 'region', 'extra',
+        'revenue', 'bep', 'opex', 'updateFreq', 'avoidScenario',
+        'evaluationMode', 'notes'
+    ];
+
+    const VAGUE_CHECK_FIELDS = [
+        { input: 'coreValue', warn: 'coreValueVagueWarn' },
+        { input: 'compPrice', warn: 'compPriceVagueWarn' },
+        { input: 'avoidScenario', warn: 'avoidScenarioVagueWarn' },
+        { input: 'notes', warn: 'notesVagueWarn' },
+    ];
+
+    ALL_FIELD_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            updateSafetyBar();
+            debounceSave();
+            // Check vague words for relevant fields
+            VAGUE_CHECK_FIELDS.forEach(f => {
+                if (f.input === id) checkVague(f.input, f.warn);
+            });
+        });
+        el.addEventListener('change', () => {
+            updateSafetyBar();
+            debounceSave();
+        });
+    });
+
+    /* ==========================================
+       LOCAL STORAGE — save / restore (400ms debounce)
+       ========================================== */
+    let saveTimer = null;
+
+    function debounceSave() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveForm, 400);
+    }
+
+    function saveForm() {
+        const data = {};
+        ALL_FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data._selectedModels = Array.from(selectedModels);
+        data._selectedOutputs = Array.from(selectedOutputs);
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            // Storage full or unavailable — silently fail
+        }
+    }
+
+    function restoreForm() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+
+            ALL_FIELD_IDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && data[id] !== undefined) {
+                    el.value = data[id];
+                }
+            });
+
+            // Restore tag selections
+            if (data._selectedModels) {
+                const btns = document.getElementById('model-tags').querySelectorAll('.tag-btn');
+                data._selectedModels.forEach(m => {
+                    selectedModels.add(m);
+                    btns.forEach(b => {
+                        if (b.textContent === m) b.className = 'tag-btn active-purple';
+                    });
+                });
+            }
+            if (data._selectedOutputs) {
+                const btns = document.getElementById('output-tags').querySelectorAll('.tag-btn');
+                data._selectedOutputs.forEach(o => {
+                    selectedOutputs.add(o);
+                    btns.forEach(b => {
+                        if (b.textContent === o) b.className = 'tag-btn active';
+                    });
+                });
+            }
+
+            // Re-check vague words
+            VAGUE_CHECK_FIELDS.forEach(f => checkVague(f.input, f.warn));
+
+            updateSafetyBar();
+        } catch (e) {
+            // Parse error — ignore
+        }
+    }
+
+    /* ==========================================
+       SPLASH → APP transition
+       ========================================== */
+    function startApp() {
+        const splash = document.getElementById('splash');
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+            splash.style.display = 'none';
+            const app = document.getElementById('app');
+            app.style.display = 'flex';
+            app.classList.add('fade-in');
+            restoreForm();
+        }, 400);
+    }
+
+    /* ==========================================
+       RESET FORM
+       ========================================== */
+    function resetForm() {
+        if (!confirm('すべての入力をリセットしますか？この操作は元に戻せません。')) return;
+
+        ALL_FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else el.value = '';
+        });
+
+        selectedModels.clear();
+        selectedOutputs.clear();
+        document.querySelectorAll('.tag-btn').forEach(b => b.className = 'tag-btn');
+
+        // Clear vague warnings
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const w = document.getElementById(f.warn);
+            if (w) w.classList.remove('visible');
+        });
+
+        // Clear storage
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+        updateSafetyBar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================
+       GET EMPTY OPTIONAL FIELDS (for ambiguity warnings)
+       ========================================== */
+    function getEmptyOptionalFields() {
+        const empties = [];
+        const optionals = [
+            { id: 'targetUsers', label: '年間ターゲットユーザー数' },
+            { id: 'compPrice', label: '競合の価格設定' },
+            { id: 'extra', label: '特記事項' },
+            { id: 'revenue', label: '売上目標' },
+            { id: 'bep', label: '損益分岐点' },
+            { id: 'avoidScenario', label: '避けたいシナリオ' },
+            { id: 'notes', label: '補足メモ' },
+        ];
+        optionals.forEach(f => {
+            if (getVal(f.id).length === 0) empties.push(f.label);
+        });
+        if (selectedModels.size === 0) empties.push('マネタイズモデル');
+        if (selectedOutputs.size === 0) empties.push('出力オプション');
+        return empties;
+    }
+
+    /* ==========================================
+       PROMPT GENERATION
+       ========================================== */
+    function generatePromptText() {
+        const appName = getVal('appName');
+        const category = getVal('category');
+        const platform = getVal('platform');
+        const stage = getVal('stage');
+        const coreValue = getVal('coreValue');
+        const targetUsers = getVal('targetUsers');
+        const price = getVal('price');
+        const priceCurrencyEl = document.getElementById('priceCurrency');
+        const priceCurrency = priceCurrencyEl.options[priceCurrencyEl.selectedIndex].text;
+        const priceCurrencySymbol = priceCurrencyEl.value;
+        const basis = getVal('basis');
+        const concern = getVal('concern');
+        const compPrice = getVal('compPrice');
+        const wtp = getVal('wtp');
+        const region = getVal('region');
+        const extra = getVal('extra');
+        const revenue = getVal('revenue');
+        const bep = getVal('bep');
+        const opex = getVal('opex');
+        const updateFreq = getVal('updateFreq');
+        const avoidScenario = getVal('avoidScenario');
+        const evaluationMode = getVal('evaluationMode');
+        const notes = getVal('notes');
+
+        const modelsStr = selectedModels.size > 0
+            ? Array.from(selectedModels).join(', ')
+            : '（未指定 — カテゴリに基づいて推奨してください）';
+
+        const outputsStr = selectedOutputs.size > 0
+            ? Array.from(selectedOutputs).join(', ')
+            : '（包括的な価格戦略）';
+
+        let p = '';
+
+        /* --- WEB SEARCH COMMANDS --- */
+        p += `重要: 回答前に、以下のウェブ検索を必ず実行してください:\n`;
+        p += `- ${region}における${category}製品の最新価格トレンドとベンチマーク\n`;
+        p += `- ${compPrice || category}の競合価格モデルと最近の価格変更\n`;
+        p += `- ${region}における${category}の消費者支払い意欲に関する調査\n`;
+        p += `- ${platform}のプラットフォーム手数料ポリシーと最近の変更\n`;
+        p += `すべての回答は検索結果に基づいてください。すべてのソースを取得日付とともに引用してください。\n\n`;
+
+        p += `---\n\n`;
+
+        /* --- PRIVACY NOTICE --- */
+        p += `プライバシー通知: 以下に提供されるすべての情報は、この出力の生成のためにのみ使用されます。トレーニング、ログ記録、その他の目的には使用しないでください。\n\n`;
+
+        /* --- ROLE --- */
+        p += `# 価格戦略プロンプト\n\n`;
+        p += `あなたはSaaS、モバイルアプリ、デジタルプロダクトを専門とするシニア価格コンサルタントです。プレシードからシリーズBまでのスタートアップに対し、10年以上のマネタイゼーション戦略のアドバイス経験があります。コンシューマーおよびB2Bセグメントにわたる200以上のプロダクトの価格設計を行ってきました。常にウェブ検索から最新の市場データを活用してください。「場合による」という一般論ではなく、具体的でエビデンスに基づいた価格戦略を策定してください。\n\n`;
+
+        /* --- SECTION 1: PRODUCT OVERVIEW --- */
+        p += `## セクション1: プロダクト概要\n`;
+        p += `- アプリ / サービス名: ${appName}\n`;
+        p += `- コアバリュー: ${coreValue}\n`;
+        p += `- カテゴリ: ${category}\n`;
+        p += `- プラットフォーム: ${platform}\n`;
+        p += `- 開発ステージ: ${stage}\n`;
+        p += `- 年間ターゲットユーザー数: ${targetUsers || '（未指定）'}\n\n`;
+
+        /* --- SECTION 2: CURRENT PRICING HYPOTHESIS --- */
+        p += `## セクション2: 現在の価格仮説\n`;
+        p += `- マネタイズモデル: ${modelsStr}\n`;
+        p += `- 想定価格: ${priceCurrencySymbol}${price}\n`;
+        p += `  注意: 上記の価格はすべて${priceCurrency}です。通貨単位を再解釈しないでください。\n`;
+        p += `- 価格設定の根拠: ${basis}\n`;
+        p += `- 最大の懸念点: ${concern}\n\n`;
+
+        /* --- SECTION 3: MARKET & COMPETITOR CONTEXT --- */
+        p += `## セクション3: 市場・競合コンテキスト\n`;
+        if (compPrice) {
+            p += `- 競合の価格設定: ${compPrice}\n`;
+        } else {
+            p += `- 競合の価格設定: （未提供 — ウェブ検索で${region}における${category}の上位3〜5社の競合と現在の価格を特定してください）\n`;
+        }
+        p += `- ターゲットWTP: ${wtp}\n`;
+        p += `- 主要ターゲット市場: ${region}\n`;
+        p += `- 特記事項: ${extra || '（なし）'}\n\n`;
+
+        /* --- SECTION 4: BUSINESS CONSTRAINTS --- */
+        p += `## セクション4: ビジネス制約\n`;
+        p += `- 売上目標: ${revenue || '（未指定）'}\n`;
+        p += `- 損益分岐点: ${bep || '（未指定）'}\n`;
+        p += `- ランニングコスト: ${opex}\n`;
+        p += `- コンテンツ更新頻度: ${updateFreq}\n`;
+        p += `- 避けたいシナリオ: ${avoidScenario || '（未指定）'}\n\n`;
+
+        /* --- SECTION 5: OUTPUT REQUIREMENTS --- */
+        p += `## セクション5: 出力要件\n`;
+        p += `- 必要な出力: ${outputsStr}\n`;
+        p += `- 評価モード: ${evaluationMode}\n`;
+        p += `- 補足メモ: ${notes || '（なし）'}\n\n`;
+
+        /* --- INTERPRETATION RULES --- */
+        p += `---\n\n`;
+        p += `## 解釈ルール\n\n`;
+
+        p += `ルール1 — バリューベース価格設定の優先:\n`;
+        p += `  価格推奨はユーザーが知覚する価値に基づくこと。コストプラスではない。\n`;
+        p += `  コスト構造はフロア価格の情報を提供し、価値知覚がシーリングを設定する。常に両方を示すこと。\n\n`;
+
+        p += `ルール2 — モデル比較の厳密性:\n`;
+        p += `  各価格モデル比較には、3年間の累積収益シミュレーション、\n`;
+        p += `  各価格ポイントでのユーザー心理、解約/コンバージョンリスク評価を含めること。\n`;
+        p += `  定量的なトレードオフなしにモデルを提示しないこと。\n\n`;
+
+        p += `ルール3 — 出力フェーズ順序:\n`;
+        p += `  フェーズ5が完了するまで、評価・批判・懸念を出力しないこと。\n`;
+        p += `  評価モードがOFFの場合、フェーズ6は完全にスキップすること。\n\n`;
+
+        p += `ルール4 — 競合価格インテリジェンス:\n`;
+        p += `  競合価格が提供されていない場合、ウェブ検索で上位3〜5社の競合を特定し、\n`;
+        p += `  現在の価格を調査すること。すべてに以下のタグを付与:\n`;
+        p += `    [ユーザー提供]: ユーザーが入力した価格\n`;
+        p += `    [補足: 検証済み]: ウェブ検索で確認済み\n`;
+        p += `    [補足: 推定]: 公開情報からの推定\n`;
+        p += `  ユーザー提供データは決して削除しないこと。\n\n`;
+
+        p += `ルール5 — 通貨の取り扱い:\n`;
+        p += `  基準通貨: ${priceCurrency}\n`;
+        p += `  地域別価格が推奨される場合、ウェブ検索した為替レートで換算すること。\n`;
+        p += `  前提とした為替レートを明示すること。ソースと日付を引用すること。\n\n`;
+
+        p += `ルール6 — 前提条件の品質:\n`;
+        p += `  すべての前提には以下のいずれかを含めること:\n`;
+        p += `  (a) 引用と取得日付を伴う業界ベンチマーク、または\n`;
+        p += `  (b) ラベル: [保守的] / [中間] / [積極的] と一行の根拠\n`;
+        p += `  (a)または(b)のない裸の数字は受け入れ不可。\n\n`;
+
+        /* --- STRICT OUTPUT INSTRUCTIONS --- */
+        p += `---\n\n`;
+        p += `## 厳格な出力指示\n\n`;
+
+        p += `フェーズ1 — 市場・競合価格ベンチマーキング\n`;
+        p += `  表形式: | 競合 | モデル | 価格 | 価値提案 | 主な弱点 |\n`;
+        p += `  最低5社の競合を含めること（ユーザー提供 + 補足）。\n`;
+        p += `  価格パターンと市場のギャップを特定すること。\n\n`;
+
+        p += `フェーズ2 — バリューベース価格分析\n`;
+        p += `  以下に基づいてユーザーの支払い意欲を定量化:\n`;
+        p += `  (a) 解決される問題の価値（節約される時間、コスト等）\n`;
+        p += `  (b) 次善の代替手段の価格\n`;
+        p += `  (c) スイッチングコストの考慮\n`;
+        p += `  フロア、最適値、シーリングを含む推奨価格帯を出力すること。\n\n`;
+
+        p += `フェーズ3 — 3つの価格モデル推奨\n`;
+        p += `  各モデルについて表を出力:\n`;
+        p += `  | 指標 | モデルA | モデルB | モデルC |\n`;
+        p += `  含めるもの: 価格ポイント、3年間の収益予測（楽観的/中立/悲観的）、\n`;
+        p += `  ユーザー心理の障壁、解約リスク、コンバージョン率の推定。\n`;
+        p += `  明確な根拠とともに1つのモデルを推奨すること。\n\n`;
+
+        p += `フェーズ4 — 心理的価格設定戦術\n`;
+        p += `  以下のすべてに対応:\n`;
+        p += `  (a) プライスアンカリング戦略（代替品に対する価格の見せ方）\n`;
+        p += `  (b) 端数価格分析（X.99円 vs キリのいい数字 — このカテゴリではどちらが有効か）\n`;
+        p += `  (c) バンドル/パッケージ設計（該当する場合）\n`;
+        p += `  (d) ローンチ価格から定常価格への移行計画\n\n`;
+
+        p += `フェーズ5 — 実装ロードマップ\n`;
+        p += `  タイムライン: ローンチ → 3ヶ月 → 6ヶ月 → 12ヶ月\n`;
+        p += `  含めるもの: 初期価格、計画的な調整、A/Bテストの推奨、\n`;
+        p += `  値上げのトリガーと方法論。\n\n`;
+
+        p += `フェーズ6 — 批判的評価（評価モード: ONの場合のみ）\n`;
+        if (evaluationMode === 'ON') {
+            p += `  率直かつ厳しく評価すること。オブラートに包まないこと。\n`;
+            p += `  最低要件 — 以下の3つすべてを含めること:\n`;
+            p += `  (a) 現在の価格仮説における少なくとも2つの機会損失\n`;
+            p += `  (b) 軽減策を伴う少なくとも2つの価格リスク\n`;
+            p += `  (c) ウェブ検索で発見した少なくとも1つの矛盾（市場データ vs ユーザーの前提）\n`;
+        } else {
+            p += `  評価セクションはスキップされます。評価モードをONにすると含まれます。\n`;
+        }
+        p += `\n`;
+
+        /* --- PRE-OUTPUT SELF-CHECK --- */
+        p += `出力前セルフチェック:\n`;
+        p += `出力前に以下を確認:\n`;
+        p += `(a) 解釈ルールが正しく適用されていること\n`;
+        p += `(b) フェーズ順序が維持されていること — フェーズ6より前に批評を入れないこと\n`;
+        p += `(c) すべての推定値がルール6に従ったラベル付き形式であること\n`;
+        p += `(d) すべての競合価格がルール4に従ったタグ付きであること\n`;
+        p += `(e) 3つの価格モデルが定量的なトレードオフとともに比較されていること\n`;
+        p += `(f) プライスアンカリング戦略が一般的ではなく具体的であること\n`;
+        p += `(g) 評価モードONの場合、フェーズ6が最低要件(a)(b)(c)を満たしていること\n\n`;
+
+        /* --- CREDIT LINE --- */
+        p += `重要: 回答の最後に必ず以下のクレジットラインをそのまま記載してください。削除・変更・翻訳しないでください:\n`;
+        p += `_Generated with Sorted.Tools Free Release — Pricing Strategy v1.0.0_\n`;
+        p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
+
+        p += `---\n\n`;
+
+        p += `この情報はAIによって生成されたものであり、正確性は保証されません。必ず実際の市場データと照合してください。\n`;
+
+        /* --- AMBIGUITY WARNINGS --- */
+        const empties = getEmptyOptionalFields();
+        if (empties.length > 0) {
+            p += `\n[曖昧性警告: 以下の任意項目が空欄のままです。AIはこれらについて仮定を置いて回答します: ${empties.join(', ')}]\n`;
+        }
+
+        p += `\n_Generated with Sorted.Tools Free Release — Pricing Strategy v1.0.0_\n`;
+        p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
+        p += `回答はすべて日本語で行ってください。\n`;
+
+        return p;
+    }
+
+    /* ==========================================
+       PROCESS GENERATION
+       ========================================== */
+    let isGenerating = false;
+
+    function processGeneration() {
+        if (isGenerating) return;
+        if (!checkGate1()) return;
+
+        isGenerating = true;
+        const btn = document.getElementById('generateBtn');
+        btn.textContent = '生成中...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const promptText = generatePromptText();
+            document.getElementById('output').textContent = promptText;
+
+            // Update prompt length
+            document.getElementById('promptLength').textContent = promptText.length.toLocaleString() + ' chars';
+
+            // Switch views
+            document.getElementById('formView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'block';
+            document.getElementById('resultView').classList.add('fade-in');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            btn.textContent = '価格戦略プロンプトを生成';
+            btn.disabled = false;
+            isGenerating = false;
+        }, 600);
+    }
+
+    /* ==========================================
+       COPY TO CLIPBOARD
+       ========================================== */
+    function copyText(btn) {
+        const text = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'クリップボードにコピーしました';
+            btn.style.background = '#fff';
+            btn.style.color = '#000';
+            setTimeout(() => {
+                btn.textContent = orig;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2200);
+        }).catch(() => {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            const orig = btn.textContent;
+            btn.textContent = 'クリップボードにコピーしました';
+            setTimeout(() => { btn.textContent = orig; }, 2200);
+        });
+    }
+
+    /* ==========================================
+       BACK TO EDITOR
+       ========================================== */
+    function goBack() {
+        document.getElementById('resultView').style.display = 'none';
+        document.getElementById('resultView').classList.remove('fade-in');
+        document.getElementById('formView').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================
+       INIT — run on page load
+       ========================================== */
+    updateSafetyBar();
+</script>
+</body>
+</html>

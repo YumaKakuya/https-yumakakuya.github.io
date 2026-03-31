@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Forecast PRO | Sorted. Tools</title>
+    <title>Revenue Forecast Free | Sorted. Tools</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -195,6 +195,75 @@
             margin: 0 auto;
             width: 100%;
             padding: 30px 20px;
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .tool-card {
+            display: block;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-decoration: none;
+            color: var(--text);
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
+        }
+
+        .tool-card:hover {
+            border-color: #444;
+            transform: translateY(-1px);
+            background: var(--surface-lighter);
+        }
+
+        .tool-card.planned {
+            cursor: default;
+            color: var(--muted);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tool-card.planned:hover {
+            transform: none;
+            border-color: var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .tool-card.active {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 1px rgba(255,107,107,0.2);
+        }
+
+        .tool-card.live {
+            border-color: rgba(0,255,157,0.28);
+        }
+
+        .tool-card-kicker {
+            display: block;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tool-card-title {
+            display: block;
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .tool-card-desc {
+            display: block;
+            font-size: 12px;
+            line-height: 1.7;
+            color: var(--muted);
         }
 
         /* --- FORM STYLES --- */
@@ -451,7 +520,7 @@
 <body>
 
     <div id="splash-screen">
-        <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
         <div class="fade-in"
             style="color:var(--muted); font-size:12px; letter-spacing:1px; margin-bottom: 20px; animation-delay: 0.2s;">
             REVENUE FORECAST GENERATOR</div>
@@ -461,37 +530,51 @@
 
     <div id="app-container">
         <header>
-            <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
-            <div style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono', monospace;">v1.0.0</div>
+            <div class="brand">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
+            <div style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono', monospace;">v1.0.0 / LIMITED</div>
         </header>
 
         <main class="main-content">
             <div id="form-view" class="view-container">
 
-                <div
-                    style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:10px;overflow-x:auto;">
-                    <span
-                        style="font-size:10px;color:var(--muted);letter-spacing:1px;white-space:nowrap;font-family:'JetBrains Mono',monospace;">SERIES
-                        /</span>
-                    <span
-                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;background:rgba(255,107,107,.1);border:1px solid #ff6b6b;color:#ff6b6b;">01
-                        Revenue Forecast ◀</span>
-                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
-                    <span
-                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">02
-                        ASO Optimizer</span>
-                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
-                    <span
-                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">03
-                        Pitch Deck</span>
-                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
-                    <span
-                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">04
-                        Pricing Strategy</span>
-                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
-                    <span
-                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">05
-                        Competitor Research</span>
+                <div class="tool-grid">
+                    <a class="tool-card active" href="/sorted-tools/">
+                        <span class="tool-card-kicker">Series 1 / Tool 01 / Live</span>
+                        <span class="tool-card-title">Revenue Forecast</span>
+                        <span class="tool-card-desc">Current tool. Generate revenue and business-plan prompts before launch.</span>
+                    </a>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Series 1 / Tool 02 / Planned</span>
+                        <span class="tool-card-title">ASO Optimizer</span>
+                        <span class="tool-card-desc">App Store metadata and keyword prompt builder. Not public yet.</span>
+                    </div>
+                    <div class="tool-card planned">
+                        <span class="tool-card-kicker">Series 1 / Tool 03 / Planned</span>
+                        <span class="tool-card-title">Pitch Deck</span>
+                        <span class="tool-card-desc">Investor and pitch narrative builder. Not public yet.</span>
+                    </div>
+                    <a class="tool-card live" href="/sorted-pricing-strategy/">
+                        <span class="tool-card-kicker">Series 1 / Tool 04 / Live</span>
+                        <span class="tool-card-title">Pricing Strategy</span>
+                        <span class="tool-card-desc">Open the pricing model and monetization strategy builder.</span>
+                    </a>
+                    <a class="tool-card live" href="/sorted-competitor-research/">
+                        <span class="tool-card-kicker">Series 1 / Tool 05 / Live</span>
+                        <span class="tool-card-title">Competitor Research</span>
+                        <span class="tool-card-desc">Open the competitor analysis and positioning builder.</span>
+                    </a>
+                </div>
+
+                <div style="background:rgba(0,255,157,.06);border:1px solid rgba(0,255,157,.2);border-radius:12px;padding:16px 18px;margin-bottom:24px;line-height:1.8;">
+                    <div style="font-family:'JetBrains Mono', monospace;font-size:11px;letter-spacing:1px;color:var(--accent);margin-bottom:6px;">LIMITED FREE RELEASE</div>
+                    <div style="font-size:13px;color:var(--text);margin-bottom:8px;">
+                        Revenue Forecast, Pricing Strategy, and Competitor Research are open now for a limited time.
+                    </div>
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                        <a href="/sorted-pricing-strategy/" style="color:var(--accent);text-decoration:none;font-size:12px;">Open Pricing Strategy →</a>
+                        <a href="/sorted-competitor-research/" style="color:var(--accent);text-decoration:none;font-size:12px;">Open Competitor Research →</a>
+                        <a href="/sorted-cowork/" style="color:var(--accent);text-decoration:none;font-size:12px;">Open Cowork →</a>
+                    </div>
                 </div>
 
                 <div class="card" style="border-top: 3px solid #00ff9d;">
@@ -671,9 +754,8 @@
         </main>
 
         <footer>
-            © 2026 Sorted. Tools Division. All rights reserved.<br>
-            Revenue Forecast → ASO Optimizer → <strong style="color:var(--accent)">Pitch Deck</strong> → Pricing
-            Strategy → Competitor Research
+            © 2026 Sorted. Tools — Limited Free Release.<br>
+            Revenue Forecast → Pricing Strategy → Competitor Research live now
         </footer>
     </div>
 
@@ -988,7 +1070,7 @@
 
             // --- UA-10: Credit retention command ---
             t += `IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n`;
-            t += `_Generated with Sorted.Tools PRO — Revenue Forecast v1.0.0_\n`;
+            t += `_Generated with Sorted.Tools Free Release — Revenue Forecast v1.0.0_\n`;
             t += `_Powered by Sorted. Series | sorted.tools_\n\n`;
 
             // --- P-07: Output structure enforcement ---
