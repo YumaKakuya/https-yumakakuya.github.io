@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenue Forecast PRO | Sorted. Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* --- BRANDING: SORTED. NEON STYLE --- */
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body,
+        html {
+            height: 100%;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* --- ANIMATIONS --- */
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .splash-brand {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .splash-brand span {
+            color: var(--accent);
+        }
+
+        .splash-btn {
+            margin-top: 40px;
+            padding: 12px 40px;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 30px var(--accent-dim);
+        }
+
+        /* --- MAIN APP LAYOUT --- */
+        #app-container {
+            display: none;
+            opacity: 0;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        /* Header */
+        header {
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(19, 19, 31, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .brand {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .brand span {
+            color: var(--accent);
+        }
+
+        .badge {
+            font-size: 10px;
+            background: var(--accent);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 30px 20px;
+        }
+
+        /* --- FORM STYLES --- */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: #444;
+        }
+
+        .card-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--surface-lighter);
+            color: #fff;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-dim);
+        }
+
+        .card-body {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            background: #08080c;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-dim);
+        }
+
+        input::placeholder {
+            color: #444;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+            font-weight: 600;
+        }
+
+        .tag-btn:hover {
+            border-color: #666;
+            color: #fff;
+        }
+
+        .tag-btn.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-dim);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px var(--accent-dim);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-dim);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- RESULT STYLES --- */
+        .result-header-bar {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .terminal-window {
+            background: #08080c;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-bar {
+            background: var(--surface-lighter);
+            padding: 8px 15px;
+            font-size: 11px;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-bar::before {
+            content: "● ● ●";
+            letter-spacing: -2px;
+            margin-right: 10px;
+            color: #444;
+        }
+
+        .result-box {
+            padding: 30px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ccc;
+            white-space: pre-wrap;
+            height: 500px;
+            overflow-y: auto;
+            font-size: 13px;
+            line-height: 1.6;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .action-row {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .copy-btn-large {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn-large:hover {
+            box-shadow: 0 0 30px var(--accent-dim);
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover {
+            border-color: #666;
+            color: #fff;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--muted);
+            font-size: 11px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        @media (max-width: 600px) {
+            .card-body {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="splash-screen">
+        <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="fade-in"
+            style="color:var(--muted); font-size:12px; letter-spacing:1px; margin-bottom: 20px; animation-delay: 0.2s;">
+            REVENUE FORECAST GENERATOR</div>
+        <button class="splash-btn fade-in" style="animation-delay: 0.4s;" onclick="startApp()">INITIALIZE
+            SYSTEM</button>
+    </div>
+
+    <div id="app-container">
+        <header>
+            <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+            <div style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono', monospace;">v1.0.0</div>
+        </header>
+
+        <main class="main-content">
+            <div id="form-view" class="view-container">
+
+                <div
+                    style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:10px;overflow-x:auto;">
+                    <span
+                        style="font-size:10px;color:var(--muted);letter-spacing:1px;white-space:nowrap;font-family:'JetBrains Mono',monospace;">SERIES
+                        /</span>
+                    <span
+                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;background:rgba(255,107,107,.1);border:1px solid #ff6b6b;color:#ff6b6b;">01
+                        Revenue Forecast ◀</span>
+                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
+                    <span
+                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">02
+                        ASO Optimizer</span>
+                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
+                    <span
+                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">03
+                        Pitch Deck</span>
+                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
+                    <span
+                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">04
+                        Pricing Strategy</span>
+                    <span style="color:#333;font-size:11px;flex-shrink:0;">→</span>
+                    <span
+                        style="font-size:11px;padding:6px 12px;border-radius:20px;white-space:nowrap;font-weight:600;border:1px solid var(--border);color:#444;">05
+                        Competitor Research</span>
+                </div>
+
+                <div class="card" style="border-top: 3px solid #00ff9d;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#00ff9d"></div>APP INFO
+                    </div>
+                    <div class="card-body">
+                        <div><label>App Name</label><input type="text" id="appName" placeholder="e.g. FitTracker"></div>
+                        <div>
+                            <label>Business Category (for market analysis)<span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">May differ from App Store category</span></label>
+                            <select id="category">
+                                <option>Education</option>
+                                <option>Health &amp; Fitness</option>
+                                <option>Business</option>
+                                <option>Games</option>
+                                <option>Utilities</option>
+                                <option>Social Networking</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Platform</label>
+                            <select id="platform">
+                                <option>iOS & Android</option>
+                                <option>iOS Only</option>
+                                <option>Android Only</option>
+                                <option>Web App / SaaS</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Development Stage</label>
+                            <select id="stage">
+                                <option>Building MVP</option>
+                                <option>Idea stage</option>
+                                <option>Post-launch (early)</option>
+                                <option>Scale phase</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>One-Line Description</label>
+                            <input type="text" id="appDesc" placeholder="e.g. A one-time purchase app that helps non-native engineers explain dev terms in 3 seconds">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-top: 3px solid #ffcc00;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#ffcc00"></div>REVENUE MODEL
+                    </div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>Revenue Model (select multiple)</label>
+                            <div class="tags" id="monetization-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Pricing<span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">Enter per revenue model. e.g. $9.99/mo, $79.99/yr, $29.99 one-time</span></label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <input type="text" id="price" placeholder="e.g. 9.99 / 79.99 / 29.99 (numbers only; select currency on the right)"
+                                    style="flex:1;">
+                                <select id="priceCurrency" style="width:90px;flex-shrink:0;">
+                                    <option value="$">$ USD</option>
+                                    <option value="¥">¥ JPY</option>
+                                    <option value="€">€ EUR</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div><label>Free Plan Scope</label><input type="text" id="freeFeatures" placeholder="e.g. Basic features only, with ads">
+                        </div>
+                        <div class="full">
+                            <label>Running Costs (variable only)<span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">Servers, APIs, external services, etc.</span></label>
+                            <select id="runningCostType" onchange="toggleRunningCostAmount()">
+                                <option value="zero">Zero (serverless / local only)</option>
+                                <option value="variable">Variable costs (API costs, etc.)</option>
+                                <option value="fixed">Fixed costs (servers, DB, etc.)</option>
+                            </select>
+                        </div>
+                        <div class="full" id="runningCostAmountWrap" style="display:none;">
+                            <label>Estimated Monthly Cost</label>
+                            <input type="text" id="runningCostAmount" placeholder="e.g. $20/mo, $50/mo">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-top: 3px solid #ff3b30;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#ff3b30"></div>MARKET TARGET
+                    </div>
+                    <div class="card-body">
+                        <div class="full"><label>Target User</label><input type="text" id="target"
+                                placeholder="e.g. Busy professionals who want to learn English but can't commit to daily practice"></div>
+                        <div><label>Estimated Market Size (TAM)</label><input type="text" id="tam" placeholder="e.g. US language learning market"></div>
+                        <div class="full">
+                            <label>Competitor Apps <span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">as many as you know</span></label>
+                            <input type="text" id="competitors" placeholder="e.g. Duolingo, Anki, ChatGPT">
+                        </div>
+                        <div>
+                            <label>Target Region</label>
+                            <select id="region">
+                                <option>United States</option>
+                                <option>Global</option>
+                                <option>Asia-Pacific</option>
+                                <option>North America &amp; Europe</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="border-top: 3px solid #a29bfe;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#a29bfe"></div>ANALYSIS GOAL
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <label>Base Currency<span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">All amounts will use this currency</span></label>
+                            <select id="baseCurrency">
+                                <option value="USD">USD (US Dollar)</option>
+                                <option value="JPY">JPY (Japanese Yen)</option>
+                                <option value="EUR">EUR (Euro)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Forecast Horizon</label>
+                            <select id="horizon">
+                                <option>1 year (short-term)</option>
+                                <option>3 years (mid-term)</option>
+                                <option>5 years (long-term)</option>
+                                <option>6 months (near-term)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Monthly User Target</label>
+                            <input type="text" id="monthlyUsers" placeholder="e.g. 1,000 users">
+                            <div id="monthlyUsersWarning"
+                                style="color:var(--accent); font-size:10px; margin-top:4px; display:none;">
+                                Only digits, commas, and abbreviations (k, M, B) are allowed</div>
+                        </div>
+                        <div><label>Success Goal</label><input type="text" id="goal" placeholder="e.g. $1,500/mo profit for sustainability, fundraising"></div>
+                        <div class="full">
+                            <label>Output Options (select multiple)</label>
+                            <div class="tags" id="format-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Evaluation Mode<span
+                                    style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">When ON, generates a critical evaluation section</span></label>
+                            <select id="evaluationMode">
+                                <option value="ON">ON (includes critical evaluation)</option>
+                                <option value="OFF">OFF (numbers &amp; tactics only)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>INITIALIZE PROMPT
+                    GENERATION</button>
+            </div>
+
+            <div id="result-view" class="view-container hidden">
+                <div class="result-header-bar">
+                    > STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.
+                </div>
+                <div class="terminal-window">
+                    <div class="terminal-bar">generated_prompt.txt - Read Only</div>
+                    <div class="result-box" id="output"></div>
+                </div>
+                <div class="action-row">
+                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="back-btn" onclick="backToForm()">CREATE NEW FORECAST</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            © 2026 Sorted. Tools Division. All rights reserved.<br>
+            Revenue Forecast → ASO Optimizer → <strong style="color:var(--accent)">Pitch Deck</strong> → Pricing
+            Strategy → Competitor Research
+        </footer>
+    </div>
+
+    <script>
+        // Language setting: change to user preference in app version
+        const LANG = "English";
+
+        // --- APP FLOW & TRANSITIONS ---
+        const splash = document.getElementById('splash-screen');
+        const appContainer = document.getElementById('app-container');
+        const formView = document.getElementById('form-view');
+        const resultView = document.getElementById('result-view');
+        const generateBtn = document.getElementById('generateBtn');
+
+        function startApp() {
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.style.display = 'none';
+                appContainer.style.display = 'flex';
+                appContainer.classList.add('fade-in');
+                checkGate1(); // Check initial validation state
+            }, 500);
+        }
+
+        function processGeneration() {
+            if (!checkGate1(true)) return;
+            generatePromptText();
+            formView.classList.add('fade-out');
+            setTimeout(() => {
+                formView.classList.add('hidden');
+                formView.classList.remove('fade-out');
+                resultView.classList.remove('hidden');
+                resultView.classList.add('fade-in');
+                setTimeout(() => resultView.classList.remove('fade-in'), 500);
+            }, 500);
+        }
+
+        function backToForm() {
+            resultView.classList.add('fade-out');
+            setTimeout(() => {
+                resultView.classList.add('hidden');
+                resultView.classList.remove('fade-out');
+                formView.classList.remove('hidden');
+                formView.classList.add('fade-in');
+                setTimeout(() => formView.classList.remove('fade-in'), 500);
+            }, 500);
+        }
+
+        // --- LOGIC ---
+        const monOpts = ["Monthly subscription", "Annual subscription", "One-time purchase", "Ad-supported", "Freemium", "API billing", "B2B contract"];
+        const fmtOpts = ["3-scenario revenue forecast", "Break-even analysis", "Unit economics (LTV/CAC)", "Marketing ROI", "Risk analysis & mitigation", "Investor summary"];
+        const selectedMon = new Set(); const selectedFmt = new Set();
+
+        function renderTags(id, opts, set) {
+            const container = document.getElementById(id);
+            opts.forEach(opt => {
+                const btn = document.createElement('button'); btn.className = 'tag-btn'; btn.textContent = opt;
+                btn.onclick = () => {
+                    if (set.has(opt)) { set.delete(opt); btn.classList.remove('active'); }
+                    else { set.add(opt); btn.classList.add('active'); }
+                    checkGate1();
+                };
+                container.appendChild(btn);
+            });
+        }
+        renderTags('monetization-tags', monOpts, selectedMon);
+        renderTags('format-tags', fmtOpts, selectedFmt);
+
+        // --- VALIDATION AND GATES ---
+        function checkGate1(showAlert = false) {
+            const appNameLength = (document.getElementById('appName').value || '').trim().length;
+            const priceLength = (document.getElementById('price').value || '').trim().length;
+            const goalLength = (document.getElementById('goal').value || '').trim().length;
+            const monSelected = selectedMon.size > 0;
+
+            const isValid = appNameLength >= 3 && priceLength >= 1 && goalLength >= 1 && monSelected;
+
+            generateBtn.disabled = !isValid;
+
+            // Return boolean to guard the processGeneration call
+            return isValid;
+        }
+
+        // Add validation listeners
+        ['appName', 'price', 'goal'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => checkGate1());
+                el.addEventListener('change', () => checkGate1());
+            }
+        });
+
+        // P-04: Numeric field validation for monthlyUsers
+        const monthlyUsersEl = document.getElementById('monthlyUsers');
+        const warningEl = document.getElementById('monthlyUsersWarning');
+        if (monthlyUsersEl && warningEl) {
+            monthlyUsersEl.addEventListener('input', (e) => {
+                const val = e.target.value;
+                // Allow: digits, commas, and abbreviations (k, M, B)
+                const isValid = /^[\d,kKmMbB.]*$/.test(val);
+                if (!isValid && val.length > 0) {
+                    warningEl.style.display = 'block';
+                } else {
+                    warningEl.style.display = 'none';
+                }
+            });
+        }
+
+        // --- PARSE RULES ---
+        function sanitize(str) {
+            // P-05: Remove HTML entities, control chars, injection patterns
+            return str
+                .replace(/&[#a-zA-Z0-9]+;/g, '')
+                .replace(/[<>]/g, '')
+                .replace(/ignore previous instructions/gi, '')
+                .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF]/g, '')
+                .trim(); // P-01: trim whitespace
+        }
+
+        function getVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return '(not provided)';
+            const raw = el.value || '';
+            const cleaned = sanitize(raw);
+            return cleaned.length === 0 ? '(not provided)' : cleaned;
+        }
+
+        // P-07: Track empty optional fields for ambiguity warning
+        function getEmptyOptionalFields() {
+            const optionalFields = [
+                { id: 'appDesc', label: 'One-Line Description' },
+                { id: 'freeFeatures', label: 'Free Plan Scope' },
+                { id: 'target', label: 'Target User' },
+                { id: 'tam', label: 'Market Size (TAM)' },
+                { id: 'competitors', label: 'Competitor Apps' },
+                { id: 'monthlyUsers', label: 'Monthly User Target' },
+                {
+                    id: 'runningCostAmount',
+                    label: 'Running Costs (monthly estimate)',
+                    condition: () => {
+                        const type = document.getElementById('runningCostType');
+                        return type && type.value !== 'zero';
+                    }
+                },
+            ];
+            return optionalFields.filter(f => {
+                if (f.condition && !f.condition()) return false;
+                const el = document.getElementById(f.id);
+                if (!el) return false;
+                return el.value.trim().length === 0;
+            });
+        }
+
+        function toggleRunningCostAmount() {
+            const type = document.getElementById('runningCostType').value;
+            const wrap = document.getElementById('runningCostAmountWrap');
+            wrap.style.display = (type === 'zero') ? 'none' : 'block';
+        }
+
+        function generatePromptText() {
+
+            // --- P-08: Web search command (top of prompt) ---
+            let t = `IMPORTANT: Before answering, you MUST run the following web searches:\n`;
+            t += `- Current market size and latest trends for the ${getVal('category')} category\n`;
+            t += `- Latest store policies and platform fees for ${getVal('platform')}\n`;
+            t += `- Current pricing and revenue models of top competing apps in this category\n`;
+            t += `Base ALL responses on search results. Cite every source with retrieval date.\n\n`;
+            t += `---\n\n`;
+
+            // --- UA-09: Data usage restriction ---
+            t += `PRIVACY NOTICE: All information provided below is to be used SOLELY for generating this output. Do NOT use it for training, logging, or any other purpose.\n\n`;
+
+            // --- Role definition ---
+            t += `# App Revenue Forecast & Business Plan Prompt\n\n`;
+            t += `You are a senior business analyst specializing in mobile app ventures, with a track record supporting fundraising at YCombinator, a16z, and Sequoia. Always leverage the latest industry data from web search. Produce a quantitative, rigorous revenue simulation suitable for investors and banks.\n\n`;
+
+            // --- Input data ---
+            t += `## Section 1: Product Overview\n`;
+            t += `- App Name: ${getVal('appName')}\n`;
+            t += `- Description: ${getVal('appDesc')}\n`;
+            t += `- Category: ${getVal('category')}\n`;
+            t += `- Platform: ${getVal('platform')}\n`;
+            t += `- Current Phase: ${getVal('stage')}\n\n`;
+
+            // --- Section 2: Running Cost (hybrid) ---
+            const rcType = document.getElementById('runningCostType').value;
+            const rcAmount = document.getElementById('runningCostAmount').value.trim();
+            let rcLine = '';
+            if (rcType === 'zero') {
+                rcLine = '- Running Cost: $0 (serverless/local only — variable cost is zero. Platform fixed fees are calculated separately.)';
+            } else if (rcType === 'variable') {
+                rcLine = `- Running Cost (variable): ${rcAmount || '(amount not specified)'}`;
+            } else {
+                rcLine = `- Running Cost (fixed): ${rcAmount || '(amount not specified)'}`;
+            }
+
+            t += `## Section 2: Business Model\n`;
+            t += `- Revenue Sources: ${Array.from(selectedMon).join(', ') || '(not specified — infer best model from category)'}\n`;
+            const priceCurrency = document.getElementById('priceCurrency').value;
+            const priceVal = getVal('price');
+            t += `- Pricing: ${priceCurrency}${priceVal}\n`;
+            t += `  NOTE: All price values above are in ${priceCurrency}. Do NOT reinterpret the currency unit.\n`;
+            t += `- Free Plan Scope: ${getVal('freeFeatures')}\n`;
+            t += `${rcLine}\n\n`;
+
+            // --- P-03: Competitor check ---
+            const compInput = document.getElementById('competitors').value.trim();
+            const compLine = compInput.length === 0
+                ? `- Competitors: (not provided) → Search the web to identify the top 3 competitors in this category and platform. Verify that they are genuinely competitive with this app.`
+                : `- Competitors: ${sanitize(compInput)} → Verify these are appropriate competitors. If not, supplement with more relevant ones found via web search.`;
+
+            // --- TAM check (P-08 extension) ---
+            const tamInput = document.getElementById('tam').value.trim();
+            const tamLine = tamInput.length === 0
+                ? `- Market Size (TAM): (not provided) → Search the web to estimate TAM based on category and region. State all assumptions explicitly.`
+                : `- Market Size (TAM): ${sanitize(tamInput)}`;
+
+            t += `## Section 3: Market & Target\n`;
+            t += `- Target Users: ${getVal('target')}\n`;
+            t += `${tamLine}\n`;
+            t += `- Region: ${getVal('region')}\n`;
+            t += `${compLine}\n`;
+            t += `- Monthly User Target: ${getVal('monthlyUsers')}\n\n`;
+
+            const evalMode = document.getElementById('evaluationMode').value;
+            t += `## Section 4: Analysis Goals\n`;
+            t += `- Forecast Period: ${getVal('horizon')}\n`;
+            t += `- Success Goal: ${getVal('goal')} * Treat this as a given condition. Do NOT comment on the scale.\n`;
+            t += `- Required Output Items: ${Array.from(selectedFmt).join(', ') || '(comprehensive analysis)'}\n`;
+            t += `- Base Currency: ${document.getElementById('baseCurrency').value}\n`;
+            t += `- Evaluation Mode: ${evalMode}\n\n`;
+
+            // --- INTERPRETATION RULES ---
+            t += `## INTERPRETATION RULES (read first)\n\n`;
+            t += `Rule 1 — Running Cost:\n`;
+            t += `  "Running Cost: $0" means variable cost is zero. This is NOT a contradiction.\n`;
+            t += `  Platform fixed fees (App Store annual fee / Google Play registration) must be calculated automatically from the selected platform and shown as a separate line in the forecast.\n\n`;
+            t += `Rule 2 — Success Goal:\n`;
+            t += `  Use Success Goal only as the design target for achievement scenarios.\n`;
+            t += `  Do NOT comment on the scale or feasibility of the goal until PHASE 6.\n\n`;
+            t += `Rule 3 — Output Phase Order:\n`;
+            t += `  Do NOT produce any evaluation, criticism, or concern until PHASE 5 is complete.\n`;
+            t += `  If Evaluation Mode is OFF, skip PHASE 6 entirely.\n\n`;
+            t += `Rule 4 — Competitor Supplementation:\n`;
+            t += `  If input competitors are inappropriate or insufficient, supplement via web search.\n`;
+            t += `  Tag supplemented competitors as [Supplemented]. Never remove user-provided competitors.\n\n`;
+
+            t += `Rule 5 — Currency & Exchange Rate:\n`;
+            t += `  Base currency for this analysis: ${document.getElementById('baseCurrency').value}\n`;
+            t += `  Pricing currency is explicitly stated in Section 2. Do NOT reinterpret or reassign currency units.\n`;
+            t += `  If multiple currencies appear in the input data, convert all amounts to the base currency.\n`;
+            t += `  State the assumed exchange rate explicitly at the top of PHASE 1 as [Assumption].\n`;
+            t += `  Obtain the exchange rate via web search and cite the source with retrieval date.\n\n`;
+
+            t += `Rule 6 — Assumption Quality:\n`;
+            t += `  Every [Assumption] value must include one of the following:\n`;
+            t += `  (a) An industry benchmark source with citation and retrieval date\n`;
+            t += `  (b) A label: [Conservative] / [Middle] / [Aggressive] with a one-line reasoning\n`;
+            t += `  Bare numbers without either (a) or (b) are NOT acceptable.\n\n`;
+
+            // --- STRICT OUTPUT INSTRUCTIONS ---
+            t += `## STRICT OUTPUT INSTRUCTIONS\n\n`;
+            t += `PHASE 1 — Assumption Table\n`;
+            t += `  List all assumptions in table format.\n`;
+            t += `  Include platform fixed fees as a separate row.\n`;
+            t += `  Label every assumption explicitly as [Assumption].\n\n`;
+            t += `PHASE 2 — Forecast Table\n`;
+            t += `  Optimistic / Neutral / Pessimistic — three separate tables.\n`;
+            t += `  Output rules — NO exceptions:\n`;
+            t += `    Y1 (Month 1–12): Output every month. 12 rows minimum.\n`;
+            t += `    Y2 onward: Output quarterly (Q1–Q4 per year).\n`;
+            t += `    Example for 3-year: 12 monthly + 8 quarterly = 20 rows minimum per scenario.\n`;
+            t += `    Example for 5-year: 12 monthly + 16 quarterly = 28 rows minimum per scenario.\n`;
+            t += `  Show revenue, cost, and net profit separately per row.\n`;
+            t += `  Growth phase definitions (apply different growth rate assumptions per phase):\n`;
+            t += `    Phase A — Y1: Launch / organic growth. State assumed organic growth rate.\n`;
+            t += `    Phase B — Y2–Y3: Paid acquisition + feature expansion. State assumed paid CAC and budget.\n`;
+            t += `    Phase C — Y4+: Retention optimization + monetization. State assumed churn reduction rate.\n`;
+            t += `  State phase transitions explicitly in the table with a separator row.\n`;
+            t += `  At the END of PHASE 2, output a 'Success Goal Achievement Summary' table:\n`;
+            t += `  | Scenario    | Achievement Timing | Annual Revenue at Achievement |\n`;
+            t += `  | Optimistic  | MXX or QX-YX       | [base currency]XXX            |\n`;
+            t += `  | Neutral     | MXX or QX-YX       | [base currency]XXX            |\n`;
+            t += `  | Pessimistic | Not achieved / MXX | [base currency]XXX            |\n`;
+            t += `  [No evaluation or criticism in this phase.]\n\n`;
+            t += `PHASE 3 — Break-Even Analysis\n`;
+            t += `  State monthly BEP conditions explicitly.\n`;
+            t += `  Use real costs including platform fees.\n\n`;
+            t += `PHASE 4 — Unit Economics (LTV / CAC)\n`;
+            t += `  Separate cash CAC and time-based CAC.\n\n`;
+            t += `PHASE 5 — Marketing ROI\n`;
+            t += `  Identify bottlenecks. Propose actions ordered by expected ROI.\n\n`;
+            t += `PHASE 6 — Critical Evaluation (only if Evaluation Mode: ON)\n`;
+            t += `  Be direct and critical. Do not sugarcoat. This is the designated phase for honest assessment.\n`;
+            t += `  Minimum requirements — all three must be present:\n`;
+            t += `  (a) At least 3 specific risks, each with a concrete mitigation action\n`;
+            t += `  (b) At least 2 business model critiques with data or reasoning\n`;
+            t += `  (c) At least 1 assumption from PHASE 1 challenged with contradicting data from web search\n`;
+            t += `  If Evaluation Mode is OFF, output only:\n`;
+            t += `  "Evaluation section skipped. Turn Evaluation Mode ON to include it."\n\n`;
+
+            t += `PRE-OUTPUT SELF-CHECK:\n`;
+            t += `Before output, verify:\n`;
+            t += `(a) INTERPRETATION RULES applied correctly\n`;
+            t += `(b) Phase order maintained\n`;
+            t += `(c) No evaluation mixed into PHASE 1-5\n`;
+            t += `(d) No comments on Success Goal scale before PHASE 6\n`;
+            t += `(e) All [Assumption] values include source or label per Rule 6\n`;
+            t += `(f) PHASE 2 contains no skipped months or quarters\n`;
+            t += `(g) Success Goal Achievement Summary table is present at end of PHASE 2\n`;
+            t += `(h) PHASE 6 meets minimum requirements (a)(b)(c) if Evaluation Mode is ON\n\n`;
+
+            // --- UA-10: Credit retention command ---
+            t += `IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n`;
+            t += `_Generated with Sorted.Tools PRO — Revenue Forecast v1.0.0_\n`;
+            t += `_Powered by Sorted. Series | sorted.tools_\n\n`;
+
+            // --- P-07: Output structure enforcement ---
+            t += `---\n\n`;
+            t += `⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n`;
+
+            // P-07: Ambiguity warning (conditional)
+            const emptyFields = getEmptyOptionalFields();
+            if (emptyFields.length > 0) {
+                t += `\nThe following optional fields were left empty, which may reduce output precision:\n`;
+                emptyFields.forEach(f => { t += `- ${f.label}: not provided\n`; });
+            }
+
+            t += `\n_Generated with Sorted.Tools PRO — Revenue Forecast v1.0.0_\n`;
+            t += `_Powered by Sorted. Series | sorted.tools_\n`;
+
+            // --- Language directive ---
+            t += `\n\nRespond entirely in ${LANG}.`;
+
+            document.getElementById('output').textContent = t;
+        }
+
+        function copyText(btn) {
+            const text = document.getElementById('output').textContent;
+            const originalText = btn.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerText = '✅ COPIED TO CLIPBOARD';
+                btn.style.background = '#fff'; btn.style.color = '#000';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = ''; btn.style.color = '';
+                }, 2000);
+            }).catch(() => {
+                btn.innerText = '⚠️ Copy failed — HTTPS or user interaction required';
+                setTimeout(() => { btn.innerText = originalText; }, 3000);
+            });
+        }
+    </script>
+
+</body>
+
+</html>

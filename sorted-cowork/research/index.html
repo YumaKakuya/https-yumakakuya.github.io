@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cowork Research Builder | Sorted. Tools</title>
+    <meta name="description" content="Generate precise Claude Cowork research prompts for competitive analysis, market research, and deep-dive investigations. Not a prompt list — a prompt builder.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00e5ff;
+            --accent-dim: rgba(0, 229, 255, 0.1);
+            --accent2: #ff6b35;
+            --text: #e8e8f0;
+            --muted: #666;
+            --green: #00ff9d;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body, html {
+            height: 100%;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* SCANLINE OVERLAY */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        @keyframes scanline {
+            0% { top: -10%; }
+            100% { top: 110%; }
+        }
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 1px); }
+            40% { transform: translate(2px, -1px); }
+            60% { transform: translate(-1px, 2px); }
+            80% { transform: translate(1px, -1px); }
+        }
+
+        .hidden { display: none !important; }
+
+        /* SPLASH */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .splash-scan {
+            position: absolute;
+            top: -10%; left: 0; right: 0; height: 80px;
+            background: linear-gradient(transparent, rgba(0,229,255,0.03), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        .splash-brand {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--muted);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .splash-title {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .splash-title span { color: var(--accent); }
+
+        .splash-sub {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+
+        .splash-welcome {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 13px;
+            color: var(--text);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            opacity: 0.75;
+        }
+
+        .splash-cursor {
+            display: inline-block;
+            width: 8px; height: 14px;
+            background: var(--accent);
+            animation: blink 1s step-end infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+        }
+
+        .splash-btn {
+            padding: 14px 48px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .splash-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+            transition: 0.4s;
+        }
+        .splash-btn:hover::before { left: 100%; }
+        .splash-btn:hover {
+            background: rgba(0,229,255,0.08);
+            box-shadow: 0 0 20px rgba(0,229,255,0.2), inset 0 0 20px rgba(0,229,255,0.05);
+        }
+
+        .splash-version {
+            position: absolute;
+            bottom: 24px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        /* MAIN */
+        #app-container {
+            display: none; opacity: 0;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+        header {
+            padding: 14px 30px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10,10,15,0.9);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px);
+        }
+
+        .brand {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 15px; font-weight: 700;
+            letter-spacing: 1px; color: #fff;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .brand span { color: var(--accent); }
+        .brand-dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        .header-meta {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px; color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 28px 20px;
+        }
+
+        /* SERIES NAV */
+        .series-nav {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            display: flex; align-items: center; gap: 8px;
+            overflow-x: auto;
+        }
+
+        .series-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px; color: var(--muted);
+            letter-spacing: 2px; white-space: nowrap;
+        }
+
+        .series-tag {
+            font-size: 10px;
+            padding: 5px 11px;
+            border-radius: 20px;
+            white-space: nowrap;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            color: #444;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+
+        .series-tag.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .series-arrow { color: #222; font-size: 11px; flex-shrink: 0; }
+
+        /* CARD */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .dot {
+            width: 6px; height: 6px;
+            border-radius: 50%;
+        }
+
+        .card-body {
+            padding: 16px 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .full { grid-column: 1 / -1; }
+
+        label {
+            display: block;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        label .note {
+            font-size: 9px;
+            color: #444;
+            text-transform: none;
+            letter-spacing: 0;
+            font-family: 'Inter', sans-serif;
+            margin-left: 6px;
+        }
+
+        input[type="text"], select, textarea {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            padding: 10px 12px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        input[type="text"]:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px rgba(0,229,255,0.08);
+        }
+
+        input::placeholder, textarea::placeholder { color: #333; }
+
+        select option { background: var(--surface); }
+
+        /* TAGS */
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+        .tag-btn {
+            padding: 6px 13px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--muted);
+            font-size: 11px;
+            font-family: 'IBM Plex Mono', monospace;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .tag-btn.selected {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0,229,255,0.07);
+        }
+
+        .tag-btn:hover:not(.selected) {
+            border-color: #444;
+            color: #aaa;
+        }
+
+        /* SAFETY BAR */
+        .safety-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .safety-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .safety-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--muted);
+            flex-shrink: 0;
+            transition: background 0.3s;
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+
+        .safety-dot.green { background: var(--green); box-shadow: 0 0 8px rgba(0, 255, 157, 0.5); }
+        .safety-dot.yellow { background: #ffcc00; box-shadow: 0 0 8px rgba(255, 204, 0, 0.5); }
+        .safety-dot.red { background: var(--accent2); box-shadow: 0 0 8px rgba(255, 107, 53, 0.5); }
+
+        .safety-label {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+
+        .safety-label.green { color: var(--green); }
+        .safety-label.yellow { color: #ffcc00; }
+        .safety-label.red { color: var(--accent2); }
+
+        .safety-check-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            padding: 6px 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .safety-check-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .safety-report {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin-bottom: 16px;
+        }
+
+        .safety-report-header {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .safety-report-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .safety-report-item:last-of-type { border-bottom: none; }
+
+        .safety-report-icon {
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .safety-report-text {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--text);
+            flex: 1;
+            letter-spacing: 0.3px;
+            line-height: 1.5;
+        }
+
+        .safety-report-text small {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .safety-report-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+        }
+
+        .safety-report-close:hover { color: var(--text); }
+
+        /* GENERATE BTN */
+        .generate-btn {
+            width: 100%;
+            margin-top: 8px;
+            padding: 16px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: 0.2s;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:disabled {
+            border-color: #222;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .generate-btn:not(:disabled)::before {
+            content: '';
+            position: absolute; top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,229,255,0.1), transparent);
+            transition: 0.5s;
+        }
+        .generate-btn:not(:disabled):hover::before { left: 100%; }
+        .generate-btn:not(:disabled):hover {
+            background: rgba(0,229,255,0.06);
+            box-shadow: 0 0 20px rgba(0,229,255,0.15);
+        }
+
+        /* RESULT VIEW */
+        .result-header-bar {
+            background: rgba(0,229,255,0.05);
+            border: 1px solid rgba(0,229,255,0.2);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 16px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 1px;
+        }
+
+        .terminal-window {
+            background: #050508;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .terminal-bar {
+            background: var(--surface);
+            padding: 8px 14px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 2px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .terminal-bar::before {
+            content: '';
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 6px var(--accent);
+        }
+
+        .result-box {
+            padding: 20px;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 11.5px;
+            line-height: 1.7;
+            color: #c8d8e8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 520px;
+            overflow-y: auto;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .action-row {
+            display: flex; gap: 10px; flex-direction: column;
+        }
+
+        .copy-btn-large {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 3px;
+            transition: 0.2s;
+        }
+
+        .copy-btn-large:hover {
+            background: rgba(0,229,255,0.06);
+            box-shadow: 0 0 20px rgba(0,229,255,0.15);
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'IBM Plex Mono', monospace;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 2px;
+            width: 100%;
+            transition: 0.2s;
+        }
+
+        .back-btn:hover { border-color: #444; color: #aaa; }
+
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--muted);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            letter-spacing: 1px;
+        }
+
+        .gate-hint {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: var(--accent2);
+            margin-top: 8px;
+            display: none;
+            letter-spacing: 1px;
+        }
+
+        .soft-warn {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 10px;
+            color: #ff9d3a;
+            margin-top: 5px;
+            display: none;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+
+        /* ONBOARD HINT */
+        .onboard-hint {
+            background: rgba(0, 229, 255, 0.04);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            border-radius: 8px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+        }
+
+        .onboard-hint-inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .onboard-icon {
+            font-size: 16px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .onboard-text {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.8;
+            flex: 1;
+        }
+
+        .onboard-text strong {
+            color: var(--text);
+            font-size: 12px;
+        }
+
+        .onboard-close {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 12px;
+            cursor: pointer;
+            padding: 0 4px;
+            flex-shrink: 0;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+
+        .onboard-close:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .card-body { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SPLASH -->
+    <div id="splash-screen">
+        <div class="splash-scan"></div>
+        <div class="splash-brand fade-in">Sorted. Tools — COWORK SERIES</div>
+        <div class="splash-title fade-in" style="animation-delay:0.1s">
+            TASK<span>_</span>BUILDER<span class="splash-cursor"></span>
+        </div>
+        <div class="splash-sub fade-in" style="animation-delay:0.2s">RESEARCH EDITION</div>
+        <div class="splash-welcome fade-in" style="animation-delay:0.3s">ようこそ、プロの入口へ。</div>
+        <button class="splash-btn fade-in" style="animation-delay:0.45s" onclick="startApp()">INITIALIZE SYSTEM</button>
+        <div class="splash-version">v1.0.0 — FREE RELEASE</div>
+    </div>
+
+    <div id="app-container">
+        <header>
+            <div class="brand">
+                <div class="brand-dot"></div>
+                Sorted<span>.</span>&nbsp;Tools
+            </div>
+            <div class="header-meta">COWORK TASK BUILDER&nbsp;&nbsp;|&nbsp;&nbsp;RESEARCH</div>
+        </header>
+
+        <main class="main-content">
+
+            <!-- FORM VIEW -->
+            <div id="form-view" class="view-container">
+
+                <!-- SERIES NAV -->
+                <div class="series-nav">
+                    <span class="series-label">COWORK /</span>
+                    <span class="series-tag">01 File Org</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag active">02 Research ◀</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">03 Data Extract</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">04 Report Gen</span>
+                    <span class="series-arrow">→</span>
+                    <span class="series-tag">05 Inbox Mgmt</span>
+                </div>
+
+                <div class="onboard-hint" id="onboardHint">
+                    <div class="onboard-hint-inner">
+                        <span class="onboard-icon">💡</span>
+                        <span class="onboard-text">
+                            <strong>One quick tip.</strong> The more specific your research topic and constraints, the more precise the generated prompt. You can write in any language — English tends to give the most accurate results with AI agents.
+                        </span>
+                        <button class="onboard-close" onclick="closeOnboard()">✕</button>
+                    </div>
+                </div>
+
+                <!-- CARD 1: RESEARCH SETUP -->
+                <div class="card" style="border-top: 3px solid var(--accent);">
+                    <div class="card-header">
+                        <div class="dot" style="background:var(--accent)"></div>RESEARCH SETUP
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <label>リサーチ目的</label>
+                            <select id="researchType" onchange="checkGate()">
+                                <option value="">── 選択してください ──</option>
+                                <option value="競合・市場調査">競合・市場調査</option>
+                                <option value="Web情報収集・まとめ">Web情報収集・まとめ</option>
+                                <option value="特定トピックの深掘り調査">特定トピックの深掘り調査</option>
+                                <option value="技術・製品リサーチ">技術・製品リサーチ</option>
+                                <option value="カスタム（自由記述）">カスタム（自由記述）</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>調査テーマ・トピック<span class="note">何を調べたいかを具体的に</span></label>
+                            <input type="text" id="researchTopic" placeholder="例: モバイル家計簿アプリの日本市場における競合状況" oninput="checkGate()">
+                            <div class="soft-warn" id="topicWarn">
+                                💬 抽象的な表現が含まれています。AIが検索語として使用できません。<br>
+                                <span style="opacity:0.7">例）日本のASO最適化ツール市場 / モバイル家計簿アプリの競合状況</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: RESEARCH DETAILS -->
+                <div class="card" style="border-top: 3px solid #ffcc00;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#ffcc00"></div>RESEARCH DETAILS
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <label>対象領域・業界</label>
+                            <input type="text" id="domain" placeholder="例: モバイルアプリ / フィンテック / 個人向けSaaS" oninput="checkGate()">
+                            <div class="soft-warn" id="domainWarn">
+                                💬 意味のある領域名で指定してください。<br>
+                                <span style="opacity:0.7">例）モバイルアプリ / 個人向けSaaS / フィンテック</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label>調査の深さ</label>
+                            <select id="researchDepth">
+                                <option value="表面的な概要（スピード重視）">表面的な概要（スピード重視）</option>
+                                <option value="標準（バランス型）" selected>標準（バランス型）</option>
+                                <option value="深掘り（詳細分析・時間をかける）">深掘り（詳細分析・時間をかける）</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>情報源の優先度</label>
+                            <div class="tags" id="source-tags"></div>
+                        </div>
+                        <div>
+                            <label>比較・競合対象<span class="note">未入力の場合はAIが自動で特定</span></label>
+                            <input type="text" id="compareTargets" placeholder="例: Notion, Obsidian, Roam Research" oninput="checkGate()">
+                            <div class="soft-warn" id="compareWarn">
+                                💬 固有名詞または比較カテゴリで指定してください。<br>
+                                <span style="opacity:0.7">例）Notion, Obsidian, Roam / ASOツール全般</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label>除外・制約条件</label>
+                            <input type="text" id="excludeScope" placeholder="例: 日本語情報のみ / 2024年以降の情報のみ / 有料ツールは除外" oninput="checkGate()">
+                            <div class="soft-warn" id="excludeWarn">
+                                💬 制約として機能しない表現が含まれています。<br>
+                                <span style="opacity:0.7">例）日本語情報のみ / 2024年以降の情報 / 有料ツールは除外</span>
+                            </div>
+                        </div>
+                        <div class="full">
+                            <label>追加コンテキスト・補足</label>
+                            <textarea id="additionalContext" placeholder="例: 自分はインディー開発者で、$10以下の買い切りツールと競合するかを知りたい"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: OUTPUT & SAFETY -->
+                <div class="card" style="border-top: 3px solid #ff6b35;">
+                    <div class="card-header">
+                        <div class="dot" style="background:#ff6b35"></div>OUTPUT &amp; SAFETY
+                    </div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>出力形式（複数選択可）</label>
+                            <div class="tags" id="output-tags"></div>
+                        </div>
+                        <div>
+                            <label>安全レベル</label>
+                            <select id="safetyLevel" onchange="checkGate()">
+                                <option value="strict">調査開始前に計画を提示・承認を待つ（推奨）</option>
+                                <option value="moderate">外部アクセスを伴う操作のみ確認</option>
+                                <option value="auto">完全自律実行・ログ保存</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>スケジュール</label>
+                            <select id="schedule">
+                                <option value="once">一回のみ</option>
+                                <option value="daily">毎日（定期モニタリング）</option>
+                                <option value="weekly">毎週</option>
+                                <option value="monthly">毎月</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SAFETY BAR -->
+                <div class="safety-bar" id="safetyBar">
+                    <div class="safety-bar-left">
+                        <div class="safety-dot" id="safetyDot"></div>
+                        <span class="safety-label" id="safetyLabel">入力を確認中...</span>
+                    </div>
+                    <button class="safety-check-btn" onclick="toggleSafetyReport()">SAFETY CHECK ▾</button>
+                </div>
+
+                <!-- SAFETY CHECK REPORT -->
+                <div class="safety-report" id="safetyReport">
+                    <div class="safety-report-header">
+                        <span>SAFETY CHECK REPORT</span>
+                        <button class="safety-report-close" onclick="toggleSafetyReport()">✕</button>
+                    </div>
+                    <div id="safetyReportItems"></div>
+                </div>
+
+                <!-- GATE HINT -->
+                <div class="gate-hint" id="gateHint">
+                    ⚠ リサーチ目的とテーマを入力してください
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>
+                    GENERATE COWORK PROMPT
+                </button>
+
+            </div>
+
+            <!-- RESULT VIEW -->
+            <div id="result-view" class="view-container hidden">
+                <div class="result-header-bar">
+                    &gt; STATUS: RESEARCH PROMPT READY. PASTE INTO CLAUDE COWORK.
+                </div>
+                <div class="terminal-window">
+                    <div class="terminal-bar">cowork_research_prompt.txt — Read Only</div>
+                    <div class="result-box" id="output"></div>
+                </div>
+                <div class="action-row">
+                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="back-btn" onclick="backToForm()">← CREATE NEW PROMPT</button>
+                </div>
+            </div>
+
+        </main>
+
+        <footer>
+            © 2026 Sorted. Tools — Cowork Series<br>
+            File Org → <strong style="color:var(--accent)">Research</strong> → Data Extract → Report Gen → Inbox Mgmt
+        </footer>
+    </div>
+
+    <script>
+        const splash = document.getElementById('splash-screen');
+        const appContainer = document.getElementById('app-container');
+        const formView = document.getElementById('form-view');
+        const resultView = document.getElementById('result-view');
+        const generateBtn = document.getElementById('generateBtn');
+
+        // --- APP FLOW ---
+        function startApp() {
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.style.display = 'none';
+                appContainer.style.display = 'flex';
+                appContainer.classList.add('fade-in');
+                checkGate();
+            }, 500);
+        }
+
+        function processGeneration() {
+            formView.classList.add('fade-out');
+            setTimeout(() => {
+                formView.classList.add('hidden');
+                formView.classList.remove('fade-out');
+                generatePromptText();
+                resultView.classList.remove('hidden');
+                resultView.classList.add('fade-in');
+                window.scrollTo(0, 0);
+            }, 400);
+        }
+
+        function backToForm() {
+            resultView.classList.add('fade-out');
+            setTimeout(() => {
+                resultView.classList.add('hidden');
+                resultView.classList.remove('fade-out');
+                formView.classList.remove('hidden');
+                formView.classList.add('fade-in');
+                window.scrollTo(0, 0);
+            }, 400);
+        }
+
+        function closeOnboard() {
+            document.getElementById('onboardHint').style.display = 'none';
+        }
+
+        // --- TAG SYSTEM ---
+        const selectedSources = new Set();
+        const selectedOutputs = new Set();
+
+        function renderTags(containerId, options, selectedSet, onchange) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'tag-btn' + (selectedSet.has(opt.value) ? ' selected' : '');
+                btn.textContent = opt.label;
+                btn.onclick = () => {
+                    if (selectedSet.has(opt.value)) {
+                        selectedSet.delete(opt.value);
+                        btn.classList.remove('selected');
+                    } else {
+                        selectedSet.add(opt.value);
+                        btn.classList.add('selected');
+                    }
+                    if (onchange) onchange();
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        renderTags('source-tags', [
+            { value: 'Web全般', label: 'Web全般' },
+            { value: '公式サイト・公式ドキュメント優先', label: '公式優先' },
+            { value: 'SNS・Reddit・コミュニティ', label: 'SNS/Reddit' },
+            { value: 'ニュース・業界メディア', label: 'ニュース' },
+            { value: 'GitHub・技術情報', label: 'GitHub/技術' },
+            { value: '学術論文・レポート', label: '学術/レポート' },
+        ], selectedSources, checkGate);
+
+        renderTags('output-tags', [
+            { value: '箇条書きサマリー', label: 'サマリー' },
+            { value: '比較表（Markdown）', label: '比較表' },
+            { value: 'SWOT分析', label: 'SWOT' },
+            { value: '推奨アクション付き', label: '推奨アクション' },
+            { value: 'タイムライン・沿革付き', label: 'タイムライン' },
+            { value: '情報源リスト付き', label: '情報源リスト' },
+        ], selectedOutputs, checkGate);
+
+        // --- WARNING PATTERNS ---
+        // researchTopic: 曖昧語・感想語・雰囲気語
+        const VAGUE_WORDS = [
+            // 感想・雰囲気系
+            'なんか', 'なんとなく', 'いい感じ', 'よさそう', 'よさげ',
+            'いい感じの', 'すきそう', '好きそう', '刺さりそう', '合いそう',
+            'それっぽい', 'みたいな', 'っぽい', 'そんな感じ',
+            // 丸投げ系
+            'いろいろ', 'なんでも', 'とか', 'など', 'わからない', 'わからん',
+            'よくわからない', 'よくわからん', 'おまかせ', 'お任せ',
+            'わたし向け', 'あなた向け', 'わたしに合わせて',
+            // 抽象指示系
+            'うまく', 'ちゃんと', 'しっかり', 'てきとう', '適当', 'よしなに',
+            'うまいこと', 'いいように', 'いい感じに',
+            // 英語曖昧系
+            'something', 'stuff', 'things', 'various', 'anything', 'whatever'
+        ];
+
+        // domain: 意味のない領域指定
+        const DOMAIN_VAGUE = [
+            'わたしに合わせて', 'あなた向け', 'わたし向け', 'おまかせ', 'お任せ',
+            'なんでも', 'いろいろ', 'なんか', 'わからない', 'わからん',
+            'よくわからない', 'とくになし', '特になし', 'なし', 'なんとなく'
+        ];
+
+        // compareTargets: 対象集合が成立しない指定
+        const COMPARE_VAGUE = [
+            'わたしが好きだろうな', '好きそうなやつ', 'よさそうなやつ', 'いい感じのやつ',
+            'そのへん', 'なんか', 'いろいろ', 'てきとう', '適当', 'おまかせ', 'お任せ',
+            'わからない', 'わからん', 'なんでも'
+        ];
+
+        // excludeScope: 制約として機能しない入力
+        const EXCLUDE_VAGUE = [
+            '全部', 'すべて除外', '何でも', '制限なし', 'なんでも',
+            'わかんない', 'わからない', 'わからん', 'よくわからない',
+            '適宜', '適切に', 'いい感じで', 'てきとう', '適当',
+            'なし', '特になし', 'とくになし', 'なんとなく'
+        ];
+
+        // --- SAFETY BAR ---
+        function updateSafetyBar(researchTopic, excludeScope, safetyLevel) {
+            const domain         = getVal('domain');
+            const compareTargets = getVal('compareTargets');
+
+            const issues = [];
+            const topicLower   = researchTopic.toLowerCase();
+            const domainLower  = domain.toLowerCase();
+            const compareLower = compareTargets.toLowerCase();
+
+            // 調査テーマの曖昧語
+            if (researchTopic && VAGUE_WORDS.some(w => topicLower.includes(w))) {
+                issues.push('vagueTopic');
+            }
+            // 対象領域の曖昧語
+            if (domain && DOMAIN_VAGUE.some(w => domainLower.includes(w))) {
+                issues.push('vagueDomain');
+            }
+            // 比較対象の曖昧語
+            if (compareTargets && COMPARE_VAGUE.some(w => compareLower.includes(w))) {
+                issues.push('vagueCompare');
+            }
+            // 除外条件の曖昧語
+            if (excludeScope && EXCLUDE_VAGUE.some(w => excludeScope.includes(w))) {
+                issues.push('vagueExclude');
+            }
+            // autoレベル
+            if (safetyLevel === 'auto') {
+                issues.push('safetyLevel');
+            }
+
+            const hardIssues = issues.filter(i => i !== 'safetyLevel');
+            const dot   = document.getElementById('safetyDot');
+            const label = document.getElementById('safetyLabel');
+
+            if (!researchTopic) {
+                dot.className   = 'safety-dot';
+                label.className = 'safety-label';
+                label.textContent = '入力を確認中...';
+            } else if (issues.length === 0) {
+                dot.className   = 'safety-dot green';
+                label.className = 'safety-label green';
+                label.textContent = 'ALL CLEAR — 生成できます';
+            } else if (hardIssues.length === 0) {
+                dot.className   = 'safety-dot yellow';
+                label.className = 'safety-label yellow';
+                label.textContent = '自動実行が有効になっています';
+            } else if (hardIssues.length === 1) {
+                dot.className   = 'safety-dot yellow';
+                label.className = 'safety-label yellow';
+                label.textContent = 'REVIEW SUGGESTED — 入力を確認してください';
+            } else {
+                dot.className   = 'safety-dot red';
+                label.className = 'safety-label red';
+                label.textContent = 'INPUT ISSUES — ' + hardIssues.length + '件の問題があります';
+            }
+        }
+
+        // --- SAFETY REPORT ---
+        function buildSafetyReport() {
+            const researchTopic  = getVal('researchTopic');
+            const domain         = getVal('domain');
+            const excludeScope   = getVal('excludeScope');
+            const compareTargets = getVal('compareTargets');
+            const safetyLevel    = getVal('safetyLevel');
+
+            const topicLower   = researchTopic.toLowerCase();
+            const domainLower  = domain.toLowerCase();
+            const compareLower = compareTargets.toLowerCase();
+
+            const hasVagueTopic   = researchTopic   && VAGUE_WORDS.some(w => topicLower.includes(w));
+            const hasVagueDomain  = domain          && DOMAIN_VAGUE.some(w => domainLower.includes(w));
+            const hasVagueCompare = compareTargets  && COMPARE_VAGUE.some(w => compareLower.includes(w));
+            const hasVagueExclude = excludeScope    && EXCLUDE_VAGUE.some(w => excludeScope.includes(w));
+
+            const items = [
+                {
+                    label: '調査テーマ',
+                    value: researchTopic || '(未入力)',
+                    ok:  !researchTopic ? false : (hasVagueTopic ? false : true),
+                    msg: !researchTopic ? '必須項目です'
+                       : hasVagueTopic  ? '抽象的な表現が含まれています。固有名詞・技術名・カテゴリ名で書き直してください'
+                       : '具体的で明確です'
+                },
+                {
+                    label: '対象領域・業界',
+                    value: domain || '(未入力)',
+                    ok:  !domain         ? null
+                       : hasVagueDomain  ? false
+                       : true,
+                    msg: !domain         ? '任意項目 — 未入力の場合はAIが推定します'
+                       : hasVagueDomain  ? '意味のある領域名ではありません。例: モバイルアプリ / フィンテック / SaaS'
+                       : '明確な領域が設定されています'
+                },
+                {
+                    label: '比較・競合対象',
+                    value: compareTargets || '(未入力 — 自動特定)',
+                    ok:  !compareTargets  ? null
+                       : hasVagueCompare  ? false
+                       : true,
+                    msg: !compareTargets  ? '未入力のためAIが自動特定します'
+                       : hasVagueCompare  ? '対象が特定できません。固有名詞（例: Notion, Figma）または比較カテゴリで指定してください'
+                       : '比較対象が指定されています'
+                },
+                {
+                    label: '除外・制約条件',
+                    value: excludeScope || '(未入力)',
+                    ok:  !excludeScope   ? null
+                       : hasVagueExclude ? false
+                       : true,
+                    msg: !excludeScope   ? '任意項目'
+                       : hasVagueExclude ? '制約として機能しない表現です。例: 日本語情報のみ / 2024年以降 / 有料ツールは除外'
+                       : '明確な制約が設定されています'
+                },
+                {
+                    label: '安全レベル',
+                    value: safetyLevel === 'strict'   ? '計画提示・承認待ち（推奨）'
+                         : safetyLevel === 'moderate' ? '重要操作のみ確認'
+                         : '完全自律実行',
+                    ok:  safetyLevel === 'auto' ? false : true,
+                    msg: safetyLevel === 'auto' ? '自動実行モードは注意が必要です' : '安全な設定です'
+                }
+            ];
+
+            const container = document.getElementById('safetyReportItems');
+            container.innerHTML = items.map(item => {
+                const icon = item.ok === true ? '✅' : item.ok === false ? '⚠️' : '💡';
+                return '<div class="safety-report-item">' +
+                    '<span class="safety-report-icon">' + icon + '</span>' +
+                    '<span class="safety-report-text">' + item.label + ': ' + item.value + '<small>' + item.msg + '</small></span>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function toggleSafetyReport() {
+            const report = document.getElementById('safetyReport');
+            if (report.style.display === 'block') {
+                report.style.display = 'none';
+            } else {
+                buildSafetyReport();
+                report.style.display = 'block';
+            }
+        }
+
+        // --- VALIDATION ---
+        function checkGate() {
+            const researchType = getVal('researchType');
+            const researchTopic = getVal('researchTopic');
+            const hint = document.getElementById('gateHint');
+
+            const valid = researchType !== '' && researchTopic.length >= 5;
+            generateBtn.disabled = !valid;
+            hint.style.display = valid ? 'none' : 'block';
+
+            const excludeScope = getVal('excludeScope');
+            const safetyLevel = getVal('safetyLevel');
+            updateSafetyBar(researchTopic, excludeScope, safetyLevel);
+
+            const report = document.getElementById('safetyReport');
+            if (report.style.display === 'block') {
+                buildSafetyReport();
+            }
+
+            // soft-warn 表示制御
+            const topicVal   = getVal('researchTopic');
+            const domainVal  = getVal('domain');
+            const compareVal = getVal('compareTargets');
+            const excludeVal = getVal('excludeScope');
+
+            const tw = document.getElementById('topicWarn');
+            const dw = document.getElementById('domainWarn');
+            const cw = document.getElementById('compareWarn');
+            const ew = document.getElementById('excludeWarn');
+
+            if (tw) tw.style.display = (topicVal && VAGUE_WORDS.some(w => topicVal.toLowerCase().includes(w)))
+                ? 'block' : 'none';
+            if (dw) dw.style.display = (domainVal && DOMAIN_VAGUE.some(w => domainVal.toLowerCase().includes(w)))
+                ? 'block' : 'none';
+            if (cw) cw.style.display = (compareVal && COMPARE_VAGUE.some(w => compareVal.toLowerCase().includes(w)))
+                ? 'block' : 'none';
+            if (ew) ew.style.display = (excludeVal && EXCLUDE_VAGUE.some(w => excludeVal.includes(w)))
+                ? 'block' : 'none';
+        }
+
+        function getVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            return el.value ? el.value.trim() : '';
+        }
+
+        function sanitize(str) {
+            return str.replace(/[<>"']/g, '');
+        }
+
+        // --- GENERATE PROMPT ---
+        function generatePromptText() {
+            const researchType    = getVal('researchType');
+            const researchTopic   = sanitize(getVal('researchTopic'));
+            const domain          = sanitize(getVal('domain'));
+            const researchDepth   = getVal('researchDepth');
+            const excludeScope    = sanitize(getVal('excludeScope'));
+            const compareTargets  = sanitize(getVal('compareTargets'));
+            const additionalCtx   = sanitize(getVal('additionalContext'));
+            const safetyLevel     = getVal('safetyLevel');
+            const schedule        = getVal('schedule');
+            const sources         = Array.from(selectedSources);
+            const outputs         = Array.from(selectedOutputs);
+
+            let t = '';
+
+            // HEADER
+            t += '# COWORK RESEARCH PROMPT\n';
+            t += '# Generated by Sorted. Tools — Cowork Research Builder v1.0.0\n';
+            t += '# -------------------------------------------------------\n\n';
+
+            // P-08: Web search mandate
+            t += 'IMPORTANT: Before responding, you MUST perform web searches for:\n';
+            t += '- Latest information and trends on "' + researchTopic + '"\n';
+            if (domain) {
+                t += '- Current market dynamics and key players in: ' + domain + '\n';
+            }
+            if (compareTargets) {
+                t += '- Current status of each of the following: ' + compareTargets + '\n';
+            } else {
+                t += '- Key competitors and alternatives in this space (identify them yourself)\n';
+            }
+            t += 'Always cite your sources with retrieval dates. Relying solely on training data is prohibited.\n';
+            t += 'Claims without sources must be marked [REQUIRES SEARCH].\n\n';
+            t += '---\n\n';
+            t += 'Privacy notice: The information below is used solely for generating this output. Do not use it for training, logging, or any other purpose.\n\n';
+
+            // OBJECTIVE
+            t += '## OBJECTIVE\n';
+            t += 'You are a precise research agent. Your task is:\n';
+            t += '"' + researchType + ' on the topic: ' + researchTopic + '"\n';
+            t += 'Complete this task fully and autonomously according to the rules below.\n';
+            const scheduleMap = {
+                once:    'Run this task once only.',
+                daily:   'Set up as a recurring Cowork scheduled task — run daily and report new findings.',
+                weekly:  'Set up as a recurring Cowork scheduled task — run every Monday and report new findings.',
+                monthly: 'Set up as a recurring Cowork scheduled task — run on the 1st of every month and report new findings.',
+            };
+            t += (scheduleMap[schedule] || scheduleMap['once']) + '\n\n';
+
+            // SCOPE
+            t += '## SCOPE\n';
+            t += '- Research type: ' + researchType + '\n';
+            t += '- Topic: ' + researchTopic + '\n';
+            if (domain) t += '- Domain / Industry: ' + domain + '\n';
+            if (sources.length > 0) {
+                t += '- Preferred sources: ' + sources.join(', ') + '\n';
+            }
+            if (compareTargets) {
+                t += '- Competitors / alternatives: ' + compareTargets + '\n';
+            } else {
+                t += '- Competitors / alternatives: (Not specified — identify 3–5 key competitors/alternatives via web search. Tag each as [AUTO-IDENTIFIED])\n';
+            }
+            if (excludeScope) {
+                t += '- Exclusions / constraints: ' + excludeScope + '\n';
+            }
+            if (additionalCtx) {
+                t += '- Additional context: ' + additionalCtx + '\n';
+            }
+            t += '\n';
+
+            // RESEARCH DIRECTIVES
+            const depthRoleMap = {
+                '表面的な概要（スピード重視）': 'Prioritize speed and key-point extraction. Deliver a concise summary of the most critical information.',
+                '標準（バランス型）':           'Balance comprehensiveness with readability. Analyze at a practical depth.',
+                '深掘り（詳細分析・時間をかける）': 'Conduct a thorough investigation. Go beyond surface-level findings — trace primary sources, data, and evidence.'
+            };
+            const depthInstruction = depthRoleMap[researchDepth] || depthRoleMap['標準（バランス型）'];
+            t += '## RESEARCH DIRECTIVES\n';
+            t += depthInstruction + '\n\n';
+            t += 'Steps:\n';
+            t += '1. Execute all web search commands above before writing any response.\n';
+            t += '2. Organize and integrate collected information; resolve duplicates and contradictions.\n';
+            t += '3. Assess credibility of each source; flag low-quality or outdated information with [VERIFY].\n';
+            t += '4. Structure your findings according to the output format specified below.\n\n';
+
+            // CONSTRAINTS
+            t += '## CONSTRAINTS\n';
+            t += '- Do NOT skip web searches and rely only on training data.\n';
+            t += '- Do NOT present unverified statistics or figures without citing a source (use [ASSUMPTION] or [Source: XXX]).\n';
+            t += '- Do NOT present information older than 1 year as current without noting its age.\n';
+            t += '- Do NOT omit reasoning or evidence — conclusions must be supported.\n';
+            t += '- Do NOT ignore user-specified exclusions or constraints.\n';
+            if (excludeScope) {
+                t += '- Strictly enforce the following constraint: ' + excludeScope + '\n';
+            }
+            t += '\n';
+
+            // SAFETY & EXECUTION RULES
+            t += '## SAFETY & EXECUTION RULES\n';
+            if (safetyLevel === 'strict') {
+                t += '1. Before beginning, present a research plan (scope, search queries, estimated time) and wait for approval.\n';
+                t += '2. Do NOT proceed until the user confirms with "OK" or "proceed".\n';
+                t += '3. Mark any operation involving external access or writes with ⚠️ WARNING.\n';
+            } else if (safetyLevel === 'moderate') {
+                t += '1. For any write or post operations on external services, pause and request approval.\n';
+                t += '2. Read-only research operations may proceed automatically.\n';
+                t += '3. Log all actions taken.\n';
+            } else {
+                t += '1. Execute all research operations automatically without pausing.\n';
+                t += '2. Log every action to research_log.md.\n';
+                t += '3. Stop and report only if a critical error occurs (access denied, 404, etc.).\n';
+            }
+            t += '\n';
+
+            // OUTPUT FORMAT
+            if (outputs.length > 0) {
+                t += '## OUTPUT FORMAT\n';
+                t += 'Include all of the following in your response (all formats must be present if multiple are specified):\n';
+                outputs.forEach((o, i) => { t += (i + 1) + '. ' + o + '\n'; });
+                t += '\n';
+            }
+
+            // VALIDATION
+            t += '## VALIDATION\n';
+            t += 'Before finalizing, verify:\n';
+            t += '(a) All web search commands have been executed\n';
+            t += '(b) All figures and statistics have a cited source or [ASSUMPTION] label\n';
+            t += '(c) All exclusion / constraint rules have been respected\n';
+            t += '(d) No information older than 1 year has been presented as current without noting its age\n';
+            t += '(e) All specified output formats are included\n\n';
+
+            // ERROR HANDLING
+            t += '## ERROR HANDLING\n';
+            t += 'Do not guess. Do not assume. When in doubt, list the ambiguity and ask before proceeding.\n\n';
+
+            // FINAL SUMMARY FORMAT
+            t += '## FINAL SUMMARY FORMAT\n';
+            t += 'End your response with this block:\n\n';
+            t += '---\n';
+            t += 'RESEARCH COMPLETE\n';
+            t += '- Topic: ' + researchTopic + '\n';
+            t += '- Sources referenced: [N]\n';
+            t += '- Information freshness: Newest [date] — Oldest [date]\n';
+            t += '- Auto-identified competitors: [yes/no — N items]\n';
+            t += '- Low-quality / needs-verification items: [N]\n';
+            t += '- Unresolved questions: [list if any]\n';
+            t += '---\n\n';
+
+            // UA-10: Credit retention mandate
+            t += 'IMPORTANT: You MUST include the following credit lines at the end of your output, exactly as written. Do not modify, remove, or translate them.\n';
+            t += '_Generated with Sorted.Tools — Cowork Research Builder v1.0.0_\n';
+            t += '_Powered by Sorted. Cowork Series | sorted.tools_\n\n';
+
+            // P-07: Footer
+            t += '---\n\n';
+            t += '⚠️ この情報はAIが生成したものであり、正確性を保証するものではありません。必ず一次情報と照合してください。';
+
+            // 曖昧警告（条件付き）
+            const emptyOptionals = [];
+            if (!getVal('domain'))            emptyOptionals.push({ label: '対象領域・業界' });
+            if (!getVal('compareTargets'))    emptyOptionals.push({ label: '比較・競合対象（自動特定に依存）' });
+            if (!getVal('additionalContext')) emptyOptionals.push({ label: '追加コンテキスト' });
+            if (sources.length === 0)         emptyOptionals.push({ label: '情報源の優先度' });
+
+            if (emptyOptionals.length > 0) {
+                t += '\n以下の項目が未入力のため、出力の精度が低下している可能性があります:\n';
+                emptyOptionals.forEach(f => { t += '- ' + f.label + ': 未入力\n'; });
+            }
+
+            document.getElementById('output').textContent = t;
+        }
+
+        // --- COPY ---
+        function copyText(btn) {
+            const text = document.getElementById('output').textContent;
+            const originalText = btn.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerText = '✅ COPIED — PASTE INTO CLAUDE COWORK';
+                btn.style.background = 'rgba(0,255,157,0.1)';
+                btn.style.borderColor = '#00ff9d';
+                btn.style.color = '#00ff9d';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '';
+                    btn.style.borderColor = '';
+                    btn.style.color = '';
+                }, 2500);
+            }).catch(() => {
+                btn.innerText = '⚠️ コピー失敗（HTTPS環境で実行してください）';
+                setTimeout(() => { btn.innerText = originalText; }, 3000);
+            });
+        }
+    </script>
+
+</body>
+</html>

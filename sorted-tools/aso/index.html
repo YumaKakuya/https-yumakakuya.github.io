@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASO Optimizer PRO | Sorted. Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html {
+            height: 100%; background-color: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5;
+            user-select: none; -webkit-user-select: none; overflow-x: hidden;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        .hidden { display: none !important; }
+
+        /* SPLASH */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .splash-brand { font-size: 32px; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; color: #fff; }
+        .splash-brand span { color: var(--accent); }
+        .splash-sub { font-size: 12px; color: var(--muted); letter-spacing: 3px; margin-bottom: 40px; font-family: 'JetBrains Mono', monospace; }
+        .splash-btn {
+            margin-top: 20px; padding: 12px 40px; background: transparent;
+            border: 2px solid var(--accent); color: var(--accent); font-size: 14px;
+            font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: 0.3s;
+        }
+        .splash-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px var(--accent-dim); }
+
+        /* LAYOUT */
+        #app-container { display: none; opacity: 0; min-height: 100vh; flex-direction: column; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        header {
+            padding: 15px 30px; border-bottom: 1px solid var(--border);
+            background: rgba(19, 19, 31, 0.8); position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px);
+        }
+        .brand { font-size: 18px; font-weight: 800; letter-spacing: 1px; color: #fff; }
+        .brand span { color: var(--accent); }
+        .badge { font-size: 10px; background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; font-weight: 700; }
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .tool-name { font-size: 10px; color: var(--accent); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        .version { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+        .main-content { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; padding: 30px 20px; }
+
+        /* CARDS */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: border-color 0.3s; }
+        .card:hover { border-color: #444; }
+        .card-header { padding: 12px 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; background: var(--surface-lighter); color: #fff; }
+        .card-header-desc { font-size: 10px; color: var(--muted); font-weight: 400; letter-spacing: 0; margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .card-body { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: 1 / -1; }
+
+        label { display: block; color: var(--muted); font-size: 11px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .label-hint { font-size: 10px; color: #555; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 6px; }
+        input, select, textarea {
+            width: 100%; background: #08080c; border: 1px solid var(--border);
+            color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 13px; transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+        input::placeholder, textarea::placeholder { color: #444; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--muted);
+            padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: 0.2s; font-weight: 600;
+        }
+        .tag-btn:hover { border-color: #666; color: #fff; }
+        .tag-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-dim); }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 10px; color: var(--muted); letter-spacing: 2px; font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+        }
+
+        .generate-btn {
+            width: 100%; background: var(--accent); color: #000; font-weight: 800;
+            padding: 18px; border: none; border-radius: 12px; cursor: pointer;
+            font-size: 14px; letter-spacing: 1px; transition: 0.2s; text-transform: uppercase;
+            box-shadow: 0 0 20px var(--accent-dim);
+        }
+        .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,255,157,0.3); }
+        .generate-btn:active { transform: translateY(0); }
+        .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* RESULT */
+        .result-header-bar {
+            font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 12px;
+            margin-bottom: 15px; letter-spacing: 1px;
+        }
+        .terminal-window {
+            background: #08080c; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .terminal-bar {
+            background: var(--surface-lighter); padding: 8px 15px; font-size: 11px; color: var(--muted);
+            border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;
+            display: flex; align-items: center;
+        }
+        .terminal-bar::before { content: "● ● ●"; letter-spacing: -2px; margin-right: 10px; color: #444; }
+        .prompt-length { margin-left: auto; color: #555; font-size: 10px; }
+        .result-box {
+            padding: 30px; font-family: 'JetBrains Mono', monospace; color: #ccc; white-space: pre-wrap;
+            height: 500px; overflow-y: auto; font-size: 13px; line-height: 1.6;
+            user-select: text; -webkit-user-select: text;
+        }
+        .action-row { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+        .copy-btn-large {
+            width: 100%; background: var(--accent); color: #000; border: none;
+            padding: 18px; border-radius: 12px; cursor: pointer; font-weight: 800;
+            font-size: 16px; letter-spacing: 1px; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .copy-btn-large:hover { box-shadow: 0 0 30px var(--accent-dim); }
+        .back-btn {
+            background: transparent; color: var(--muted); border: 1px solid var(--border);
+            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.2s;
+        }
+        .back-btn:hover { border-color: #666; color: #fff; }
+
+        /* SERIES NAV */
+        .series-nav {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+            overflow-x: auto;
+        }
+        .series-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; }
+        .series-item {
+            font-size: 11px; padding: 6px 12px; border-radius: 20px; white-space: nowrap;
+            font-weight: 600; letter-spacing: 0.5px;
+        }
+        .series-item.done { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); }
+        .series-item.active { background: rgba(162,155,254,0.1); border: 1px solid #a29bfe; color: #a29bfe; }
+        .series-item.upcoming { border: 1px solid var(--border); color: #444; }
+        .series-arrow { color: #333; font-size: 12px; }
+
+        footer {
+            text-align: center; padding: 30px; color: var(--muted); font-size: 11px;
+            border-top: 1px solid var(--border); margin-top: auto;
+        }
+
+        .kw-counter {
+            font-size: 10px; color: #555; font-family: 'JetBrains Mono', monospace;
+            margin-top: 6px; letter-spacing: 0.5px; min-height: 16px;
+        }
+        /* SOFT WARNINGS */
+        .soft-warn {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #ff9d3a; margin-top: 5px; display: none;
+            letter-spacing: 0.5px; line-height: 1.5;
+        }
+
+        /* SAFETY BAR */
+        .safety-bar {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 10px 18px; margin-bottom: 20px; display: flex; align-items: center;
+            justify-content: space-between; gap: 12px;
+        }
+        .safety-bar-left { display: flex; align-items: center; gap: 10px; }
+        .safety-dot {
+            width: 9px; height: 9px; border-radius: 50%; background: #444;
+            flex-shrink: 0; transition: 0.3s;
+        }
+        .safety-dot.green  { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        .safety-dot.yellow { background: #ffcc00; box-shadow: 0 0 8px rgba(255,204,0,0.5); }
+        .safety-dot.red    { background: #ff4d4d; box-shadow: 0 0 8px rgba(255,77,77,0.5); }
+        .safety-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: var(--muted); letter-spacing: 1px;
+        }
+        .safety-check-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--muted);
+            font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px;
+            padding: 5px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: 0.2s;
+        }
+        .safety-check-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .safety-report {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 18px; margin-bottom: 20px; display: none;
+        }
+        .safety-report-header {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
+            letter-spacing: 2px; margin-bottom: 10px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .safety-report-item { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+        .safety-report-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+        .safety-report-text {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #aaa; letter-spacing: 0.3px; line-height: 1.5;
+        }
+        .safety-report-close {
+            background: none; border: none; color: var(--muted); cursor: pointer;
+            font-size: 12px; padding: 0;
+        }
+        .safety-report-close:hover { color: var(--text); }
+
+        .form-actions { display: flex; flex-direction: column; gap: 12px; }
+        .reset-btn {
+            background: transparent; color: #555; border: 1px solid var(--border);
+            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            font-size: 11px; letter-spacing: 1px; width: 100%; transition: 0.2s;
+        }
+        .reset-btn:hover { border-color: #ff6b6b; color: #ff6b6b; }
+
+        @media (max-width: 600px) { .card-body { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+    <div class="splash-sub fade-in" style="animation-delay:0.1s">ASO OPTIMIZER</div>
+    <button class="splash-btn fade-in" style="animation-delay: 0.3s;" onclick="startApp()">INITIALIZE SYSTEM</button>
+</div>
+
+<div id="app-container">
+    <header>
+        <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="header-right">
+            <div class="tool-name">ASO OPTIMIZER</div>
+            <div class="version">v1.0.0</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- SERIES NAV -->
+        <div class="series-nav">
+            <span class="series-label">SERIES /</span>
+            <span class="series-item done">01 Revenue Forecast</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item active">02 ASO Optimizer ◀</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item upcoming">03 Pitch Deck</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item upcoming">04 Pricing Strategy</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item upcoming">05 Competitor Research</span>
+        </div>
+
+        <div id="form-view">
+
+            <div class="safety-bar" id="safetyBar">
+                <div class="safety-bar-left">
+                    <div class="safety-dot" id="safetyDot"></div>
+                    <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+                </div>
+                <button class="safety-check-btn" onclick="toggleReadinessReport()">READINESS CHECK ▼</button>
+            </div>
+
+            <div class="safety-report" id="safetyReport">
+                <div class="safety-report-header">
+                    <span>READINESS REPORT</span>
+                    <button class="safety-report-close" onclick="toggleReadinessReport()">✕</button>
+                </div>
+                <div id="safetyReportItems"></div>
+            </div>
+
+            <!-- CARD 1: APP INFO -->
+            <div class="card" style="border-top: 3px solid #00ff9d;">
+                <div class="card-header">
+                    <div class="dot" style="background:#00ff9d"></div>
+                    APP INFO
+                    <span class="card-header-desc">Basic Info</span>
+                </div>
+                <div class="card-body">
+                    <div><label>App Name<span style="color:#ff6b6b">★Required</span></label><input type="text" id="appName" placeholder="e.g. FitTracker, MealPlan Pro"></div>
+                    <div>
+                        <label>Category</label>
+                        <select id="category">
+                            <option>Education</option>
+                            <option>Business</option>
+                            <option>Utilities</option>
+                            <option>Health & Fitness</option>
+                            <option>Games</option>
+                            <option>Lifestyle</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Platform</label>
+                        <select id="platform">
+                            <option>iOS Only</option>
+                            <option>iOS & Android</option>
+                            <option>Android Only</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Target Region</label>
+                        <select id="region">
+                            <option>United States</option>
+                            <option>Global (Worldwide)</option>
+                            <option>Global (English-speaking)</option>
+                            <option>Asia-Pacific</option>
+                            <option>North America</option>
+                            <option>Europe</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label>One-Line Description<span style="color:#ff6b6b">★Required</span></label>
+                        <input type="text" id="appDesc" placeholder="e.g. A calorie-tracking app that logs meals in 3 seconds with AI photo recognition">
+                        <div class="soft-warn" id="appDescVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: KEYWORD STRATEGY -->
+            <div class="card" style="border-top: 3px solid #a29bfe;">
+                <div class="card-header">
+                    <div class="dot" style="background:#a29bfe"></div>
+                    KEYWORD STRATEGY
+                    <span class="card-header-desc">Keyword Strategy</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Target Keywords<span style="color:#ff6b6b">★Required</span> <span class="label-hint">comma-separated</span></label>
+                        <textarea id="targetKw" placeholder="e.g. calorie tracker, meal planner, diet app, food log"></textarea>
+                        <div class="kw-counter" id="kwCounter"></div>
+                    </div>
+                    <div class="full">
+                        <label>Competitor Apps<span class="label-hint">as many as you know</span></label>
+                        <input type="text" id="competitors" placeholder="e.g. MyFitnessPal, Lose It!, Yazio">
+                    </div>
+                    <div>
+                        <label>Current Keyword Ranking</label>
+                        <select id="currentRank">
+                            <option>Not yet released</option>
+                            <option>Unranked (100+)</option>
+                            <option>Rank 51–100</option>
+                            <option>Rank 21–50</option>
+                            <option>Rank 11–20</option>
+                            <option>Top 10</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Current Review Count</label>
+                        <select id="reviewCount">
+                            <option>0 (Not released)</option>
+                            <option>1–10</option>
+                            <option>11–50</option>
+                            <option>51–200</option>
+                            <option>200+</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label>Current App Description <span class="label-hint">optional</span></label>
+                        <textarea id="currentDesc" placeholder="Paste your current store listing description here (optional)"></textarea>
+                    </div>
+                    <div class="full">
+                        <label>Competitor Store URL <span class="label-hint">optional</span></label>
+                        <input type="text" id="competitorUrl" placeholder="e.g. https://apps.apple.com/us/app/... (optional)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: TARGET USER -->
+            <div class="card" style="border-top: 3px solid #ff6b6b;">
+                <div class="card-header">
+                    <div class="dot" style="background:#ff6b6b"></div>
+                    TARGET USER
+                    <span class="card-header-desc">Target User</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Target User Profile</label>
+                        <textarea id="targetUser" placeholder="e.g. Health-conscious millennials who want to track calories but find existing apps too complex"></textarea>
+                        <div class="soft-warn" id="targetUserVagueWarn"></div>
+                    </div>
+                    <div class="full">
+                        <label>User Search Terms<span class="label-hint">the words users actually type</span></label>
+                        <input type="text" id="searchWords" placeholder='e.g. "easy calorie counter" "simple meal tracker" "diet app no ads"'>
+                    </div>
+                    <div>
+                        <label>Download Motivation</label>
+                        <select id="dlMotivation">
+                            <option>Increase download volume</option>
+                            <option>Rank higher in store search</option>
+                            <option>Stand out from competitors</option>
+                            <option>Solidify ASO strategy before launch</option>
+                            <option>Improve ratings &amp; reviews</option>
+                            <option>Just exploring (low commitment)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Competitive Differentiator</label>
+                        <input type="text" id="differentiation" placeholder="e.g. AI photo recognition — log meals without typing">
+                        <div class="soft-warn" id="differentiationVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: ASO GOALS -->
+            <div class="card" style="border-top: 3px solid #ffcc00;">
+                <div class="card-header">
+                    <div class="dot" style="background:#ffcc00"></div>
+                    ASO GOALS
+                    <span class="card-header-desc">Optimization Goals</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Primary Goal</label>
+                        <div class="tags" id="goal-tags"></div>
+                    </div>
+                    <div class="full">
+                        <label>Required Output (select multiple)</label>
+                        <div class="tags" id="output-tags"></div>
+                    </div>
+                    <div class="full">
+                        <label>Additional Notes <span class="label-hint">any special conditions or constraints</span></label>
+                        <input type="text" id="notes" placeholder="e.g. Organic-only strategy (zero ad spend), US market priority">
+                        <div class="soft-warn" id="notesVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>⚡ GENERATE ASO PROMPT</button>
+                <button class="reset-btn" onclick="resetForm()">RESET FORM</button>
+            </div>
+        </div>
+
+        <!-- RESULT VIEW -->
+        <div id="result-view" class="hidden">
+            <div class="result-header-bar">
+                > STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-bar">aso_prompt.txt - Read Only<span class="prompt-length" id="promptLength"></span></div>
+                <div class="result-box" id="output"></div>
+            </div>
+            <div class="action-row">
+                <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                <button class="back-btn" onclick="backToForm()">CREATE NEW PROMPT</button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        © 2026 Sorted. Tools Division. All rights reserved.<br>
+        Part of the Sorted. Series — <strong style="color:var(--accent)">Revenue Forecast</strong> → <strong style="color:#a29bfe">ASO Optimizer</strong> → Pitch Deck → Pricing Strategy → Competitor Research
+    </footer>
+</div>
+
+<script>
+    const LANG = "English";
+    const STORAGE_KEY = 'sorted_aso_en_form';
+    const splash = document.getElementById('splash-screen');
+    const appContainer = document.getElementById('app-container');
+    const formView = document.getElementById('form-view');
+    const resultView = document.getElementById('result-view');
+    const generateBtn = document.getElementById('generateBtn');
+    let isGenerating = false;
+
+    function startApp() {
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+            splash.style.display = 'none';
+            appContainer.style.display = 'flex';
+            appContainer.classList.add('fade-in');
+            checkGate1();
+        }, 500);
+    }
+
+    function processGeneration() {
+        if (isGenerating) return;
+        if (!checkGate1(true)) return;
+        isGenerating = true;
+        generateBtn.disabled = true;
+        generatePromptText();
+        formView.classList.add('fade-out');
+        setTimeout(() => {
+            formView.classList.add('hidden');
+            formView.classList.remove('fade-out');
+            resultView.classList.remove('hidden');
+            resultView.classList.add('fade-in');
+            setTimeout(() => resultView.classList.remove('fade-in'), 500);
+            isGenerating = false;
+        }, 500);
+    }
+
+    function backToForm() {
+        resultView.classList.add('fade-out');
+        setTimeout(() => {
+            resultView.classList.add('hidden');
+            resultView.classList.remove('fade-out');
+            formView.classList.remove('hidden');
+            formView.classList.add('fade-in');
+            setTimeout(() => formView.classList.remove('fade-in'), 500);
+            checkGate1();
+        }, 500);
+    }
+
+    // --- VAGUE / ABSTRACT WORD DETECTION ---
+    const VAGUE_WORDS = [
+        'kind of', 'sort of', 'something like', 'whatever', 'stuff',
+        'things', 'basically', 'just make it good', 'make it nice',
+        'you know', 'figure it out', 'up to you', 'I guess',
+        'probably', 'maybe', 'not sure', 'idk', 'etc',
+        'awesome', 'amazing', 'cool', 'great', 'best',
+        'somehow', 'just do it', 'make it work', 'do your thing'
+    ];
+    const INSTRUCTION_WORDS = [
+        'please do', 'please create', 'please make', 'can you',
+        'could you', 'I want you to', 'generate', 'write me',
+        'build me', 'come up with', 'figure out'
+    ];
+
+    const VAGUE_CHECK_FIELDS = [
+        { id: 'appDesc',          warnId: 'appDescVagueWarn',          label: 'App Description' },
+        { id: 'targetUser',       warnId: 'targetUserVagueWarn',       label: 'Target User' },
+        { id: 'differentiation',  warnId: 'differentiationVagueWarn',  label: 'Differentiator' },
+        { id: 'notes',            warnId: 'notesVagueWarn',            label: 'Notes' },
+    ];
+
+    function checkVagueInputs() {
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const el = document.getElementById(f.id);
+            const warn = document.getElementById(f.warnId);
+            if (!el || !warn) return;
+            const val = el.value.trim();
+            if (val.length === 0) { warn.style.display = 'none'; return; }
+
+            const vagueHit  = VAGUE_WORDS.find(w => val.includes(w));
+            const instrHit  = INSTRUCTION_WORDS.find(w => val.includes(w));
+
+            if (vagueHit) {
+                warn.textContent = '⚠ "' + vagueHit + '" is vague — be more specific for better prompt accuracy';
+                warn.style.display = 'block';
+            } else if (instrHit) {
+                warn.textContent = '⚠ Task instruction ("' + instrHit + '") detected — this field is for facts and context, not instructions';
+                warn.style.display = 'block';
+            } else {
+                warn.style.display = 'none';
+            }
+        });
+    }
+
+    VAGUE_CHECK_FIELDS.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (el) {
+            el.addEventListener('input', checkVagueInputs);
+            el.addEventListener('change', checkVagueInputs);
+        }
+    });
+
+    // TAG OPTIONS
+    const goalOpts = [
+        "Increase search impressions",
+        "Improve download conversion (CVR)",
+        "Improve ratings & reviews",
+        "Rank for specific keywords",
+        "Stabilize long-term organic growth"
+    ];
+    const outputOpts = [
+        "Title & subtitle optimization (3 variants)",
+        "Keyword field design",
+        "Description rewrite",
+        "Screenshot copy text",
+        "Review prompt copy & timing",
+        "Competitive positioning analysis",
+        "Localization strategy"
+    ];
+
+    const selectedGoals = new Set();
+    const selectedOutputs = new Set();
+
+    function renderTags(id, opts, set) {
+        const container = document.getElementById(id);
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            btn.textContent = opt;
+            btn.onclick = () => {
+                if (set.has(opt)) { set.delete(opt); btn.classList.remove('active'); }
+                else { set.add(opt); btn.classList.add('active'); }
+                scheduleSave();
+                updateSafetyBar();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    renderTags('goal-tags', goalOpts, selectedGoals);
+    renderTags('output-tags', outputOpts, selectedOutputs);
+
+    // --- localStorage persistence ---
+    const formFieldIds = [
+        'appName', 'category', 'platform', 'region', 'appDesc',
+        'targetKw', 'competitors', 'currentRank', 'reviewCount',
+        'currentDesc', 'competitorUrl', 'targetUser', 'searchWords',
+        'dlMotivation', 'differentiation', 'notes'
+    ];
+
+    let saveTimeout;
+    function scheduleSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveForm, 400);
+    }
+
+    function saveForm() {
+        const data = {};
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data._goals = Array.from(selectedGoals);
+        data._outputs = Array.from(selectedOutputs);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function restoreForm() {
+        let data;
+        try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) {}
+        if (!data) return;
+
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && data[id] !== undefined) el.value = data[id];
+        });
+
+        if (Array.isArray(data._goals)) {
+            const btns = document.getElementById('goal-tags').querySelectorAll('.tag-btn');
+            btns.forEach(btn => {
+                if (data._goals.includes(btn.textContent)) {
+                    selectedGoals.add(btn.textContent);
+                    btn.classList.add('active');
+                }
+            });
+        }
+        if (Array.isArray(data._outputs)) {
+            const btns = document.getElementById('output-tags').querySelectorAll('.tag-btn');
+            btns.forEach(btn => {
+                if (data._outputs.includes(btn.textContent)) {
+                    selectedOutputs.add(btn.textContent);
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        updateKwCount();
+        checkVagueInputs();
+        checkGate1();
+    }
+
+    function resetForm() {
+        if (!confirm('Reset all form fields?')) return;
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else el.value = '';
+        });
+        selectedGoals.clear();
+        selectedOutputs.clear();
+        document.querySelectorAll('.tag-btn.active').forEach(btn => btn.classList.remove('active'));
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        updateKwCount();
+        checkVagueInputs();
+        checkGate1();
+    }
+
+    restoreForm();
+
+    formFieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => { scheduleSave(); updateSafetyBar(); });
+            el.addEventListener('change', () => { scheduleSave(); updateSafetyBar(); });
+        }
+    });
+
+    // --- Keyword counter ---
+    function updateKwCount() {
+        const el = document.getElementById('targetKw');
+        const counter = document.getElementById('kwCounter');
+        if (!el || !counter) return;
+        const raw = el.value.trim();
+        if (raw.length === 0) { counter.textContent = ''; return; }
+        const tokens = raw.split(/[,、\s]+/).filter(k => k.length > 0);
+        counter.textContent = tokens.length + ' keyword' + (tokens.length !== 1 ? 's' : '') + ' detected';
+    }
+
+    document.getElementById('targetKw').addEventListener('input', updateKwCount);
+    updateKwCount();
+
+    function sanitize(str) {
+        if (typeof str !== 'string') return '';
+        return str
+            .normalize('NFKC')
+            .replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+            .replace(/\u301C/g, '\uFF5E')
+            .replace(/\u2014/g, '\u2015')
+            .replace(/&[#a-zA-Z0-9]+;/g, '')
+            .replace(/[<>]/g, '')
+            .replace(/ignore previous instructions/gi, '')
+            .replace(/forget all instructions/gi, '')
+            .replace(/disregard previous/gi, '')
+            .replace(/\u3000/g, ' ')
+            .replace(/ {2,}/g, ' ')
+            .replace(/([！？!?])\1{2,}/g, '$1')
+            .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF\u2015]/g, '')
+            .trim();
+    }
+
+    function getVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return '(not provided)';
+        const raw = el.value || '';
+        const cleaned = sanitize(raw);
+        return cleaned.length === 0 ? '(not provided)' : cleaned;
+    }
+
+    function getEmptyOptionalFields() {
+        const optionalFields = [
+            { id: 'competitors', label: 'Competitor Apps' },
+            { id: 'currentRank', label: 'Current Keyword Ranking', isSelect: true },
+            { id: 'targetUser', label: 'Target User Profile' },
+            { id: 'searchWords', label: 'User Search Terms' },
+            { id: 'currentDesc', label: 'Current App Description' },
+            { id: 'competitorUrl', label: 'Competitor Store URL' },
+        ];
+        return optionalFields.filter(f => {
+            const el = document.getElementById(f.id);
+            if (!el) return false;
+            return el.value.trim().length === 0;
+        });
+    }
+
+    function checkGate1(showAlert) {
+        const appNameLen = (document.getElementById('appName').value || '').trim().length;
+        const appDescLen = (document.getElementById('appDesc').value || '').trim().length;
+        const targetKwLen = (document.getElementById('targetKw').value || '').trim().length;
+        const isValid = appNameLen >= 3 && appDescLen >= 3 && targetKwLen >= 3;
+        if (generateBtn) generateBtn.disabled = !isValid;
+        updateSafetyBar();
+        return isValid;
+    }
+
+    function updateSafetyBar() {
+        const dot   = document.getElementById('safetyDot');
+        const label = document.getElementById('safetyLabel');
+        if (!dot || !label) return;
+
+        const appName  = (document.getElementById('appName').value || '').trim();
+        const appDesc  = (document.getElementById('appDesc').value || '').trim();
+        const targetKw = (document.getElementById('targetKw').value || '').trim();
+
+        if (!appName && !appDesc && !targetKw) {
+            dot.className = 'safety-dot';
+            label.textContent = 'Waiting for input...';
+            return;
+        }
+
+        const requiredOk = appName.length >= 3 && appDesc.length >= 3 && targetKw.length >= 3;
+        if (!requiredOk) {
+            dot.className = 'safety-dot red';
+            label.textContent = 'NOT READY — Required fields missing';
+            return;
+        }
+
+        const competitors     = (document.getElementById('competitors').value || '').trim();
+        const targetUser      = (document.getElementById('targetUser').value || '').trim();
+        const searchWords     = (document.getElementById('searchWords').value || '').trim();
+        const differentiation = (document.getElementById('differentiation').value || '').trim();
+        const hasGoals        = selectedGoals.size > 0;
+        const hasOutputs      = selectedOutputs.size > 0;
+
+        const recommendedFilled = competitors && targetUser && searchWords &&
+                                  differentiation && hasGoals && hasOutputs;
+
+        if (recommendedFilled) {
+            dot.className = 'safety-dot green';
+            label.textContent = 'ALL CLEAR — Ready to generate high-precision prompt';
+        } else {
+            dot.className = 'safety-dot yellow';
+            label.textContent = 'READY — Fill recommended fields for better accuracy';
+        }
+    }
+
+    function toggleReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        if (report.style.display === 'block') {
+            report.style.display = 'none';
+        } else {
+            buildReadinessReport();
+            report.style.display = 'block';
+        }
+    }
+
+    function buildReadinessReport() {
+        const items = [];
+        const v = id => (document.getElementById(id).value || '').trim();
+
+        const appName  = v('appName');
+        const appDesc  = v('appDesc');
+        const targetKw = v('targetKw');
+
+        items.push(appName.length >= 3
+            ? { icon: '\u2705', text: 'App Name: ' + appName }
+            : { icon: '\u26A0\uFE0F', text: 'App Name is required (min 3 characters)' });
+
+        items.push(appDesc.length >= 3
+            ? { icon: '\u2705', text: 'App Description: OK' }
+            : { icon: '\u26A0\uFE0F', text: 'App Description is required (min 3 characters)' });
+
+        items.push(targetKw.length >= 3
+            ? { icon: '\u2705', text: 'Target Keywords: ' + targetKw.split(/[,、\s]+/).filter(Boolean).length + ' detected' }
+            : { icon: '\u26A0\uFE0F', text: 'Target Keywords are required' });
+
+        const kwTokens = targetKw.split(/[,、\s]+/).filter(Boolean);
+        const singleWordKw = kwTokens.filter(k => k.length <= 2);
+        if (singleWordKw.length > 0) {
+            items.push({ icon: '\uD83D\uDCA1', text: 'Short keywords detected (' + singleWordKw.join(', ') + ') — compound phrases improve search precision' });
+        }
+
+        const competitors     = v('competitors');
+        const targetUser      = v('targetUser');
+        const searchWords     = v('searchWords');
+        const differentiation = v('differentiation');
+        const currentDesc     = v('currentDesc');
+
+        items.push(competitors
+            ? { icon: '\u2705', text: 'Competitors: provided' }
+            : { icon: '\uD83D\uDCA1', text: 'No competitors — AI will estimate but accuracy decreases' });
+
+        items.push(targetUser
+            ? { icon: '\u2705', text: 'Target User: provided' }
+            : { icon: '\uD83D\uDCA1', text: 'No target user — clear persona improves strategy precision' });
+
+        items.push(searchWords
+            ? { icon: '\u2705', text: 'Search Terms: provided' }
+            : { icon: '\uD83D\uDCA1', text: 'No search terms — impacts keyword strategy' });
+
+        items.push(differentiation
+            ? { icon: '\u2705', text: 'Differentiator: provided' }
+            : { icon: '\uD83D\uDCA1', text: 'No differentiator — needed for competitive analysis' });
+
+        items.push(currentDesc
+            ? { icon: '\u2705', text: 'Current Description: provided' }
+            : { icon: '\uD83D\uDCA1', text: 'No current description — rewrite accuracy improves with it' });
+
+        items.push(selectedGoals.size > 0
+            ? { icon: '\u2705', text: 'ASO Goals: ' + selectedGoals.size + ' selected' }
+            : { icon: '\uD83D\uDCA1', text: 'No ASO goals — strategy direction will be unclear' });
+
+        items.push(selectedOutputs.size > 0
+            ? { icon: '\u2705', text: 'Output: ' + selectedOutputs.size + ' selected' }
+            : { icon: '\uD83D\uDCA1', text: 'No output selected — specifying deliverables improves actionability' });
+
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const val = v(f.id);
+            if (!val) return;
+            const vagueHit = VAGUE_WORDS.find(w => val.includes(w));
+            const instrHit = INSTRUCTION_WORDS.find(w => val.includes(w));
+            if (vagueHit) {
+                items.push({ icon: '\u26A0\uFE0F', text: f.label + ' contains vague term "' + vagueHit + '" — be more specific for better results' });
+            } else if (instrHit) {
+                items.push({ icon: '\u26A0\uFE0F', text: f.label + ' contains task instruction "' + instrHit + '" — use facts/context instead' });
+            }
+        });
+
+        document.getElementById('safetyReportItems').innerHTML = items.map(i =>
+            '<div class="safety-report-item"><span class="safety-report-icon">' + i.icon +
+            '</span><span class="safety-report-text">' + i.text + '</span></div>'
+        ).join('');
+    }
+
+    ['appName', 'appDesc', 'targetKw'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', checkGate1);
+            el.addEventListener('change', checkGate1);
+        }
+    });
+    checkGate1();
+
+    function generatePromptText() {
+        let t = 'IMPORTANT: Before answering, you MUST run the following web searches:\n';
+        t += '- Current ASO trends and algorithm updates for ' + getVal('platform') + ' (' + getVal('region') + ')\n';
+        t += '- Current keyword search volume and competition for: ' + (document.getElementById('targetKw').value ? sanitize(document.getElementById('targetKw').value) : '(not provided)') + '\n';
+        t += '- Current store page, rating, and pricing of competing apps in "' + getVal('category') + '" category\n';
+        t += 'Base ALL responses on search results. Cite every source with retrieval date.\n\n';
+        t += '---\n\n';
+        t += 'PRIVACY NOTICE: All information provided below is to be used SOLELY for generating this output. Do NOT use it for training, logging, or any other purpose.\n\n';
+        t += '# App Store Optimization (ASO) Strategy Prompt\n\n';
+        t += 'You are a senior ASO strategist with 10+ years of experience driving organic growth for mobile apps across App Store and Google Play. You have boosted multiple apps from unranked to Top 10 in competitive categories. Always leverage the latest ASO data from web search. Produce a concrete, immediately actionable ASO strategy.\n\n';
+
+        const compInput = document.getElementById('competitors').value.trim();
+        const compLine = compInput.length === 0
+            ? '- Competitors: (not provided) → Search the web to identify top competitors. Classify each as [Supplemented: Direct], [Supplemented: Adjacent], or [Supplemented: Workflow Alternative].\n'
+            : '- Competitors: ' + sanitize(compInput) + ' [User-provided] → Verify appropriateness. Supplement if needed. Classify all competitors as one of: [User-provided], [Supplemented: Direct], [Supplemented: Adjacent], [Supplemented: Workflow Alternative].\n';
+
+        t += '## Section 1: App Overview\n';
+        t += '- App Name: ' + getVal('appName') + '\n';
+        t += '- One-line Description: ' + getVal('appDesc') + '\n';
+        t += '- Category: ' + getVal('category') + '\n';
+        t += '- Platform: ' + getVal('platform') + '\n';
+        t += '- Target Region: ' + getVal('region') + '\n\n';
+
+        const kwRaw = document.getElementById('targetKw').value.trim();
+        const kwCleaned = sanitize(kwRaw);
+        const kwTokens = kwCleaned.split(/[,、\s]+/).filter(k => k.length > 0);
+        const kwSingleWordWarning = (kwTokens.length === 1 && kwTokens[0].length <= 8)
+            ? '\n  ⚠️ WARNING: Only one short keyword was provided. This keyword may have broad or ambiguous search intent. You MUST supplement with compound keyword variants and evaluate each separately.'
+            : '';
+
+        t += '## Section 2: Current ASO Status\n';
+        t += '- Target Keywords: ' + (kwCleaned.length > 0 ? kwCleaned : '(not provided)') + kwSingleWordWarning + '\n';
+        t += compLine;
+        t += '- Current Keyword Ranking: ' + getVal('currentRank') + '\n';
+        t += '- Current Review Count: ' + getVal('reviewCount') + '\n';
+        t += '- Current App Description: ' + getVal('currentDesc') + '\n';
+        t += '- Competitor Store Page URL: ' + getVal('competitorUrl') + '\n\n';
+        t += '## Section 3: Target User\n';
+        t += '- Target User Profile: ' + getVal('targetUser') + '\n';
+        t += '- User Search Terms: ' + getVal('searchWords') + '\n';
+        t += '- Download Motivation: ' + getVal('dlMotivation') + '\n';
+        t += '- Differentiation from Competitors: ' + getVal('differentiation') + '\n\n';
+
+        const goals = Array.from(selectedGoals).join(', ') || '(not specified — provide comprehensive ASO improvement)';
+        const outputs = Array.from(selectedOutputs).join(', ') || '(comprehensive ASO recommendations)';
+        t += '## Section 4: Goals & Required Output\n';
+        t += '- Primary ASO Goal: ' + goals + '\n';
+        t += '- Required Output Items: ' + outputs + '\n';
+        t += '- Additional Notes: ' + getVal('notes') + '\n\n';
+
+        t += '## INTERPRETATION RULES (Read before generating output)\n\n';
+        t += 'Rule 1 — Keyword Prioritization:\n';
+        t += '  Evaluate all target keywords on 3 axes: Search Volume × Competition Difficulty × Relevance.\n';
+        t += '  Rank them from highest to lowest expected ROI. Do NOT treat all keywords as equal.\n\n';
+        t += 'Rule 2 — Primary Recommended Keyword:\n';
+        t += '  At the very TOP of your output (before any other content), state ONE primary recommended keyword.\n';
+        t += '  Format: [PRIMARY KEYWORD]: {keyword} — Reason: {reason} | Estimated Search Volume: {volume}\n';
+        t += '  This is mandatory. Do NOT skip or bury it.\n\n';
+        t += 'Rule 3 — Output Phase Order:\n';
+        t += '  Do NOT produce any critical evaluation or concerns until PHASE 4 is complete.\n';
+        t += '  PHASE 4 is the designated phase for honest, direct critique.\n\n';
+        t += 'Rule 4 — Competitor Supplementation & Classification:\n';
+        t += '  Classify ALL competitors using these exact tags:\n';
+        t += '    [User-provided]: competitors entered by the user\n';
+        t += '    [Supplemented: Direct]: solves the same problem for the same user\n';
+        t += '    [Supplemented: Adjacent]: operates in the same workflow context\n';
+        t += '    [Supplemented: Workflow Alternative]: different approach to the same job\n';
+        t += '  Never remove user-provided competitors. Supplement if fewer than 3 total.\n\n';
+        t += 'Rule 5 — Assumption Quality:\n';
+        t += '  Every search volume or competition estimate must use one of these labels:\n';
+        t += '    [Estimated: Relative] — based on comparison with similar keywords\n';
+        t += '    [Estimated: Heuristic based on App Store intent] — based on user search behavior inference\n';
+        t += '    [Estimated: Competitor wording overlap] — based on how competitors describe similar features\n';
+        t += '  Do NOT use bare [Estimated] without a label type. Do NOT present estimates as confirmed data.\n\n';
+        t += 'Rule 6 — Region & Language Awareness:\n';
+        t += '  ASO strategy must be tailored to the specified target region and language.\n';
+        t += '  Keyword recommendations for Japan must be in Japanese. For global/English regions, in English.\n';
+        t += '  State the region context explicitly at the start of PHASE 1.\n\n';
+
+        t += '## STRICT OUTPUT INSTRUCTIONS\n\n';
+        t += '[PRIMARY KEYWORD] ← Output this FIRST, before any PHASE\n\n';
+        t += 'PHASE 1 — Keyword Analysis\n';
+        t += '  Output a keyword priority matrix table:\n';
+        t += '  | Keyword | Est. Search Volume | Competition | Relevance | Priority |\n';
+        t += '  Include all provided keywords + supplemented ones.\n';
+        t += '  Identify quick-win keywords (high volume, low competition) explicitly.\n\n';
+        t += 'PHASE 2 — Title & Subtitle Optimization\n';
+        t += '  Propose 3 patterns of title + subtitle combinations.\n';
+        t += '  For each pattern, state:\n';
+        t += '  - Target keywords included\n';
+        t += '  - User psychology appeal\n';
+        t += '  - Character count (App Store limits: title 30 chars, subtitle 30 chars)\n\n';
+        t += 'PHASE 3 — Description Strategy\n';
+        t += '  Show exactly what to write in the first 3 lines (above the fold).\n';
+        t += '  Provide a rewritten description that balances keyword density and conversion copy.\n';
+        t += '  Mark every embedded keyword with [KW].\n\n';
+        t += 'PHASE 4 — Competitive Positioning & Critical Evaluation\n';
+        t += '  Identify the "white space" this app can own that competitors have not claimed.\n';
+        t += '  Be direct and critical. State clearly what is unlikely to work given current status.\n';
+        t += '  Minimum requirements:\n';
+        t += '  (a) Top 3 immediate actions ranked by expected ROI\n';
+        t += '  (b) At least 2 specific risks or weaknesses in the current ASO approach\n';
+        t += '  (c) At least 1 competitor insight found via web search (with source and date)\n\n';
+        t += 'MINIMUM OUTPUT REQUIREMENTS:\n';
+        t += '  Each PHASE must contain substantive analysis — not just headings or bullet placeholders.\n';
+        t += '  PHASE 1: Keyword matrix table with at least 5 keywords evaluated.\n';
+        t += '  PHASE 2: Exactly 3 title/subtitle patterns with character counts.\n';
+        t += '  PHASE 3: At least 3 lines of above-the-fold copy + full rewritten description.\n';
+        t += '  PHASE 4: Minimum (a)(b)(c) as specified above.\n\n';
+        t += 'PRE-OUTPUT SELF-CHECK:\n';
+        t += 'Before output, verify:\n';
+        t += '(a) [PRIMARY KEYWORD] is the very first line of output\n';
+        t += '(b) INTERPRETATION RULES applied correctly\n';
+        t += '(c) Phase order maintained — no critique before PHASE 4\n';
+        t += '(d) All estimates use labeled format: [Estimated: Relative] / [Estimated: Heuristic based on App Store intent] / [Estimated: Competitor wording overlap]\n';
+        t += '(e) All competitors classified as [User-provided] / [Supplemented: Direct] / [Supplemented: Adjacent] / [Supplemented: Workflow Alternative]\n';
+        t += '(f) Character counts provided for all title/subtitle proposals\n';
+        t += '(g) PHASE 4 meets minimum requirements (a)(b)(c)\n\n';
+        t += 'IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n';
+        t += '_Generated with Sorted.Tools PRO — ASO Optimizer v1.0.0_\n';
+        t += '_Powered by Sorted. Series | sorted.tools_\n\n';
+        t += '---\n\n';
+        t += '⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n';
+
+        const emptyFields = getEmptyOptionalFields();
+        if (emptyFields.length > 0) {
+            t += '\nThe following optional fields were left empty, which may reduce output precision:\n';
+            emptyFields.forEach(f => { t += '- ' + f.label + ': not provided\n'; });
+        }
+
+        t += '\n_Generated with Sorted.Tools PRO — ASO Optimizer v1.0.0_\n';
+        t += '_Powered by Sorted. Series | sorted.tools_\n';
+
+        t += '\n\nRespond entirely in ' + LANG + '.';
+        document.getElementById('output').textContent = t;
+
+        const len = t.length;
+        const lenDisplay = len >= 1000 ? (len / 1000).toFixed(1) + 'k' : len;
+        document.getElementById('promptLength').textContent = lenDisplay + ' chars';
+    }
+
+    function copyText(btn) {
+        const text = document.getElementById('output').textContent;
+        const original = btn.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerText = '✅ COPIED TO CLIPBOARD';
+            btn.style.background = '#fff'; btn.style.color = '#000';
+            setTimeout(() => { btn.innerText = original; btn.style.background = ''; btn.style.color = ''; }, 2000);
+        }).catch(() => {
+            btn.innerText = '⚠️ Copy failed — HTTPS or user interaction required';
+            setTimeout(() => { btn.innerText = original; }, 3000);
+        });
+    }
+</script>
+</body>
+</html>

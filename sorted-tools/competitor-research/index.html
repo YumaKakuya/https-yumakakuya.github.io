@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Competitor Research PRO | Sorted. Tools</title>
+
+    <!-- Google Fonts: preconnect + load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS VARIABLES — Sorted. Design System
+           ============================================ */
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* ============================================
+           SPLASH SCREEN
+           ============================================ */
+        .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .splash-brand {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .splash-brand .dot {
+            color: var(--accent);
+        }
+
+        .splash-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--muted);
+            letter-spacing: 4px;
+            margin-bottom: 2.5rem;
+        }
+
+        .splash-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 14px 40px;
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .splash-btn:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        /* ============================================
+           APP CONTAINER
+           ============================================ */
+        .app {
+            display: none;
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+        }
+
+        .app.visible {
+            display: block;
+        }
+
+        /* ============================================
+           STICKY HEADER
+           ============================================ */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .header-brand {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .header-brand .dot {
+            color: var(--accent);
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .header-tool {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 2px;
+        }
+
+        .header-version {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--muted);
+            opacity: 0.6;
+        }
+
+        /* ============================================
+           SERIES NAV BAR
+           ============================================ */
+        .series-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .series-nav-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            padding: 6px 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            background: var(--surface);
+        }
+
+        /* Done items */
+        .series-nav-item.done {
+            border-color: rgba(0, 255, 157, 0.3);
+            color: rgba(0, 255, 157, 0.5);
+            background: rgba(0, 255, 157, 0.05);
+        }
+
+        /* Active item — Competitor Research */
+        .series-nav-item.active {
+            background: rgba(255, 200, 80, 0.12);
+            border-color: #ffc850;
+            color: #ffc850;
+        }
+
+        /* ============================================
+           SAFETY BAR
+           ============================================ */
+        .safety-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .safety-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #555;
+            flex-shrink: 0;
+            transition: background 0.3s ease;
+        }
+
+        .safety-dot.red { background: #ff4444; }
+        .safety-dot.yellow { background: #ffcc00; }
+        .safety-dot.green { background: #00ff9d; }
+
+        .safety-label {
+            flex: 1;
+            color: var(--muted);
+        }
+
+        .safety-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .safety-toggle:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ============================================
+           SAFETY REPORT
+           ============================================ */
+        .safety-report {
+            display: none;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+
+        .safety-report.visible {
+            display: block;
+        }
+
+        .safety-report-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .safety-report-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            color: var(--muted);
+        }
+
+        .safety-report-item .check {
+            color: var(--accent);
+        }
+
+        .safety-report-item .missing {
+            color: #ff4444;
+        }
+
+        .safety-report-item .warn {
+            color: #ffcc00;
+        }
+
+        /* ============================================
+           FORM CARDS
+           ============================================ */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--text);
+        }
+
+        .card-body {
+            padding: 0 20px 20px;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .form-label .required {
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        .label-hint {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--muted);
+            margin-bottom: 6px;
+            font-style: italic;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--surface-lighter);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            transition: border-color 0.2s ease;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 32px;
+        }
+
+        ::placeholder {
+            color: var(--muted);
+            opacity: 0.6;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* ============================================
+           SOFT WARN
+           ============================================ */
+        .soft-warn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: #ffcc00;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .soft-warn.visible {
+            display: block;
+        }
+
+        /* ============================================
+           OUTPUT TAGS (multi-select)
+           ============================================ */
+        .output-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .output-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            padding: 6px 14px;
+            background: var(--surface-lighter);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .output-tag:hover {
+            border-color: var(--accent);
+            color: var(--text);
+        }
+
+        .output-tag.selected {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ============================================
+           FORM ACTIONS
+           ============================================ */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .generate-btn {
+            flex: 1;
+            padding: 14px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s ease, transform 0.1s ease;
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            background: var(--border);
+            color: var(--muted);
+            cursor: not-allowed;
+        }
+
+        .reset-btn {
+            padding: 14px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .reset-btn:hover {
+            border-color: #ff4444;
+            color: #ff4444;
+        }
+
+        /* ============================================
+           RESULT VIEW
+           ============================================ */
+        .result-view {
+            display: none;
+        }
+
+        .result-view.visible {
+            display: block;
+        }
+
+        /* Complete badge */
+        .complete-badge {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .complete-badge span {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            padding: 6px 16px;
+            background: rgba(255, 200, 80, 0.12);
+            border: 1px solid #ffc850;
+            color: #ffc850;
+            border-radius: 4px;
+            letter-spacing: 2px;
+        }
+
+        /* Status bar */
+        .status-bar {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 16px;
+        }
+
+        /* Terminal window */
+        .terminal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .terminal-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: var(--surface-lighter);
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .prompt-length {
+            color: var(--accent);
+            opacity: 0.7;
+        }
+
+        .result-box {
+            height: 500px;
+            overflow-y: auto;
+            padding: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            line-height: 1.7;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        /* Result actions */
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .copy-btn {
+            flex: 1;
+            padding: 14px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            padding: 14px 24px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, color 0.2s ease;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Series complete banner */
+        .series-complete-banner {
+            text-align: center;
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 24px;
+        }
+
+        .series-complete-banner .title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #ffc850;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .series-complete-banner .sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        .footer {
+            text-align: center;
+            padding: 24px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--muted);
+            opacity: 0.5;
+        }
+
+        /* ============================================
+           SCROLLBAR
+           ============================================ */
+        .result-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-box::-webkit-scrollbar-track {
+            background: var(--surface);
+        }
+
+        .result-box::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .result-box::-webkit-scrollbar-thumb:hover {
+            background: var(--muted);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .splash-brand {
+                font-size: 2.5rem;
+            }
+
+            .series-nav {
+                gap: 4px;
+            }
+
+            .series-nav-item {
+                font-size: 0.6rem;
+                padding: 5px 8px;
+            }
+
+            .form-actions,
+            .result-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================
+         SPLASH SCREEN
+         ============================================ -->
+    <div class="splash" id="splash">
+        <div class="splash-brand">Sorted<span class="dot">.</span></div>
+        <div class="splash-sub">COMPETITOR RESEARCH</div>
+        <button class="splash-btn" onclick="initSystem()">INITIALIZE SYSTEM</button>
+    </div>
+
+    <!-- ============================================
+         APP CONTAINER
+         ============================================ -->
+    <div class="app" id="app">
+
+        <!-- Sticky Header -->
+        <div class="header">
+            <div class="header-brand">Sorted<span class="dot">.</span></div>
+            <div class="header-right">
+                <div class="header-tool">COMPETITOR RESEARCH</div>
+                <div class="header-version">v1.0.0</div>
+            </div>
+        </div>
+
+        <!-- Series Nav Bar -->
+        <div class="series-nav">
+            <div class="series-nav-item done">01 Revenue Forecast</div>
+            <div class="series-nav-item done">02 ASO Optimizer</div>
+            <div class="series-nav-item done">03 Pitch Deck</div>
+            <div class="series-nav-item done">04 Pricing Strategy</div>
+            <div class="series-nav-item active">05 Competitor Research ◀</div>
+        </div>
+
+        <!-- ============================================
+             FORM VIEW
+             ============================================ -->
+        <div id="formView">
+
+            <!-- Safety Bar -->
+            <div class="safety-bar">
+                <div class="safety-dot" id="safetyDot"></div>
+                <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+                <button class="safety-toggle" onclick="toggleReadinessReport()">READINESS CHECK ▼</button>
+            </div>
+
+            <!-- Safety Report -->
+            <div class="safety-report" id="safetyReport"></div>
+
+            <!-- Card 1: YOUR PRODUCT -->
+            <div class="card" style="border-top: 3px solid #00ff9d;">
+                <div class="card-header">YOUR PRODUCT</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Product Name <span class="required">★Required</span></label>
+                            <input type="text" id="productName" placeholder="e.g. FitTracker, CodeReview Pro">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="category">
+                                <option value="Mobile App (Education)">Mobile App (Education)</option>
+                                <option value="Mobile App (Business)">Mobile App (Business)</option>
+                                <option value="Mobile App (Health & Fitness)">Mobile App (Health & Fitness)</option>
+                                <option value="Web SaaS">Web SaaS</option>
+                                <option value="Developer Tools">Developer Tools</option>
+                                <option value="Content / Media">Content / Media</option>
+                                <option value="Games">Games</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Platform</label>
+                        <select id="platform">
+                            <option value="iOS Only">iOS Only</option>
+                            <option value="iOS & Android">iOS & Android</option>
+                            <option value="Android Only">Android Only</option>
+                            <option value="Web / SaaS">Web / SaaS</option>
+                            <option value="Cross-platform">Cross-platform</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">One-Line Description <span class="required">★Required</span></label>
+                        <input type="text" id="productDesc" class="full-width" placeholder="e.g. An AI-powered calorie tracking app that logs meals in 3 seconds">
+                        <div class="soft-warn" id="productDescVagueWarn"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Strengths / Differentiators <span class="required">★Required</span></label>
+                        <textarea id="strengths" class="full-width" placeholder="e.g. Only app with AI photo meal logging. Zero server costs. Cross-sell from existing fitness user base."></textarea>
+                        <div class="soft-warn" id="strengthsVagueWarn"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Weaknesses / Concerns</label>
+                        <textarea id="weaknesses" class="full-width" placeholder="e.g. Zero brand recognition. No reviews yet. Single acquisition channel (organic only). Content freshness risk."></textarea>
+                        <div class="soft-warn" id="weaknessesVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: KNOWN COMPETITORS -->
+            <div class="card" style="border-top: 3px solid #ff6b6b;">
+                <div class="card-header">KNOWN COMPETITORS</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Direct Competitors</label>
+                        <span class="label-hint">Products solving the same problem. "None known" is OK.</span>
+                        <textarea id="directComp" class="full-width" placeholder="e.g. MyFitnessPal (direct calorie tracker), Lose It! (similar feature set)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Indirect Competitors / Alternatives</label>
+                        <textarea id="indirectComp" class="full-width" placeholder="e.g. Anki (requires manual setup), ChatGPT (on-demand but not persistent), YouTube tutorials"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Potential Future Entrants</label>
+                        <input type="text" id="futureComp" class="full-width" placeholder="e.g. Duolingo (EdTech giant could expand into this niche), Apple Health (platform advantage)">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: ANALYSIS AXES -->
+            <div class="card" style="border-top: 3px solid #a29bfe;">
+                <div class="card-header">ANALYSIS AXES</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Market Position</label>
+                            <select id="position">
+                                <option value="Targeting a white space (no competitors)">Targeting a white space (no competitors)</option>
+                                <option value="Entering an existing market (competitors present)">Entering an existing market (competitors present)</option>
+                                <option value="Lateral expansion from adjacent market">Lateral expansion from adjacent market</option>
+                                <option value="Niche strategy in gaps left by incumbents">Niche strategy in gaps left by incumbents</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Research Purpose</label>
+                            <select id="purpose">
+                                <option value="Build a positioning map">Build a positioning map</option>
+                                <option value="Inform pricing strategy">Inform pricing strategy</option>
+                                <option value="Clarify feature differentiation">Clarify feature differentiation</option>
+                                <option value="Prepare for investor pitch">Prepare for investor pitch</option>
+                                <option value="Design entry barriers / moat">Design entry barriers / moat</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Primary Question</label>
+                        <input type="text" id="mainQuestion" class="full-width" placeholder="e.g. Is this truly a white space, or are there competitors I'm missing? What happens if a major player enters?">
+                        <div class="soft-warn" id="mainQuestionVagueWarn"></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Output Options <span style="font-weight:400; color:var(--muted); font-size:0.7rem;">(select multiple)</span></label>
+                        <div class="output-tags" id="output-tags">
+                            <div class="output-tag" data-value="Positioning map (2×2) design" onclick="toggleTag(this)">Positioning map (2×2) design</div>
+                            <div class="output-tag" data-value="Per-competitor strengths / weaknesses / blind spots" onclick="toggleTag(this)">Per-competitor strengths / weaknesses / blind spots</div>
+                            <div class="output-tag" data-value="White space identification" onclick="toggleTag(this)">White space identification</div>
+                            <div class="output-tag" data-value="Future entry risk & countermeasures" onclick="toggleTag(this)">Future entry risk & countermeasures</div>
+                            <div class="output-tag" data-value="Feature / UX differentiation opportunities" onclick="toggleTag(this)">Feature / UX differentiation opportunities</div>
+                            <div class="output-tag" data-value="Moat / entry barrier design" onclick="toggleTag(this)">Moat / entry barrier design</div>
+                            <div class="output-tag" data-value="Competitive intelligence action plan" onclick="toggleTag(this)">Competitive intelligence action plan</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: MARKET CONDITIONS -->
+            <div class="card" style="border-top: 3px solid #ffcc00;">
+                <div class="card-header">MARKET CONDITIONS</div>
+                <div class="card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Target Region</label>
+                            <select id="region">
+                                <option value="United States">United States</option>
+                                <option value="Global (Worldwide)">Global (Worldwide)</option>
+                                <option value="Asia-Pacific">Asia-Pacific</option>
+                                <option value="North America & Europe">North America & Europe</option>
+                                <option value="Europe only">Europe only</option>
+                                <option value="Southeast Asia">Southeast Asia</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Market Growth Phase</label>
+                            <select id="growth">
+                                <option value="Emerging (market not yet recognized)">Emerging (market not yet recognized)</option>
+                                <option value="Growth (demand rapidly expanding)">Growth (demand rapidly expanding)</option>
+                                <option value="Mature (many competitors, differentiation difficult)">Mature (many competitors, differentiation difficult)</option>
+                                <option value="Redefinition (AI/tech reshaping the market)">Redefinition (AI/tech reshaping the market)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Context</label>
+                        <input type="text" id="context" class="full-width" placeholder="e.g. AI-assisted development tools (Cursor/Copilot) creating new user segment in 2026">
+                        <div class="soft-warn" id="contextVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: OUTPUT SETTINGS -->
+            <div class="card" style="border-top: 3px solid #00cec9;">
+                <div class="card-header">OUTPUT SETTINGS</div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Evaluation Mode</label>
+                        <select id="evaluationMode">
+                            <option value="ON (includes critical evaluation)">ON (includes critical evaluation)</option>
+                            <option value="OFF (analysis only — no critique)">OFF (analysis only — no critique)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Additional Notes</label>
+                        <input type="text" id="notes" placeholder="e.g. Focus on mobile app competitors, ignore desktop-only tools">
+                        <div class="soft-warn" id="notesVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button class="generate-btn" id="generateBtn" disabled onclick="processGeneration()">▶ GENERATE PROMPT</button>
+                <button class="reset-btn" onclick="resetForm()">RESET</button>
+            </div>
+        </div>
+
+        <!-- ============================================
+             RESULT VIEW
+             ============================================ -->
+        <div class="result-view" id="resultView">
+
+            <!-- Complete badge -->
+            <div class="complete-badge">
+                <span>✦ SERIES COMPLETE — 05/05</span>
+            </div>
+
+            <!-- Status bar -->
+            <div class="status-bar">&gt; STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.</div>
+
+            <!-- Terminal window -->
+            <div class="terminal">
+                <div class="terminal-bar">
+                    <span>competitor_research_prompt.txt — Read Only</span>
+                    <span class="prompt-length" id="promptLength">0 chars</span>
+                </div>
+                <div class="result-box" id="resultBox"></div>
+            </div>
+
+            <!-- Result actions -->
+            <div class="result-actions">
+                <button class="copy-btn" id="copyBtn" onclick="copyText(this)">COPY TO CLIPBOARD</button>
+                <button class="back-btn" onclick="goBack()">◀ BACK</button>
+            </div>
+
+            <!-- Series complete banner -->
+            <div class="series-complete-banner">
+                <div class="title">✦ SORTED. SERIES COMPLETE ✦</div>
+                <div class="sub">All 5 PRO tools generated. Ready for deployment.</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            SORTED. SERIES — 05/05 COMPLETE
+        </div>
+    </div>
+
+    <!-- ============================================
+         JAVASCRIPT
+         ============================================ -->
+    <script>
+        /* ============================================
+           CONSTANTS
+           ============================================ */
+        const LANG = "English";
+        const STORAGE_KEY = 'sorted_competitor_en_form';
+
+        /* ============================================
+           VAGUE & INSTRUCTION WORD LISTS
+           ============================================ */
+        const VAGUE_WORDS = [
+            'good', 'great', 'nice', 'bad', 'amazing', 'awesome',
+            'interesting', 'stuff', 'things', 'various', 'several',
+            'many', 'some', 'very', 'really', 'basically', 'just',
+            'simple', 'easy', 'best', 'better', 'innovative',
+            'unique', 'cutting-edge', 'world-class', 'revolutionary',
+            'disruptive', 'game-changing', 'next-gen', 'powerful',
+            'robust', 'seamless', 'intuitive', 'elegant', 'smart'
+        ];
+
+        const INSTRUCTION_WORDS = [
+            'ignore previous instructions', 'forget all instructions',
+            'disregard previous', 'system prompt', 'you are now',
+            'pretend you are', 'act as if', 'new instructions',
+            'override', 'bypass'
+        ];
+
+        /* ============================================
+           STATE
+           ============================================ */
+        let selectedOutputs = new Set();
+        let isGenerating = false;
+        let reportVisible = false;
+        let debounceTimer = null;
+
+        /* ============================================
+           SANITIZE
+           ============================================ */
+        function sanitize(str) {
+            if (typeof str !== 'string') return '';
+            return str
+                .normalize('NFKC')
+                .replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+                .replace(/\u301C/g, '\uFF5E')
+                .replace(/\u2014/g, '\u2015')
+                .replace(/&[#a-zA-Z0-9]+;/g, '')
+                .replace(/[<>]/g, '')
+                .replace(/ignore previous instructions/gi, '')
+                .replace(/forget all instructions/gi, '')
+                .replace(/disregard previous/gi, '')
+                .replace(/\u3000/g, ' ')
+                .replace(/ {2,}/g, ' ')
+                .replace(/([！？!?])\1{2,}/g, '$1')
+                .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF\u2015]/g, '')
+                .trim();
+        }
+
+        /* ============================================
+           GET VALUE HELPER
+           ============================================ */
+        function getVal(id) {
+            const el = document.getElementById(id);
+            if (!el) return '';
+            return sanitize(el.value);
+        }
+
+        /* ============================================
+           SPLASH → APP TRANSITION
+           ============================================ */
+        function initSystem() {
+            document.getElementById('splash').classList.add('hidden');
+            document.getElementById('app').classList.add('visible');
+            loadForm();
+        }
+
+        /* ============================================
+           OUTPUT TAG TOGGLE
+           ============================================ */
+        function toggleTag(el) {
+            const val = el.getAttribute('data-value');
+            if (selectedOutputs.has(val)) {
+                selectedOutputs.delete(val);
+                el.classList.remove('selected');
+            } else {
+                selectedOutputs.add(val);
+                el.classList.add('selected');
+            }
+            scheduleSave();
+            updateSafetyBar();
+        }
+
+        /* ============================================
+           GATE CHECK — Required fields validation
+           ============================================ */
+        function checkGate1() {
+            const productName = getVal('productName');
+            const productDesc = getVal('productDesc');
+            const strengths = getVal('strengths');
+
+            const hasName = productName.length >= 3;
+            const hasDesc = productDesc.length >= 3;
+            const hasStrengths = strengths.length >= 3;
+
+            /* Required: productName (3+), productDesc (3+), strengths (3+) */
+            return hasName && hasDesc && hasStrengths;
+        }
+
+        /* ============================================
+           SAFETY BAR — Multi-level readiness
+           ============================================ */
+        function updateSafetyBar() {
+            const dot = document.getElementById('safetyDot');
+            const label = document.getElementById('safetyLabel');
+            const btn = document.getElementById('generateBtn');
+
+            const gate1 = checkGate1();
+
+            if (!gate1) {
+                /* Red — required fields missing */
+                dot.className = 'safety-dot red';
+                label.textContent = 'Required fields missing';
+                btn.disabled = true;
+                return;
+            }
+
+            /* Check recommended fields for green */
+            const recommended = [
+                getVal('weaknesses').length > 0,
+                getVal('directComp').length > 0,
+                getVal('indirectComp').length > 0,
+                getVal('futureComp').length > 0,
+                getVal('mainQuestion').length > 0,
+                getVal('context').length > 0,
+                selectedOutputs.size > 0
+            ];
+
+            const filled = recommended.filter(Boolean).length;
+
+            if (filled >= 6) {
+                /* Green — comprehensive */
+                dot.className = 'safety-dot green';
+                label.textContent = 'Comprehensive — ready to generate';
+            } else if (filled >= 3) {
+                /* Yellow — acceptable */
+                dot.className = 'safety-dot yellow';
+                label.textContent = 'Acceptable — optional fields will improve output';
+            } else {
+                /* Yellow — minimal */
+                dot.className = 'safety-dot yellow';
+                label.textContent = 'Minimal — consider filling optional fields';
+            }
+
+            btn.disabled = false;
+        }
+
+        /* ============================================
+           READINESS REPORT
+           ============================================ */
+        function toggleReadinessReport() {
+            const report = document.getElementById('safetyReport');
+            reportVisible = !reportVisible;
+            if (reportVisible) {
+                buildReadinessReport();
+                report.classList.add('visible');
+            } else {
+                report.classList.remove('visible');
+            }
+        }
+
+        function buildReadinessReport() {
+            const report = document.getElementById('safetyReport');
+
+            const checks = [
+                { label: 'Product Name', ok: getVal('productName').length >= 3, required: true },
+                { label: 'One-Line Description', ok: getVal('productDesc').length >= 3, required: true },
+                { label: 'Direct Competitors', ok: getVal('directComp').length >= 3, required: false, note: '(or Primary Question)' },
+                { label: 'Primary Question', ok: getVal('mainQuestion').length >= 3, required: false, note: '(or Direct Competitors)' },
+                { label: 'Strengths / Differentiators', ok: getVal('strengths').length >= 3, required: true },
+                { label: 'Weaknesses / Concerns', ok: getVal('weaknesses').length > 0, required: false },
+                { label: 'Indirect Competitors', ok: getVal('indirectComp').length > 0, required: false },
+                { label: 'Future Entrants', ok: getVal('futureComp').length > 0, required: false },
+                { label: 'Additional Context', ok: getVal('context').length > 0, required: false },
+                { label: 'Output Options selected', ok: selectedOutputs.size > 0, required: false }
+            ];
+
+            let html = '<div class="safety-report-title">READINESS CHECK</div>';
+            checks.forEach(c => {
+                const icon = c.ok
+                    ? '<span class="check">✓</span>'
+                    : (c.required ? '<span class="missing">✗</span>' : '<span class="warn">○</span>');
+                const suffix = c.note ? ' <span style="opacity:0.5">' + c.note + '</span>' : '';
+                html += '<div class="safety-report-item">' + icon + ' ' + c.label + suffix + '</div>';
+            });
+
+            report.innerHTML = html;
+        }
+
+        /* ============================================
+           VAGUE WORD DETECTION
+           ============================================ */
+        function checkVague(id) {
+            const val = getVal(id);
+            const warn = document.getElementById(id + 'VagueWarn');
+            if (!warn) return;
+
+            if (val.length === 0) {
+                warn.classList.remove('visible');
+                warn.textContent = '';
+                return;
+            }
+
+            const lower = val.toLowerCase();
+            const found = VAGUE_WORDS.filter(w => {
+                const regex = new RegExp('\\b' + w + '\\b', 'i');
+                return regex.test(lower);
+            });
+
+            if (found.length > 0) {
+                warn.textContent = '⚠ Vague words detected: ' + found.join(', ') + ' — be more specific for better output.';
+                warn.classList.add('visible');
+            } else {
+                warn.classList.remove('visible');
+                warn.textContent = '';
+            }
+        }
+
+        /* ============================================
+           LOCAL STORAGE — SAVE / LOAD
+           ============================================ */
+        function saveForm() {
+            const fields = [
+                'productName', 'category', 'platform', 'productDesc',
+                'strengths', 'weaknesses', 'directComp', 'indirectComp',
+                'futureComp', 'position', 'purpose', 'mainQuestion',
+                'region', 'growth', 'context', 'evaluationMode', 'notes'
+            ];
+
+            const data = {};
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) data[id] = el.value;
+            });
+
+            data.selectedOutputs = Array.from(selectedOutputs);
+
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            } catch (e) {
+                /* Storage full or unavailable — silently fail */
+            }
+        }
+
+        function loadForm() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return;
+                const data = JSON.parse(raw);
+
+                Object.keys(data).forEach(id => {
+                    if (id === 'selectedOutputs') return;
+                    const el = document.getElementById(id);
+                    if (el) el.value = data[id];
+                });
+
+                if (data.selectedOutputs && Array.isArray(data.selectedOutputs)) {
+                    selectedOutputs = new Set(data.selectedOutputs);
+                    document.querySelectorAll('.output-tag').forEach(tag => {
+                        if (selectedOutputs.has(tag.getAttribute('data-value'))) {
+                            tag.classList.add('selected');
+                        }
+                    });
+                }
+
+                /* Run checks after load */
+                updateSafetyBar();
+                ['productDesc', 'strengths', 'weaknesses', 'mainQuestion', 'context', 'notes'].forEach(checkVague);
+            } catch (e) {
+                /* Corrupted storage — ignore */
+            }
+        }
+
+        function scheduleSave() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(saveForm, 400);
+        }
+
+        /* ============================================
+           RESET FORM
+           ============================================ */
+        function resetForm() {
+            if (!confirm('Reset all fields? This cannot be undone.')) return;
+
+            const fields = [
+                'productName', 'productDesc', 'strengths', 'weaknesses',
+                'directComp', 'indirectComp', 'futureComp', 'mainQuestion',
+                'context', 'notes', 'futureComp'
+            ];
+
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+
+            /* Reset selects to first option */
+            ['category', 'platform', 'position', 'purpose', 'region', 'growth', 'evaluationMode'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.selectedIndex = 0;
+            });
+
+            /* Clear output tags */
+            selectedOutputs.clear();
+            document.querySelectorAll('.output-tag').forEach(tag => tag.classList.remove('selected'));
+
+            /* Clear vague warnings */
+            document.querySelectorAll('.soft-warn').forEach(w => {
+                w.classList.remove('visible');
+                w.textContent = '';
+            });
+
+            /* Clear storage */
+            try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+            updateSafetyBar();
+            if (reportVisible) buildReadinessReport();
+        }
+
+        /* ============================================
+           GET EMPTY OPTIONAL FIELDS
+           ============================================ */
+        function getEmptyOptionalFields() {
+            const fields = [
+                { id: 'weaknesses', label: 'Weaknesses / Concerns' },
+                { id: 'indirectComp', label: 'Indirect Competitors' },
+                { id: 'futureComp', label: 'Potential Future Entrants' },
+                { id: 'mainQuestion', label: 'Primary Question' },
+                { id: 'context', label: 'Additional Context' },
+                { id: 'notes', label: 'Additional Notes' }
+            ];
+
+            return fields.filter(f => getVal(f.id).length === 0).map(f => f.label);
+        }
+
+        /* ============================================
+           GENERATE PROMPT TEXT
+           ============================================ */
+        function generatePromptText() {
+            const v = {
+                productName: getVal('productName'),
+                category: getVal('category'),
+                platform: getVal('platform'),
+                productDesc: getVal('productDesc'),
+                strengths: getVal('strengths'),
+                weaknesses: getVal('weaknesses'),
+                directComp: getVal('directComp'),
+                indirectComp: getVal('indirectComp'),
+                futureComp: getVal('futureComp'),
+                position: getVal('position'),
+                purpose: getVal('purpose'),
+                mainQuestion: getVal('mainQuestion'),
+                region: getVal('region'),
+                growth: getVal('growth'),
+                context: getVal('context'),
+                evaluationMode: getVal('evaluationMode'),
+                notes: getVal('notes')
+            };
+
+            const outputList = selectedOutputs.size > 0
+                ? Array.from(selectedOutputs).join(', ')
+                : '(comprehensive competitive analysis)';
+
+            const or = (val, fallback) => val.length > 0 ? val : fallback;
+
+            /* Direct Competitor supplementation logic */
+            let directCompBlock = '';
+            if (v.directComp.length === 0) {
+                directCompBlock = '(not provided) → Search the web to identify top direct competitors. Classify as [Supplemented: Direct].';
+            } else {
+                directCompBlock = v.directComp + ' [User-provided] → Verify via web search. Supplement if fewer than 3.';
+            }
+
+            /* Indirect Competitor supplementation logic */
+            let indirectCompBlock = '';
+            if (v.indirectComp.length === 0) {
+                indirectCompBlock = '(not provided) → Search the web to identify indirect competitors and alternatives. Classify as [Supplemented: Adjacent] or [Supplemented: Workflow Alternative].';
+            } else {
+                indirectCompBlock = v.indirectComp + ' [User-provided] → Verify via web search. Supplement if fewer than 3.';
+            }
+
+            /* Evaluation mode parse */
+            const evalOn = v.evaluationMode.startsWith('ON');
+
+            /* Build the prompt */
+            let p = '';
+
+            /* 1. WEB SEARCH COMMANDS */
+            p += 'IMPORTANT: Before answering, you MUST run the following web searches:\n';
+            p += '- Current market landscape and key players in ' + v.category + ' (' + v.region + ')\n';
+            p += '- Recent funding, acquisitions, or product launches by competitors in this space\n';
+            p += '- User reviews and complaints for top competitors (App Store, Reddit, Product Hunt)\n';
+            p += '- Market size and growth trends for ' + v.category + '\n';
+            p += 'Base ALL responses on search results. Cite every source with retrieval date.\n';
+            p += '\n---\n\n';
+
+            /* 2. PRIVACY NOTICE */
+            p += 'PRIVACY NOTICE: This prompt may contain business-sensitive information. Do not store, share, or reference this data outside of this conversation.\n';
+            p += '\n---\n\n';
+
+            /* 3. ROLE */
+            p += '# Competitor Research & Positioning Strategy Prompt\n\n';
+            p += 'You are a senior market strategist specializing in competitive analysis and market positioning for startups and indie products. You have advised 200+ companies from pre-seed to Series B on competitive strategy, with deep expertise in identifying white spaces, designing moats, and anticipating market moves. Always leverage the latest competitive intelligence from web search. Produce concrete, actionable analysis — not generic frameworks.\n';
+            p += '\n---\n\n';
+
+            /* 4. SECTIONS */
+            p += '## Section 1: Product Overview\n';
+            p += '- Product Name: ' + v.productName + '\n';
+            p += '- Category: ' + v.category + '\n';
+            p += '- Platform: ' + v.platform + '\n';
+            p += '- Description: ' + v.productDesc + '\n';
+            p += '- Strengths: ' + or(v.strengths, '(not provided)') + '\n';
+            p += '- Weaknesses: ' + or(v.weaknesses, '(not provided)') + '\n';
+            p += '\n';
+
+            p += '## Section 2: Known Competitive Landscape\n';
+            p += '- Direct Competitors: ' + directCompBlock + '\n';
+            p += '- Indirect Competitors / Alternatives: ' + indirectCompBlock + '\n';
+            p += '- Potential Future Entrants: ' + or(v.futureComp, '(not provided)') + '\n';
+            p += '\n';
+
+            p += '## Section 3: Analysis Configuration\n';
+            p += '- Market Position: ' + v.position + '\n';
+            p += '- Research Purpose: ' + v.purpose + '\n';
+            p += '- Primary Question: ' + or(v.mainQuestion, '(not provided)') + '\n';
+            p += '- Required Output: ' + outputList + '\n';
+            p += '\n';
+
+            p += '## Section 4: Market Conditions\n';
+            p += '- Target Region: ' + v.region + '\n';
+            p += '- Market Growth Phase: ' + v.growth + '\n';
+            p += '- Additional Context: ' + or(v.context, '(not provided)') + '\n';
+            p += '\n';
+
+            p += '## Section 5: Output Settings\n';
+            p += '- Evaluation Mode: ' + v.evaluationMode + '\n';
+            p += '- Additional Notes: ' + or(v.notes, '(not provided)') + '\n';
+            p += '\n---\n\n';
+
+            /* 5. INTERPRETATION RULES */
+            p += '## Interpretation Rules\n\n';
+
+            p += 'Rule 1 — Competitor Discovery & Classification:\n';
+            p += '  Classify ALL competitors using these exact tags:\n';
+            p += '    [User-provided]: competitors entered by the user\n';
+            p += '    [Supplemented: Direct]: solves the same problem for the same user\n';
+            p += '    [Supplemented: Adjacent]: operates in the same workflow or category\n';
+            p += '    [Supplemented: Workflow Alternative]: different approach to the same job-to-be-done\n';
+            p += '  Never remove user-provided competitors. Supplement to reach minimum 5 total.\n\n';
+
+            p += 'Rule 2 — Evidence-Based Analysis:\n';
+            p += '  Every competitive claim must reference a specific source: App Store data, user reviews,\n';
+            p += '  pricing pages, Crunchbase funding data, or press coverage.\n';
+            p += '  Do NOT make competitive assessments based solely on general knowledge.\n\n';
+
+            p += 'Rule 3 — Output Phase Order:\n';
+            p += '  Do NOT produce any critical evaluation until PHASE 5 is complete.\n';
+            p += '  If Evaluation Mode is OFF, skip PHASE 6 entirely.\n\n';
+
+            p += 'Rule 4 — White Space Validation:\n';
+            p += '  "No competitors" does NOT mean "opportunity." Always investigate WHY a space is empty:\n';
+            p += '  (a) Market doesn\'t exist (no demand)\n';
+            p += '  (b) Market exists but no one has noticed (opportunity)\n';
+            p += '  (c) Others tried and failed (warning — investigate why)\n';
+            p += '  State which case applies with evidence.\n\n';
+
+            p += 'Rule 5 — Positioning Map Axes:\n';
+            p += '  Do NOT use generic axes. Derive axes from the specific competitive dynamics of this market.\n';
+            p += '  State why each axis was chosen and what strategic insight it reveals.\n\n';
+
+            p += 'Rule 6 — Assumption Quality:\n';
+            p += '  Every market size or competitive estimate must include:\n';
+            p += '  (a) Source with citation and retrieval date, OR\n';
+            p += '  (b) Label: [Estimated: Based on {reasoning}]\n';
+            p += '  Bare claims without sourcing are NOT acceptable.\n\n';
+
+            p += 'Rule 7 — Competitor Store Verification (Competitor Research Only):\n';
+            p += '  Before analyzing any competitor, you MUST search for them in the App Store / Google Play\n';
+            p += '  and verify their current: (a) rating and number of reviews, (b) current price,\n';
+            p += '  (c) last update date. Do NOT analyze competitors based on general knowledge alone.\n\n';
+
+            p += 'Rule 8 — Future Entry Risk Assessment (Competitor Research Only):\n';
+            p += '  You MUST search the web for the latest market trends and use them to predict\n';
+            p += '  future competitive entry risks. State which companies or categories pose the\n';
+            p += '  highest entry risk and why, with evidence from web search.\n\n';
+
+            p += 'Rule 9 — Market Growth Phase Validation (Competitor Research Only):\n';
+            p += '  You MUST search the web to determine and validate the current market growth phase.\n';
+            p += '  State whether the market is: Emerging, Growing, Mature, or Declining,\n';
+            p += '  with evidence and source citations.\n';
+            p += '\n---\n\n';
+
+            /* 6. STRICT OUTPUT INSTRUCTIONS */
+            p += '## Strict Output Instructions\n\n';
+
+            p += 'PHASE 1 — Competitor Landscape Overview\n';
+            p += '  Table format: | Competitor | Type | Model | Pricing | Key Strength | Key Weakness | Threat Level |\n';
+            p += '  Include minimum 5 competitors (user-provided + supplemented).\n';
+            p += '  Classify threat level as: HIGH / MEDIUM / LOW with one-line reasoning.\n\n';
+
+            p += 'PHASE 2 — Positioning Matrix (2x2)\n';
+            p += '  Define 2 axes specific to this market (NOT generic axes like "price vs quality").\n';
+            p += '  Explain why these axes were chosen.\n';
+            p += '  Place all competitors + the user\'s product on the matrix.\n';
+            p += '  Identify the most defensible quadrant and white spaces.\n\n';
+
+            p += 'PHASE 3 — White Space & Opportunity Analysis\n';
+            p += '  Answer: Why is this space empty? (apply Rule 4 framework)\n';
+            p += '  For each identified white space:\n';
+            p += '  - Size estimate with source\n';
+            p += '  - Entry difficulty (1-5 scale with reasoning)\n';
+            p += '  - Time window before competitors notice\n\n';
+
+            p += 'PHASE 4 — Moat Design & Entry Barrier Strategy\n';
+            p += '  Evaluate on 4 dimensions:\n';
+            p += '  (a) Content/Data depth — can you build proprietary advantage?\n';
+            p += '  (b) Community/Network effects — can users create value for each other?\n';
+            p += '  (c) Brand & trust — how quickly can you establish credibility?\n';
+            p += '  (d) Switching costs — what locks users in?\n';
+            p += '  For each: current state, 6-month target, 12-month target.\n\n';
+
+            p += 'PHASE 5 — Actionable Intelligence Playbook\n';
+            p += '  5 specific competitive intelligence actions ranked by expected ROI.\n';
+            p += '  For each: action, cost (free/$), expected insight, timeline.\n';
+            p += '  Examples: App Store review mining, Reddit sentiment analysis, Product Hunt monitoring, competitor pricing page tracking, user interview scripts.\n\n';
+
+            if (evalOn) {
+                p += 'PHASE 6 — Critical Evaluation (Evaluation Mode: ON)\n';
+                p += '  Be direct and critical. Do not sugarcoat.\n';
+                p += '  Minimum requirements — all three must be present:\n';
+                p += '  (a) At least 2 blind spots in the user\'s competitive assessment\n';
+                p += '  (b) At least 2 overlooked competitors or substitute products (found via web search)\n';
+                p += '  (c) At least 1 risk of over-optimism about the "white space" claim\n\n';
+            } else {
+                p += 'PHASE 6 — Critical Evaluation\n';
+                p += '  Evaluation section skipped. Turn Evaluation Mode ON to include it.\n\n';
+            }
+
+            p += 'MINIMUM OUTPUT REQUIREMENTS:\n';
+            p += '- PHASE 1: Competitor table must include at least 5 rows with all columns filled\n';
+            p += '- PHASE 2: Positioning matrix must place all competitors + user\'s product with axis reasoning\n';
+            p += '- PHASE 3: Each white space must include size estimate, entry difficulty, and time window\n';
+            p += '- PHASE 4: All 4 moat dimensions must include current state, 6-month, and 12-month targets\n';
+            p += '- PHASE 5: At least 5 actionable intelligence items with ROI ranking\n';
+            p += '- PHASE 6 (if ON): Must meet all 3 minimum requirements (a)(b)(c)\n';
+            p += 'Outputs that fail to meet these minimums are NOT acceptable.\n\n';
+
+            p += 'PRE-OUTPUT SELF-CHECK:\n';
+            p += 'Before output, verify:\n';
+            p += '(a) INTERPRETATION RULES applied correctly\n';
+            p += '(b) Phase order maintained — no critique before PHASE 6\n';
+            p += '(c) All competitors classified with tags per Rule 1\n';
+            p += '(d) White space validated using Rule 4 framework\n';
+            p += '(e) Positioning axes are market-specific, not generic\n';
+            p += '(f) All estimates sourced per Rule 6\n';
+            p += '(g) Moat assessment covers all 4 dimensions\n';
+            if (evalOn) {
+                p += '(h) PHASE 6 meets minimum requirements (a)(b)(c)\n';
+            }
+            p += '(i) Competitor store data (rating, price, last update) verified per Rule 7\n';
+            p += '(j) Future entry risks assessed with web evidence per Rule 8\n';
+            p += '(k) Market growth phase validated via web search per Rule 9\n';
+            p += '\n';
+
+            p += 'IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n';
+            p += '_Generated with Sorted.Tools PRO — Competitor Research v1.0.0_\n';
+            p += '_Powered by Sorted. Series | sorted.tools_\n';
+            p += '\n---\n\n';
+
+            p += '⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n';
+
+            /* Ambiguity warnings for empty optional fields */
+            const emptyFields = getEmptyOptionalFields();
+            if (emptyFields.length > 0) {
+                p += '\n[Ambiguity warning: The following optional fields were left empty — output quality may be reduced: ' + emptyFields.join(', ') + ']\n';
+            }
+
+            p += '\n_Generated with Sorted.Tools PRO — Competitor Research v1.0.0_\n';
+            p += '_Powered by Sorted. Series | sorted.tools_\n';
+            p += '\nRespond entirely in English.\n';
+
+            return p;
+        }
+
+        /* ============================================
+           PROCESS GENERATION
+           ============================================ */
+        function processGeneration() {
+            if (isGenerating) return;
+            if (!checkGate1()) return;
+
+            isGenerating = true;
+            const btn = document.getElementById('generateBtn');
+            btn.textContent = 'GENERATING...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                const prompt = generatePromptText();
+
+                document.getElementById('resultBox').textContent = prompt;
+                document.getElementById('promptLength').textContent = prompt.length + ' chars';
+
+                document.getElementById('formView').style.display = 'none';
+                document.getElementById('resultView').classList.add('visible');
+
+                isGenerating = false;
+                btn.textContent = '▶ GENERATE PROMPT';
+                btn.disabled = false;
+            }, 300);
+        }
+
+        /* ============================================
+           COPY TO CLIPBOARD
+           ============================================ */
+        function copyText(btn) {
+            const text = document.getElementById('resultBox').textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                const original = btn.textContent;
+                btn.textContent = '✓ COPIED';
+                btn.style.background = '#00cc7d';
+                setTimeout(() => {
+                    btn.textContent = original;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(() => {
+                /* Fallback for older browsers */
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+
+                const original = btn.textContent;
+                btn.textContent = '✓ COPIED';
+                btn.style.background = '#00cc7d';
+                setTimeout(() => {
+                    btn.textContent = original;
+                    btn.style.background = '';
+                }, 2000);
+            });
+        }
+
+        /* ============================================
+           GO BACK
+           ============================================ */
+        function goBack() {
+            document.getElementById('resultView').classList.remove('visible');
+            document.getElementById('formView').style.display = '';
+        }
+
+        /* ============================================
+           EVENT LISTENERS — Input tracking
+           ============================================ */
+        document.addEventListener('DOMContentLoaded', () => {
+            /* All input/textarea/select fields — listen for changes */
+            const allInputs = document.querySelectorAll('input[type="text"], textarea, select');
+
+            allInputs.forEach(el => {
+                el.addEventListener('input', () => {
+                    scheduleSave();
+                    updateSafetyBar();
+                    if (reportVisible) buildReadinessReport();
+
+                    /* Check vague words on relevant fields */
+                    const vagueFields = ['productDesc', 'strengths', 'weaknesses', 'mainQuestion', 'context', 'notes'];
+                    if (vagueFields.includes(el.id)) {
+                        checkVague(el.id);
+                    }
+                });
+
+                el.addEventListener('change', () => {
+                    scheduleSave();
+                    updateSafetyBar();
+                    if (reportVisible) buildReadinessReport();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

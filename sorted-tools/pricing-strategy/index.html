@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Strategy PRO | Sorted. Tools</title>
+
+    <!-- Google Fonts: preconnect + load -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           CSS VARIABLES — Sorted. Design System
+           ============================================ */
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+            --red: #ff6b6b;
+            --red-dim: rgba(255, 107, 107, 0.1);
+            --yellow: #ffcc00;
+            --yellow-dim: rgba(255, 204, 0, 0.1);
+            --purple: #a29bfe;
+            --purple-dim: rgba(162, 155, 254, 0.15);
+            --teal: #00cec9;
+            --teal-dim: rgba(0, 206, 201, 0.1);
+        }
+
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            outline: none;
+        }
+
+        body, html {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Subtle radial glow background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 10% -10%, rgba(0, 255, 157, 0.03) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 90% 110%, rgba(162, 155, 254, 0.03) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-12px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .fade-in {
+            animation: fadeUp 0.45s cubic-bezier(.22, 1, .36, 1) forwards;
+        }
+
+        .fade-out {
+            animation: fadeDown 0.35s ease forwards;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================
+           SPLASH SCREEN
+           ============================================ */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        /* Scanline overlay */
+        #splash::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 255, 157, 0.015) 2px,
+                rgba(0, 255, 157, 0.015) 4px
+            );
+            pointer-events: none;
+        }
+
+        .splash-brand {
+            font-size: 48px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -1px;
+            animation: fadeUp 0.6s ease forwards;
+        }
+
+        .splash-brand .dot {
+            color: var(--accent);
+        }
+
+        .splash-sub {
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--muted);
+            letter-spacing: 4px;
+            animation: fadeUp 0.6s 0.15s ease both;
+        }
+
+        .splash-btn {
+            margin-top: 56px;
+            padding: 14px 48px;
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.6s 0.4s ease both;
+        }
+
+        .splash-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.3s ease;
+        }
+
+        .splash-btn:hover::before {
+            transform: translateX(0);
+        }
+
+        .splash-btn:hover {
+            color: #000;
+        }
+
+        .splash-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           HEADER — sticky
+           ============================================ */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 32px;
+            background: rgba(10, 10, 15, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .brand .dot {
+            color: var(--accent);
+            font-style: normal;
+        }
+
+        .badge {
+            background: var(--accent);
+            color: #000;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .header-right {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-tool-name {
+            color: var(--text);
+            letter-spacing: 1px;
+        }
+
+        .header-version {
+            color: var(--muted);
+        }
+
+        /* ============================================
+           SERIES NAV BAR
+           ============================================ */
+        .series-nav {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+            padding: 0 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .series-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .series-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px 18px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            cursor: default;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .series-tab.done {
+            color: #666;
+        }
+
+        .series-tab.active {
+            color: #a29bfe;
+            border-bottom-color: #a29bfe;
+            background: rgba(162, 155, 254, 0.15);
+        }
+
+        .series-tab.upcoming {
+            color: #555;
+        }
+
+        /* ============================================
+           SAFETY BAR
+           ============================================ */
+        .safety-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 32px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        .safety-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #555;
+            transition: background 0.3s;
+        }
+
+        .safety-dot.green {
+            background: var(--accent);
+            box-shadow: 0 0 6px rgba(0, 255, 157, 0.4);
+        }
+
+        .safety-dot.yellow {
+            background: var(--yellow);
+            box-shadow: 0 0 6px rgba(255, 204, 0, 0.4);
+        }
+
+        .safety-dot.red {
+            background: var(--red);
+            box-shadow: 0 0 6px rgba(255, 107, 107, 0.4);
+        }
+
+        .safety-label {
+            color: var(--muted);
+            flex: 1;
+        }
+
+        .safety-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+        }
+
+        .safety-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* ============================================
+           SAFETY REPORT (readiness checklist)
+           ============================================ */
+        .safety-report {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            line-height: 2;
+            color: var(--muted);
+        }
+
+        .safety-report .check-ok {
+            color: var(--accent);
+        }
+
+        .safety-report .check-fail {
+            color: var(--red);
+        }
+
+        .safety-report .check-warn {
+            color: var(--yellow);
+        }
+
+        /* ============================================
+           LAYOUT
+           ============================================ */
+        #app {
+            display: none;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main {
+            max-width: 860px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 32px 24px 60px;
+        }
+
+        /* ============================================
+           FORM CARDS
+           ============================================ */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: #3a3a50;
+        }
+
+        .card-header {
+            padding: 13px 22px;
+            background: var(--surface-lighter);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .card-header-label {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-body {
+            padding: 24px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* ============================================
+           FORM ELEMENTS
+           ============================================ */
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 7px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .req {
+            color: var(--red);
+            margin-left: 3px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: #08080f;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-dim);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #333350;
+        }
+
+        select option {
+            background: #0f0f1c;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        /* Price input row with currency selector */
+        .price-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .price-row select {
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .price-row input {
+            flex: 1;
+        }
+
+        /* ============================================
+           TAGS (multi-select buttons)
+           ============================================ */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 2px;
+        }
+
+        .tag-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.18s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tag-btn:hover {
+            border-color: #3a3a50;
+            color: var(--text);
+        }
+
+        .tag-btn.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .tag-btn.active-purple {
+            background: var(--purple-dim);
+            border-color: var(--purple);
+            color: var(--purple);
+        }
+
+        /* ============================================
+           SOFT-WARN (vague word detection)
+           ============================================ */
+        .soft-warn {
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--yellow);
+            font-family: 'JetBrains Mono', monospace;
+            display: none;
+        }
+
+        .soft-warn.visible {
+            display: block;
+        }
+
+        /* ============================================
+           FORM ACTIONS
+           ============================================ */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .generate-btn {
+            flex: 1;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 2px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+            box-shadow: 0 0 24px rgba(0, 255, 157, 0.15);
+        }
+
+        .generate-btn:hover:not(:disabled) {
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .reset-btn {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 16px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--red);
+            color: var(--red);
+        }
+
+        /* ============================================
+           RESULT VIEW
+           ============================================ */
+        #resultView {
+            display: none;
+        }
+
+        .result-status {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-status::before {
+            content: '>';
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Terminal window */
+        .terminal {
+            background: #04040a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .terminal-bar {
+            background: var(--surface-lighter);
+            padding: 9px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .t-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .prompt-length {
+            margin-left: auto;
+            color: var(--accent);
+            font-size: 10px;
+        }
+
+        .result-box {
+            padding: 28px 32px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #b0b0d0;
+            white-space: pre-wrap;
+            height: 500px;
+            overflow-y: auto;
+            font-size: 12.5px;
+            line-height: 1.7;
+            user-select: text;
+            -webkit-user-select: text;
+        }
+
+        .result-box::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .result-box::-webkit-scrollbar-thumb {
+            background: #2a2a40;
+            border-radius: 3px;
+        }
+
+        /* Result action buttons */
+        .result-actions {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .copy-btn {
+            width: 100%;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .copy-btn:hover {
+            box-shadow: 0 0 32px rgba(0, 255, 157, 0.2);
+        }
+
+        .back-btn {
+            width: 100%;
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .back-btn:hover {
+            border-color: #3a3a50;
+            color: var(--text);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            text-align: center;
+            padding: 28px;
+            color: var(--muted);
+            font-size: 11px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 640px) {
+            .card-body {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 12px 16px;
+            }
+
+            .main {
+                padding: 20px 16px 40px;
+            }
+
+            .series-nav {
+                padding: 0 16px;
+            }
+
+            .series-tab {
+                padding: 10px 12px;
+                font-size: 10px;
+            }
+
+            .safety-bar {
+                padding: 10px 16px;
+            }
+
+            .safety-report {
+                padding: 12px 16px;
+            }
+
+            .price-row {
+                flex-direction: column;
+            }
+
+            .price-row select {
+                width: 100%;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================
+     SPLASH SCREEN
+     ============================================ -->
+<div id="splash">
+    <div class="splash-brand">Sorted<span class="dot">.</span></div>
+    <div class="splash-sub">PRICING STRATEGIST</div>
+    <button class="splash-btn" onclick="startApp()"><span>INITIALIZE SYSTEM</span></button>
+</div>
+
+<!-- ============================================
+     APP CONTAINER
+     ============================================ -->
+<div id="app">
+
+    <!-- HEADER -->
+    <header>
+        <div class="brand">Sorted<span class="dot">.</span> Tools <span class="badge">PRO</span></div>
+        <div class="header-right">
+            <span class="header-tool-name">PRICING STRATEGIST</span>
+            <span class="header-version">v1.0.0</span>
+        </div>
+    </header>
+
+    <!-- SERIES NAV -->
+    <div class="series-nav">
+        <div class="series-tab done">01 Revenue Forecast</div>
+        <div class="series-tab done">02 ASO Optimizer</div>
+        <div class="series-tab done">03 Pitch Deck</div>
+        <div class="series-tab active">04 Pricing Strategy &#9664;</div>
+        <div class="series-tab upcoming">05 Competitor Research</div>
+    </div>
+
+    <!-- SAFETY BAR -->
+    <div class="safety-bar">
+        <div class="safety-dot" id="safetyDot"></div>
+        <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+        <button class="safety-btn" id="safetyBtn" onclick="toggleReadinessReport()">READINESS CHECK &#9660;</button>
+    </div>
+
+    <!-- SAFETY REPORT (hidden by default) -->
+    <div class="safety-report hidden" id="safetyReport"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="main" id="formView">
+
+        <!-- ==========================================
+             CARD 1: PRODUCT INFO
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #00ff9d;">
+            <div class="card-header">
+                <div class="dot" style="background: #00ff9d;"></div>
+                <div class="card-header-label">PRODUCT INFO</div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <label>App / Service Name <span class="req">&#9733;Required</span></label>
+                    <input type="text" id="appName" placeholder="e.g. FitTracker Pro, MealPlan SaaS">
+                </div>
+                <div>
+                    <label>Category</label>
+                    <select id="category">
+                        <option>Mobile App</option>
+                        <option>Web SaaS</option>
+                        <option>Desktop App</option>
+                        <option>Digital Content</option>
+                        <option>Plugin / Extension</option>
+                        <option>Physical Product + Digital</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Platform</label>
+                    <select id="platform">
+                        <option>iOS Only</option>
+                        <option>iOS &amp; Android</option>
+                        <option>Android Only</option>
+                        <option>Web App / SaaS</option>
+                        <option>Cross-platform</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Development Stage</label>
+                    <select id="stage">
+                        <option>Pre-launch (price undecided)</option>
+                        <option>Pre-launch (price set)</option>
+                        <option>Post-launch (adjusting)</option>
+                        <option>Scale phase</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>Core Value Proposition <span class="req">&#9733;Required</span></label>
+                    <input type="text" id="coreValue" placeholder="e.g. Helps busy professionals track calories in under 3 seconds with AI photo recognition">
+                    <div class="soft-warn" id="coreValueVagueWarn"></div>
+                </div>
+                <div>
+                    <label>Target Annual Users</label>
+                    <input type="text" id="targetUsers" placeholder="e.g. 1,280 users (Year 3)">
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 2: CURRENT PRICING HYPOTHESIS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #a29bfe;">
+            <div class="card-header">
+                <div class="dot" style="background: #a29bfe;"></div>
+                <div class="card-header-label">CURRENT PRICING HYPOTHESIS</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>Monetization Models (select multiple) <span style="color:#ff6b6b">&#9733;Required</span></label>
+                    <div class="tags" id="model-tags"></div>
+                </div>
+                <div class="full">
+                    <label>Planned Price <span class="req">&#9733;Required</span></label>
+                    <div class="price-row">
+                        <select id="priceCurrency">
+                            <option value="$">$ USD</option>
+                            <option value="&yen;">&yen; JPY</option>
+                            <option value="&euro;">&euro; EUR</option>
+                        </select>
+                        <input type="text" id="price" placeholder="e.g. 4.99">
+                    </div>
+                    <div class="soft-warn" id="priceValidWarn"></div>
+                </div>
+                <div>
+                    <label>Pricing Basis</label>
+                    <select id="basis">
+                        <option>Gut feeling (no research)</option>
+                        <option>Benchmarked against competitors</option>
+                        <option>Unit economics (LTV/CAC) calculation</option>
+                        <option>User interviews / surveys</option>
+                        <option>Market research report</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Biggest Concern</label>
+                    <select id="concern">
+                        <option>Priced too low — perceived as cheap</option>
+                        <option>Priced too high — won't convert</option>
+                        <option>Unsure: subscription vs one-time</option>
+                        <option>Should I vary price by region</option>
+                        <option>Platform fee (30%) eating margins</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 3: MARKET & COMPETITORS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #ff6b6b;">
+            <div class="card-header">
+                <div class="dot" style="background: #ff6b6b;"></div>
+                <div class="card-header-label">MARKET &amp; COMPETITORS</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>Competitor Pricing</label>
+                    <textarea id="compPrice" placeholder="e.g. Anki=free, Duolingo=free/$7.99/mo, ChatGPT=$20/mo"></textarea>
+                    <div class="soft-warn" id="compPriceVagueWarn"></div>
+                </div>
+                <div>
+                    <label>Target Willingness to Pay</label>
+                    <select id="wtp">
+                        <option>High (professionals/developers — tool-buying culture)</option>
+                        <option>Medium (employed — depends on work necessity)</option>
+                        <option>Low (students / price-sensitive segment)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Primary Market</label>
+                    <select id="region">
+                        <option>United States</option>
+                        <option>Global (Worldwide)</option>
+                        <option>Asia-Pacific</option>
+                        <option>North America &amp; Europe</option>
+                        <option>Europe only</option>
+                        <option>Southeast Asia (price-sensitive)</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>Special Conditions</label>
+                    <input type="text" id="extra" placeholder="e.g. Planning a launch discount of $2.99 for first month">
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 4: BUSINESS CONSTRAINTS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #ffcc00;">
+            <div class="card-header">
+                <div class="dot" style="background: #ffcc00;"></div>
+                <div class="card-header-label">BUSINESS CONSTRAINTS</div>
+            </div>
+            <div class="card-body">
+                <div>
+                    <label>Revenue Target</label>
+                    <input type="text" id="revenue" placeholder="e.g. $100/yr → $5,000+ by Year 3">
+                </div>
+                <div>
+                    <label>Break-Even Point</label>
+                    <input type="text" id="bep" placeholder="e.g. 29 units (based on Apple Developer $99 fee)">
+                </div>
+                <div>
+                    <label>Running Costs</label>
+                    <select id="opex">
+                        <option>Zero (serverless / local only)</option>
+                        <option>Variable costs (API usage, etc.)</option>
+                        <option>Fixed costs (servers, DB, etc.)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Content Update Frequency</label>
+                    <select id="updateFreq">
+                        <option>Annually (slow updates)</option>
+                        <option>Semi-annually (IAP-compatible)</option>
+                        <option>Monthly (cost-managed)</option>
+                        <option>Irregular (publish on demand)</option>
+                    </select>
+                </div>
+                <div class="full">
+                    <label>Scenarios to Avoid</label>
+                    <textarea id="avoidScenario" placeholder="e.g. Users who buy one-time tend to resist subscriptions. Want to increase LTV without alienating base."></textarea>
+                    <div class="soft-warn" id="avoidScenarioVagueWarn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             CARD 5: OUTPUT SETTINGS
+             ========================================== -->
+        <div class="card fade-in" style="border-top: 3px solid #00cec9;">
+            <div class="card-header">
+                <div class="dot" style="background: #00cec9;"></div>
+                <div class="card-header-label">OUTPUT SETTINGS</div>
+            </div>
+            <div class="card-body">
+                <div class="full">
+                    <label>Output Options (select multiple)</label>
+                    <div class="tags" id="output-tags"></div>
+                </div>
+                <div>
+                    <label>Evaluation Mode</label>
+                    <select id="evaluationMode">
+                        <option value="ON">ON (includes critical evaluation)</option>
+                        <option value="OFF">OFF (numbers &amp; tactics only)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Additional Notes</label>
+                    <input type="text" id="notes" placeholder="e.g. App Store 30% commission already factored in">
+                    <div class="soft-warn" id="notesVagueWarn"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM ACTIONS -->
+        <div class="form-actions">
+            <button class="generate-btn" id="generateBtn" disabled onclick="processGeneration()">GENERATE PRICING STRATEGY</button>
+            <button class="reset-btn" onclick="resetForm()">RESET</button>
+        </div>
+
+    </main>
+
+    <!-- ============================================
+         RESULT VIEW
+         ============================================ -->
+    <main class="main" id="resultView">
+        <div class="result-status">STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.</div>
+
+        <div class="terminal">
+            <div class="terminal-bar">
+                <div class="t-dot" style="background: #ff5f57;"></div>
+                <div class="t-dot" style="background: #febc2e;"></div>
+                <div class="t-dot" style="background: #28c840;"></div>
+                <span style="margin-left: 8px;">pricing_strategy_prompt.txt &mdash; Read Only</span>
+                <span class="prompt-length" id="promptLength"></span>
+            </div>
+            <div class="result-box" id="output"></div>
+        </div>
+
+        <div class="result-actions">
+            <button class="copy-btn" onclick="copyText(this)">COPY PROMPT TO CLIPBOARD</button>
+            <button class="back-btn" onclick="goBack()">BACK TO EDITOR</button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>&copy; 2026 Sorted. Tools Division. All rights reserved.</footer>
+
+</div>
+
+<!-- ============================================
+     JAVASCRIPT
+     ============================================ -->
+<script>
+    /* ==========================================
+       CONSTANTS
+       ========================================== */
+    const LANG = "English";
+    const STORAGE_KEY = 'sorted_pricing_en_form';
+
+    /* ==========================================
+       VAGUE / INSTRUCTION WORD LISTS
+       ========================================== */
+    const VAGUE_WORDS = [
+        'kind of', 'sort of', 'something like', 'whatever', 'stuff', 'things',
+        'basically', 'just make it good', 'make it nice', 'you know', 'figure it out',
+        'up to you', 'I guess', 'probably', 'maybe', 'not sure', 'idk', 'etc',
+        'awesome', 'amazing', 'cool', 'great', 'best', 'somehow', 'just do it',
+        'make it work', 'do your thing'
+    ];
+
+    const INSTRUCTION_WORDS = [
+        'please do', 'please create', 'please make', 'can you', 'could you',
+        'I want you to', 'generate', 'write me', 'build me', 'come up with',
+        'figure out'
+    ];
+
+    /* ==========================================
+       TAG DATA
+       ========================================== */
+    const MODEL_OPTS = [
+        'One-time purchase', 'Monthly subscription', 'Annual subscription',
+        'Freemium', 'Content IAP', 'Bundle pricing', 'B2B / Enterprise', 'Trial-to-paid'
+    ];
+
+    const OUTPUT_OPTS = [
+        'Optimal price recommendation with rationale',
+        'Model comparison (3 patterns)',
+        'Psychological pricing tactics',
+        'Unit economics (LTV/CAC)',
+        'Regional price differentiation',
+        'Price anchoring design',
+        'Low-risk price increase strategy'
+    ];
+
+    const selectedModels = new Set();
+    const selectedOutputs = new Set();
+
+    /* ==========================================
+       SANITIZE — exact PRO tools copy
+       ========================================== */
+    function sanitize(str) {
+        if (typeof str !== 'string') return '';
+        return str
+            .normalize('NFKC')
+            .replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+            .replace(/\u301C/g, '\uFF5E')
+            .replace(/\u2014/g, '\u2015')
+            .replace(/&[#a-zA-Z0-9]+;/g, '')
+            .replace(/[<>]/g, '')
+            .replace(/ignore previous instructions/gi, '')
+            .replace(/forget all instructions/gi, '')
+            .replace(/disregard previous/gi, '')
+            .replace(/\u3000/g, ' ')
+            .replace(/ {2,}/g, ' ')
+            .replace(/([！？!?])\1{2,}/g, '$1')
+            .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF\u2015]/g, '')
+            .trim();
+    }
+
+    /* ==========================================
+       HELPERS
+       ========================================== */
+    function getVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return '';
+        return sanitize(el.value || '');
+    }
+
+    /* ==========================================
+       RENDER TAGS
+       ========================================== */
+    function renderTags(containerId, opts, set, activeClass) {
+        const container = document.getElementById(containerId);
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            btn.textContent = opt;
+            btn.type = 'button';
+            btn.onclick = () => {
+                if (set.has(opt)) {
+                    set.delete(opt);
+                    btn.className = 'tag-btn';
+                } else {
+                    set.add(opt);
+                    btn.className = 'tag-btn ' + activeClass;
+                }
+                updateSafetyBar();
+                debounceSave();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    renderTags('model-tags', MODEL_OPTS, selectedModels, 'active-purple');
+    renderTags('output-tags', OUTPUT_OPTS, selectedOutputs, 'active');
+
+    /* ==========================================
+       GATE CHECK (required fields)
+       ========================================== */
+    function checkGate1() {
+        const appName = getVal('appName');
+        const coreValue = getVal('coreValue');
+        const price = getVal('price');
+        const priceValid = price.length >= 1 && !isNaN(parseFloat(price)) && parseFloat(price) > 0;
+        return appName.length >= 3 && coreValue.length >= 3 && priceValid && selectedModels.size > 0;
+    }
+
+    /* ==========================================
+       SAFETY BAR — status indicator
+       ========================================== */
+    function updateSafetyBar() {
+        const dot = document.getElementById('safetyDot');
+        const label = document.getElementById('safetyLabel');
+        const btn = document.getElementById('generateBtn');
+
+        const appName = getVal('appName');
+        const coreValue = getVal('coreValue');
+        const price = getVal('price');
+
+        // Gray: empty
+        if (appName.length === 0 && coreValue.length === 0 && price.length === 0) {
+            dot.className = 'safety-dot';
+            label.textContent = 'Waiting for input...';
+            btn.disabled = true;
+            return;
+        }
+
+        // Red: required fields missing
+        if (!checkGate1()) {
+            dot.className = 'safety-dot red';
+            label.textContent = 'Required fields missing';
+            btn.disabled = true;
+            return;
+        }
+
+        // Check recommended fields for green
+        const compPrice = getVal('compPrice');
+        const revenue = getVal('revenue');
+        const bep = getVal('bep');
+        const avoidScenario = getVal('avoidScenario');
+        const hasModels = selectedModels.size > 0;
+        const hasOutputs = selectedOutputs.size > 0;
+
+        const optionalFilled =
+            compPrice.length > 0 &&
+            revenue.length > 0 &&
+            bep.length > 0 &&
+            avoidScenario.length > 0 &&
+            hasModels &&
+            hasOutputs;
+
+        if (optionalFilled) {
+            // Green: all filled
+            dot.className = 'safety-dot green';
+            label.textContent = 'All fields populated — maximum prompt quality';
+            btn.disabled = false;
+        } else {
+            // Yellow: required ok, optional missing
+            dot.className = 'safety-dot yellow';
+            label.textContent = 'Required OK — optional fields improve output quality';
+            btn.disabled = false;
+        }
+    }
+
+    /* ==========================================
+       READINESS REPORT
+       ========================================== */
+    let reportVisible = false;
+
+    function toggleReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        reportVisible = !reportVisible;
+        if (reportVisible) {
+            buildReadinessReport();
+            report.classList.remove('hidden');
+        } else {
+            report.classList.add('hidden');
+        }
+    }
+
+    function buildReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        const checks = [
+            { label: 'App / Service Name (3+ chars)', ok: getVal('appName').length >= 3, required: true },
+            { label: 'Core Value Proposition (3+ chars)', ok: getVal('coreValue').length >= 3, required: true },
+            { label: 'Planned Price', ok: getVal('price').length >= 1, required: true },
+            { label: 'Monetization Models selected', ok: selectedModels.size > 0, required: true },
+            { label: 'Competitor Pricing', ok: getVal('compPrice').length > 0, required: false },
+            { label: 'Revenue Target', ok: getVal('revenue').length > 0, required: false },
+            { label: 'Break-Even Point', ok: getVal('bep').length > 0, required: false },
+            { label: 'Scenarios to Avoid', ok: getVal('avoidScenario').length > 0, required: false },
+            { label: 'Output Options selected', ok: selectedOutputs.size > 0, required: false },
+        ];
+
+        let html = '';
+        checks.forEach(c => {
+            const icon = c.ok ? '[OK]' : (c.required ? '[MISSING]' : '[EMPTY]');
+            const cls = c.ok ? 'check-ok' : (c.required ? 'check-fail' : 'check-warn');
+            const tag = c.required ? ' (required)' : ' (recommended)';
+            html += `<div class="${cls}">${icon} ${c.label}${tag}</div>`;
+        });
+
+        report.innerHTML = html;
+    }
+
+    /* ==========================================
+       VAGUE WORD DETECTION
+       ========================================== */
+    function checkVague(inputId, warnId) {
+        const val = (document.getElementById(inputId)?.value || '').toLowerCase();
+        const warn = document.getElementById(warnId);
+        if (!warn) return;
+
+        const found = [];
+        VAGUE_WORDS.forEach(w => {
+            if (val.includes(w)) found.push('"' + w + '"');
+        });
+        INSTRUCTION_WORDS.forEach(w => {
+            if (val.includes(w)) found.push('"' + w + '"');
+        });
+
+        if (found.length > 0) {
+            warn.textContent = '// Vague/instruction words detected: ' + found.join(', ') + ' — be more specific for better output';
+            warn.classList.add('visible');
+        } else {
+            warn.classList.remove('visible');
+        }
+    }
+
+    function checkPriceValid() {
+        const val = document.getElementById('price')?.value || '';
+        const warn = document.getElementById('priceValidWarn');
+        if (!warn) return;
+        if (val.length > 0 && (isNaN(parseFloat(val)) || parseFloat(val) <= 0)) {
+            warn.textContent = '// Please enter a valid number (e.g. 480, 9.99)';
+            warn.classList.add('visible');
+        } else {
+            warn.classList.remove('visible');
+        }
+    }
+
+    /* ==========================================
+       INPUT EVENT LISTENERS
+       ========================================== */
+    const ALL_FIELD_IDS = [
+        'appName', 'category', 'platform', 'stage', 'coreValue', 'targetUsers',
+        'price', 'priceCurrency', 'basis', 'concern',
+        'compPrice', 'wtp', 'region', 'extra',
+        'revenue', 'bep', 'opex', 'updateFreq', 'avoidScenario',
+        'evaluationMode', 'notes'
+    ];
+
+    const VAGUE_CHECK_FIELDS = [
+        { input: 'coreValue', warn: 'coreValueVagueWarn' },
+        { input: 'compPrice', warn: 'compPriceVagueWarn' },
+        { input: 'avoidScenario', warn: 'avoidScenarioVagueWarn' },
+        { input: 'notes', warn: 'notesVagueWarn' },
+    ];
+
+    ALL_FIELD_IDS.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            updateSafetyBar();
+            debounceSave();
+            // Check vague words for relevant fields
+            VAGUE_CHECK_FIELDS.forEach(f => {
+                if (f.input === id) checkVague(f.input, f.warn);
+            });
+            if (id === 'price') checkPriceValid();
+        });
+        el.addEventListener('change', () => {
+            updateSafetyBar();
+            debounceSave();
+        });
+    });
+
+    /* ==========================================
+       LOCAL STORAGE — save / restore (400ms debounce)
+       ========================================== */
+    let saveTimer = null;
+
+    function debounceSave() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveForm, 400);
+    }
+
+    function saveForm() {
+        const data = {};
+        ALL_FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data._selectedModels = Array.from(selectedModels);
+        data._selectedOutputs = Array.from(selectedOutputs);
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) {
+            // Storage full or unavailable — silently fail
+        }
+    }
+
+    function restoreForm() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const data = JSON.parse(raw);
+
+            ALL_FIELD_IDS.forEach(id => {
+                const el = document.getElementById(id);
+                if (el && data[id] !== undefined) {
+                    el.value = data[id];
+                }
+            });
+
+            // Restore tag selections
+            if (data._selectedModels) {
+                const btns = document.getElementById('model-tags').querySelectorAll('.tag-btn');
+                data._selectedModels.forEach(m => {
+                    selectedModels.add(m);
+                    btns.forEach(b => {
+                        if (b.textContent === m) b.className = 'tag-btn active-purple';
+                    });
+                });
+            }
+            if (data._selectedOutputs) {
+                const btns = document.getElementById('output-tags').querySelectorAll('.tag-btn');
+                data._selectedOutputs.forEach(o => {
+                    selectedOutputs.add(o);
+                    btns.forEach(b => {
+                        if (b.textContent === o) b.className = 'tag-btn active';
+                    });
+                });
+            }
+
+            // Re-check vague words
+            VAGUE_CHECK_FIELDS.forEach(f => checkVague(f.input, f.warn));
+
+            updateSafetyBar();
+        } catch (e) {
+            // Parse error — ignore
+        }
+    }
+
+    /* ==========================================
+       SPLASH → APP transition
+       ========================================== */
+    function startApp() {
+        const splash = document.getElementById('splash');
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+            splash.style.display = 'none';
+            const app = document.getElementById('app');
+            app.style.display = 'flex';
+            app.classList.add('fade-in');
+            restoreForm();
+        }, 400);
+    }
+
+    /* ==========================================
+       RESET FORM
+       ========================================== */
+    function resetForm() {
+        if (!confirm('Reset all fields? This cannot be undone.')) return;
+
+        ALL_FIELD_IDS.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else el.value = '';
+        });
+
+        selectedModels.clear();
+        selectedOutputs.clear();
+        document.querySelectorAll('.tag-btn').forEach(b => b.className = 'tag-btn');
+
+        // Clear vague warnings
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const w = document.getElementById(f.warn);
+            if (w) w.classList.remove('visible');
+        });
+
+        // Clear storage
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+        updateSafetyBar();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================
+       GET EMPTY OPTIONAL FIELDS (for ambiguity warnings)
+       ========================================== */
+    function getEmptyOptionalFields() {
+        const empties = [];
+        const optionals = [
+            { id: 'targetUsers', label: 'Target Annual Users' },
+            { id: 'compPrice', label: 'Competitor Pricing' },
+            { id: 'extra', label: 'Special Conditions' },
+            { id: 'revenue', label: 'Revenue Target' },
+            { id: 'bep', label: 'Break-Even Point' },
+            { id: 'avoidScenario', label: 'Scenarios to Avoid' },
+            { id: 'notes', label: 'Additional Notes' },
+        ];
+        optionals.forEach(f => {
+            if (getVal(f.id).length === 0) empties.push(f.label);
+        });
+        if (selectedModels.size === 0) empties.push('Monetization Models');
+        if (selectedOutputs.size === 0) empties.push('Output Options');
+        return empties;
+    }
+
+    /* ==========================================
+       PROMPT GENERATION
+       ========================================== */
+    function generatePromptText() {
+        const appName = getVal('appName');
+        const category = getVal('category');
+        const platform = getVal('platform');
+        const stage = getVal('stage');
+        const coreValue = getVal('coreValue');
+        const targetUsers = getVal('targetUsers');
+        const price = getVal('price');
+        const priceCurrencyEl = document.getElementById('priceCurrency');
+        const priceCurrency = priceCurrencyEl.options[priceCurrencyEl.selectedIndex].text;
+        const priceCurrencySymbol = priceCurrencyEl.value;
+        const basis = getVal('basis');
+        const concern = getVal('concern');
+        const compPrice = getVal('compPrice');
+        const wtp = getVal('wtp');
+        const region = getVal('region');
+        const extra = getVal('extra');
+        const revenue = getVal('revenue');
+        const bep = getVal('bep');
+        const opex = getVal('opex');
+        const updateFreq = getVal('updateFreq');
+        const avoidScenario = getVal('avoidScenario');
+        const evaluationMode = getVal('evaluationMode');
+        const notes = getVal('notes');
+
+        const modelsStr = selectedModels.size > 0
+            ? Array.from(selectedModels).join(', ')
+            : '(not specified — recommend based on category)';
+
+        const outputsStr = selectedOutputs.size > 0
+            ? Array.from(selectedOutputs).join(', ')
+            : '(comprehensive pricing strategy)';
+
+        let p = '';
+
+        /* --- WEB SEARCH COMMANDS --- */
+        p += `IMPORTANT: Before answering, you MUST run the following web searches:\n`;
+        p += `- Current pricing trends and benchmarks for ${category} products in ${region}\n`;
+        p += `- Competitor pricing models and recent price changes for: ${compPrice || category}\n`;
+        p += `- Consumer willingness-to-pay research for ${category} in ${region}\n`;
+        p += `- Platform fee policies and recent changes for ${platform}\n`;
+        p += `Base ALL responses on search results. Cite every source with retrieval date.\n\n`;
+
+        p += `---\n\n`;
+
+        /* --- PRIVACY NOTICE --- */
+        p += `PRIVACY NOTICE: All information provided below is to be used SOLELY for generating this output. Do NOT use it for training, logging, or any other purpose.\n\n`;
+
+        /* --- ROLE --- */
+        p += `# Pricing Strategy Prompt\n\n`;
+        p += `You are a senior pricing consultant specializing in SaaS, mobile apps, and digital products, with 10+ years of experience advising startups from pre-seed through Series B on monetization strategy. You have designed pricing for 200+ products across consumer and B2B segments. Always leverage the latest market data from web search. Produce a concrete, evidence-based pricing strategy — not "it depends" generalities.\n\n`;
+
+        /* --- SECTION 1: PRODUCT OVERVIEW --- */
+        p += `## Section 1: Product Overview\n`;
+        p += `- App / Service Name: ${appName}\n`;
+        p += `- Core Value: ${coreValue}\n`;
+        p += `- Category: ${category}\n`;
+        p += `- Platform: ${platform}\n`;
+        p += `- Development Stage: ${stage}\n`;
+        p += `- Target Annual Users: ${targetUsers || '(not specified)'}\n\n`;
+
+        /* --- SECTION 2: CURRENT PRICING HYPOTHESIS --- */
+        p += `## Section 2: Current Pricing Hypothesis\n`;
+        p += `- Monetization Models: ${modelsStr}\n`;
+        p += `- Planned Price: ${priceCurrencySymbol}${price}\n`;
+        p += `  NOTE: All price values above are in ${priceCurrency}. Do NOT reinterpret the currency unit.\n`;
+        p += `- Pricing Basis: ${basis}\n`;
+        p += `- Biggest Concern: ${concern}\n\n`;
+
+        /* --- SECTION 3: MARKET & COMPETITOR CONTEXT --- */
+        p += `## Section 3: Market & Competitor Context\n`;
+        if (compPrice) {
+            p += `- Competitor Pricing: ${compPrice}\n`;
+        } else {
+            p += `- Competitor Pricing: (not provided — search the web to identify top 3-5 competitors and their current pricing for ${category} in ${region})\n`;
+        }
+        p += `- Target WTP: ${wtp}\n`;
+        p += `- Primary Market: ${region}\n`;
+        p += `- Special Conditions: ${extra || '(none)'}\n\n`;
+
+        /* --- SECTION 4: BUSINESS CONSTRAINTS --- */
+        p += `## Section 4: Business Constraints\n`;
+        p += `- Revenue Target: ${revenue || '(not specified)'}\n`;
+        p += `- Break-Even Point: ${bep || '(not specified)'}\n`;
+        p += `- Running Costs: ${opex}\n`;
+        p += `- Content Update Frequency: ${updateFreq}\n`;
+        p += `- Scenarios to Avoid: ${avoidScenario || '(not specified)'}\n\n`;
+
+        /* --- SECTION 5: OUTPUT REQUIREMENTS --- */
+        p += `## Section 5: Output Requirements\n`;
+        p += `- Required Output: ${outputsStr}\n`;
+        p += `- Evaluation Mode: ${evaluationMode}\n`;
+        p += `- Additional Notes: ${notes || '(none)'}\n\n`;
+
+        /* --- INTERPRETATION RULES --- */
+        p += `---\n\n`;
+        p += `## Interpretation Rules\n\n`;
+
+        p += `Rule 1 — Value-Based Pricing Priority:\n`;
+        p += `  Price recommendations must be anchored to user-perceived value, NOT cost-plus.\n`;
+        p += `  Cost structure informs floor price; value perception sets ceiling. Always show both.\n\n`;
+
+        p += `Rule 2 — Model Comparison Rigor:\n`;
+        p += `  Each pricing model comparison must include: 3-year cumulative revenue simulation,\n`;
+        p += `  user psychology at each price point, and churn/conversion risk assessment.\n`;
+        p += `  Do NOT present models without quantified trade-offs.\n\n`;
+
+        p += `Rule 3 — Output Phase Order:\n`;
+        p += `  Do NOT produce any evaluation, criticism, or concern until PHASE 5 is complete.\n`;
+        p += `  If Evaluation Mode is OFF, skip PHASE 6 entirely.\n\n`;
+
+        p += `Rule 4 — Competitor Price Intelligence:\n`;
+        p += `  If competitor pricing is not provided, search the web to identify top 3-5 competitors\n`;
+        p += `  and their current pricing. Tag all as:\n`;
+        p += `    [User-provided]: pricing entered by user\n`;
+        p += `    [Supplemented: Verified]: confirmed via web search\n`;
+        p += `    [Supplemented: Estimated]: estimated from public information\n`;
+        p += `  Never remove user-provided data.\n\n`;
+
+        p += `Rule 5 — Currency Handling:\n`;
+        p += `  Base currency: ${priceCurrency}\n`;
+        p += `  If regional pricing is recommended, convert using web-searched exchange rates.\n`;
+        p += `  State assumed rates explicitly. Cite source with date.\n\n`;
+
+        p += `Rule 6 — Assumption Quality:\n`;
+        p += `  Every assumption must include either:\n`;
+        p += `  (a) An industry benchmark with citation and retrieval date, OR\n`;
+        p += `  (b) A label: [Conservative] / [Middle] / [Aggressive] with one-line reasoning\n`;
+        p += `  Bare numbers without (a) or (b) are NOT acceptable.\n\n`;
+
+        /* --- STRICT OUTPUT INSTRUCTIONS --- */
+        p += `---\n\n`;
+        p += `## Strict Output Instructions\n\n`;
+
+        p += `PHASE 1 — Market & Competitor Price Benchmarking\n`;
+        p += `  Table format: | Competitor | Model | Price | Value Proposition | Key Weakness |\n`;
+        p += `  Include at least 5 competitors (user-provided + supplemented).\n`;
+        p += `  Identify pricing patterns and gaps in the market.\n\n`;
+
+        p += `PHASE 2 — Value-Based Price Analysis\n`;
+        p += `  Quantify the user's willingness-to-pay based on:\n`;
+        p += `  (a) Value of the problem solved (time saved, money saved, etc.)\n`;
+        p += `  (b) Price of next-best alternative\n`;
+        p += `  (c) Switching cost consideration\n`;
+        p += `  Output a recommended price range with floor, optimal, and ceiling.\n\n`;
+
+        p += `PHASE 3 — 3 Pricing Model Recommendations\n`;
+        p += `  For each model, output a table:\n`;
+        p += `  | Metric | Model A | Model B | Model C |\n`;
+        p += `  Include: Price point, 3-year revenue projection (Optimistic/Neutral/Pessimistic),\n`;
+        p += `  User psychology barrier, Churn risk, Conversion rate estimate.\n`;
+        p += `  Recommend one model with explicit reasoning.\n\n`;
+
+        p += `PHASE 4 — Psychological Pricing Tactics\n`;
+        p += `  Address ALL of the following:\n`;
+        p += `  (a) Price anchoring strategy (show how to frame price against alternatives)\n`;
+        p += `  (b) Charm pricing analysis ($X.99 vs round numbers — which works for this category)\n`;
+        p += `  (c) Bundle / package design (if applicable)\n`;
+        p += `  (d) Launch pricing vs steady-state pricing transition plan\n\n`;
+
+        p += `PHASE 5 — Implementation Roadmap\n`;
+        p += `  Timeline: Launch → 3 months → 6 months → 12 months\n`;
+        p += `  Include: initial price, planned adjustments, A/B test recommendations,\n`;
+        p += `  price increase triggers and methodology.\n\n`;
+
+        p += `PHASE 6 — Critical Evaluation (only if Evaluation Mode: ON)\n`;
+        if (evaluationMode === 'ON') {
+            p += `  Be direct and critical. Do not sugarcoat.\n`;
+            p += `  Minimum requirements — all three must be present:\n`;
+            p += `  (a) At least 2 opportunity costs in the current pricing hypothesis\n`;
+            p += `  (b) At least 2 pricing risks with mitigation strategies\n`;
+            p += `  (c) At least 1 contradiction found via web search (market data vs user's assumption)\n`;
+        } else {
+            p += `  Evaluation section skipped. Turn Evaluation Mode ON to include it.\n`;
+        }
+        p += `\n`;
+
+        /* --- MINIMUM OUTPUT REQUIREMENTS --- */
+        p += `MINIMUM OUTPUT REQUIREMENTS:\n`;
+        p += `- PHASE 1: Competitor table must include at least 5 rows\n`;
+        p += `- PHASE 2: Floor, optimal, and ceiling prices must all be stated with reasoning\n`;
+        p += `- PHASE 3: All 3 models must include 3-year revenue projection (Optimistic/Neutral/Pessimistic)\n`;
+        p += `- PHASE 4: All 4 subsections (a)(b)(c)(d) must be addressed\n`;
+        p += `- PHASE 5: Timeline must cover all 4 milestones (Launch/3mo/6mo/12mo)\n`;
+        p += `- PHASE 6 (if ON): Must meet all 3 minimum requirements (a)(b)(c)\n`;
+        p += `Outputs that fail to meet these minimums are NOT acceptable.\n\n`;
+
+        /* --- PRE-OUTPUT SELF-CHECK --- */
+        p += `PRE-OUTPUT SELF-CHECK:\n`;
+        p += `Before output, verify:\n`;
+        p += `(a) INTERPRETATION RULES applied correctly\n`;
+        p += `(b) Phase order maintained — no critique before PHASE 6\n`;
+        p += `(c) All estimates use labeled format per Rule 6\n`;
+        p += `(d) All competitor pricing classified with tags per Rule 4\n`;
+        p += `(e) 3 pricing models compared with quantified trade-offs\n`;
+        p += `(f) Price anchoring strategy is specific, not generic\n`;
+        p += `(g) PHASE 6 meets minimum requirements (a)(b)(c) if Evaluation Mode ON\n\n`;
+
+        /* --- CREDIT LINE --- */
+        p += `IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n`;
+        p += `_Generated with Sorted.Tools PRO — Pricing Strategy v1.0.0_\n`;
+        p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
+
+        p += `---\n\n`;
+
+        p += `⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n`;
+
+        /* --- AMBIGUITY WARNINGS --- */
+        const empties = getEmptyOptionalFields();
+        if (empties.length > 0) {
+            p += `\n[Ambiguity warning: The following optional fields were left empty. The AI will make assumptions for these: ${empties.join(', ')}]\n`;
+        }
+
+        p += `\n_Generated with Sorted.Tools PRO — Pricing Strategy v1.0.0_\n`;
+        p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
+        p += `Respond entirely in English.\n`;
+
+        return p;
+    }
+
+    /* ==========================================
+       PROCESS GENERATION
+       ========================================== */
+    let isGenerating = false;
+
+    function processGeneration() {
+        if (isGenerating) return;
+        if (!checkGate1()) return;
+
+        isGenerating = true;
+        const btn = document.getElementById('generateBtn');
+        btn.textContent = 'GENERATING...';
+        btn.disabled = true;
+
+        setTimeout(() => {
+            const promptText = generatePromptText();
+            document.getElementById('output').textContent = promptText;
+
+            // Update prompt length
+            document.getElementById('promptLength').textContent = promptText.length.toLocaleString() + ' chars';
+
+            // Switch views
+            document.getElementById('formView').style.display = 'none';
+            document.getElementById('resultView').style.display = 'block';
+            document.getElementById('resultView').classList.add('fade-in');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            btn.textContent = 'GENERATE PRICING STRATEGY';
+            btn.disabled = false;
+            isGenerating = false;
+        }, 600);
+    }
+
+    /* ==========================================
+       COPY TO CLIPBOARD
+       ========================================== */
+    function copyText(btn) {
+        const text = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'COPIED TO CLIPBOARD';
+            btn.style.background = '#fff';
+            btn.style.color = '#000';
+            setTimeout(() => {
+                btn.textContent = orig;
+                btn.style.background = '';
+                btn.style.color = '';
+            }, 2200);
+        }).catch(() => {
+            // Fallback for older browsers
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            const orig = btn.textContent;
+            btn.textContent = 'COPIED TO CLIPBOARD';
+            setTimeout(() => { btn.textContent = orig; }, 2200);
+        });
+    }
+
+    /* ==========================================
+       BACK TO EDITOR
+       ========================================== */
+    function goBack() {
+        document.getElementById('resultView').style.display = 'none';
+        document.getElementById('resultView').classList.remove('fade-in');
+        document.getElementById('formView').style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================
+       INIT — run on page load
+       ========================================== */
+    updateSafetyBar();
+</script>
+</body>
+</html>

@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pitch Deck PRO | Sorted. Tools</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #13131f;
+            --surface-lighter: #1c1c2e;
+            --border: #2a2a3e;
+            --accent: #00ff9d;
+            --accent-dim: rgba(0, 255, 157, 0.1);
+            --text: #e8e8f0;
+            --muted: #888;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html {
+            height: 100%; background-color: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5;
+            user-select: none; -webkit-user-select: none; overflow-x: hidden;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        .hidden { display: none !important; }
+
+        /* SPLASH */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .splash-brand { font-size: 32px; font-weight: 800; letter-spacing: 2px; margin-bottom: 8px; color: #fff; }
+        .splash-brand span { color: var(--accent); }
+        .splash-sub { font-size: 12px; color: var(--muted); letter-spacing: 3px; margin-bottom: 40px; font-family: 'JetBrains Mono', monospace; }
+        .splash-btn {
+            margin-top: 20px; padding: 12px 40px; background: transparent;
+            border: 2px solid var(--accent); color: var(--accent); font-size: 14px;
+            font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: 0.3s;
+        }
+        .splash-btn:hover { background: var(--accent); color: #000; box-shadow: 0 0 30px var(--accent-dim); }
+
+        /* LAYOUT */
+        #app-container { display: none; opacity: 0; min-height: 100vh; flex-direction: column; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        header {
+            padding: 15px 30px; border-bottom: 1px solid var(--border);
+            background: rgba(19, 19, 31, 0.8); position: sticky; top: 0; z-index: 100;
+            display: flex; justify-content: space-between; align-items: center;
+            backdrop-filter: blur(20px);
+        }
+        .brand { font-size: 18px; font-weight: 800; letter-spacing: 1px; color: #fff; }
+        .brand span { color: var(--accent); }
+        .badge { font-size: 10px; background: var(--accent); color: #000; padding: 2px 6px; border-radius: 4px; margin-left: 8px; vertical-align: middle; font-weight: 700; }
+        .header-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .tool-name { font-size: 10px; color: var(--accent); font-family: 'JetBrains Mono', monospace; letter-spacing: 1px; }
+        .version { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+        .main-content { flex: 1; max-width: 800px; margin: 0 auto; width: 100%; padding: 30px 20px; }
+
+        /* CARDS */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 24px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: border-color 0.3s; }
+        .card:hover { border-color: #444; }
+        .card-header { padding: 12px 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 10px; background: var(--surface-lighter); color: #fff; }
+        .card-header-desc { font-size: 10px; color: var(--muted); font-weight: 400; letter-spacing: 0; margin-left: auto; font-family: 'JetBrains Mono', monospace; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .card-body { padding: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: 1 / -1; }
+
+        label { display: block; color: var(--muted); font-size: 11px; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .label-hint { font-size: 10px; color: #555; font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 6px; }
+        input, select, textarea {
+            width: 100%; background: #08080c; border: 1px solid var(--border);
+            color: #fff; padding: 12px 16px; border-radius: 8px; font-size: 13px; transition: 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-dim); }
+        input::placeholder, textarea::placeholder { color: #444; }
+
+        .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .tag-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--muted);
+            padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; transition: 0.2s; font-weight: 600;
+        }
+        .tag-btn:hover { border-color: #666; color: #fff; }
+        .tag-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 15px var(--accent-dim); }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 10px; color: var(--muted); letter-spacing: 2px; font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+        }
+
+        .generate-btn {
+            width: 100%; background: var(--accent); color: #000; font-weight: 800;
+            padding: 18px; border: none; border-radius: 12px; cursor: pointer;
+            font-size: 14px; letter-spacing: 1px; transition: 0.2s; text-transform: uppercase;
+            box-shadow: 0 0 20px var(--accent-dim);
+        }
+        .generate-btn:hover { transform: translateY(-2px); box-shadow: 0 0 30px rgba(0,255,157,0.3); }
+        .generate-btn:active { transform: translateY(0); }
+        .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* RESULT */
+        .result-header-bar {
+            font-family: 'JetBrains Mono', monospace; color: var(--accent); font-size: 12px;
+            margin-bottom: 15px; letter-spacing: 1px;
+        }
+        .terminal-window {
+            background: #08080c; border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .terminal-bar {
+            background: var(--surface-lighter); padding: 8px 15px; font-size: 11px; color: var(--muted);
+            border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;
+            display: flex; align-items: center;
+        }
+        .terminal-bar::before { content: "● ● ●"; letter-spacing: -2px; margin-right: 10px; color: #444; }
+        .prompt-length { margin-left: auto; color: #555; font-size: 10px; }
+        .result-box {
+            padding: 30px; font-family: 'JetBrains Mono', monospace; color: #ccc; white-space: pre-wrap;
+            height: 500px; overflow-y: auto; font-size: 13px; line-height: 1.6;
+            user-select: text; -webkit-user-select: text;
+        }
+        .action-row { margin-top: 30px; display: flex; flex-direction: column; gap: 15px; }
+        .copy-btn-large {
+            width: 100%; background: var(--accent); color: #000; border: none;
+            padding: 18px; border-radius: 12px; cursor: pointer; font-weight: 800;
+            font-size: 16px; letter-spacing: 1px; transition: 0.3s;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        .copy-btn-large:hover { box-shadow: 0 0 30px var(--accent-dim); }
+        .back-btn {
+            background: transparent; color: var(--muted); border: 1px solid var(--border);
+            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; transition: 0.2s;
+        }
+        .back-btn:hover { border-color: #666; color: #fff; }
+
+        /* SERIES NAV */
+        .series-nav {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
+            overflow-x: auto;
+        }
+        .series-label { font-size: 10px; color: var(--muted); letter-spacing: 1px; white-space: nowrap; font-family: 'JetBrains Mono', monospace; }
+        .series-item {
+            font-size: 11px; padding: 6px 12px; border-radius: 20px; white-space: nowrap;
+            font-weight: 600; letter-spacing: 0.5px;
+        }
+        .series-item.done { background: var(--accent-dim); border: 1px solid var(--accent); color: var(--accent); }
+        .series-item.active { background: rgba(162,155,254,0.1); border: 1px solid #a29bfe; color: #a29bfe; }
+        .series-item.upcoming { border: 1px solid var(--border); color: #444; }
+        .series-arrow { color: #333; font-size: 12px; }
+
+        footer {
+            text-align: center; padding: 30px; color: var(--muted); font-size: 11px;
+            border-top: 1px solid var(--border); margin-top: auto;
+        }
+
+        /* SOFT WARNINGS */
+        .soft-warn {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #ff9d3a; margin-top: 5px; display: none;
+            letter-spacing: 0.5px; line-height: 1.5;
+        }
+
+        /* SAFETY BAR */
+        .safety-bar {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 10px 18px; margin-bottom: 20px; display: flex; align-items: center;
+            justify-content: space-between; gap: 12px;
+        }
+        .safety-bar-left { display: flex; align-items: center; gap: 10px; }
+        .safety-dot {
+            width: 9px; height: 9px; border-radius: 50%; background: #444;
+            flex-shrink: 0; transition: 0.3s;
+        }
+        .safety-dot.green  { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        .safety-dot.yellow { background: #ffcc00; box-shadow: 0 0 8px rgba(255,204,0,0.5); }
+        .safety-dot.red    { background: #ff4d4d; box-shadow: 0 0 8px rgba(255,77,77,0.5); }
+        .safety-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: var(--muted); letter-spacing: 1px;
+        }
+        .safety-check-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--muted);
+            font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 1px;
+            padding: 5px 10px; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: 0.2s;
+        }
+        .safety-check-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .safety-report {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 14px 18px; margin-bottom: 20px; display: none;
+        }
+        .safety-report-header {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
+            letter-spacing: 2px; margin-bottom: 10px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .safety-report-item { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; }
+        .safety-report-icon { font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+        .safety-report-text {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #aaa; letter-spacing: 0.3px; line-height: 1.5;
+        }
+        .safety-report-close {
+            background: none; border: none; color: var(--muted); cursor: pointer;
+            font-size: 12px; padding: 0;
+        }
+        .safety-report-close:hover { color: var(--text); }
+
+        .form-actions { display: flex; flex-direction: column; gap: 12px; }
+        .reset-btn {
+            background: transparent; color: #555; border: 1px solid var(--border);
+            padding: 10px; border-radius: 8px; cursor: pointer; font-weight: 600;
+            font-size: 11px; letter-spacing: 1px; width: 100%; transition: 0.2s;
+        }
+        .reset-btn:hover { border-color: #ff6b6b; color: #ff6b6b; }
+
+        @media (max-width: 600px) { .card-body { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+<div id="splash-screen">
+    <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+    <div class="splash-sub fade-in" style="animation-delay:0.1s">PITCH DECK GENERATOR</div>
+    <button class="splash-btn fade-in" style="animation-delay: 0.3s;" onclick="startApp()">INITIALIZE SYSTEM</button>
+</div>
+
+<div id="app-container">
+    <header>
+        <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="header-right">
+            <div class="tool-name">PITCH DECK</div>
+            <div class="version">v1.0.0</div>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <!-- SERIES NAV -->
+        <div class="series-nav">
+            <span class="series-label">SERIES /</span>
+            <span class="series-item done">01 Revenue Forecast</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item done">02 ASO Optimizer</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item active">03 Pitch Deck ◀</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item upcoming">04 Pricing Strategy</span>
+            <span class="series-arrow">→</span>
+            <span class="series-item upcoming">05 Competitor Research</span>
+        </div>
+
+        <div id="form-view">
+
+            <div class="safety-bar" id="safetyBar">
+                <div class="safety-bar-left">
+                    <div class="safety-dot" id="safetyDot"></div>
+                    <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+                </div>
+                <button class="safety-check-btn" onclick="toggleReadinessReport()">READINESS CHECK ▼</button>
+            </div>
+
+            <div class="safety-report" id="safetyReport">
+                <div class="safety-report-header">
+                    <span>READINESS REPORT</span>
+                    <button class="safety-report-close" onclick="toggleReadinessReport()">✕</button>
+                </div>
+                <div id="safetyReportItems"></div>
+            </div>
+
+            <!-- CARD 1: COMPANY INFO -->
+            <div class="card" style="border-top: 3px solid #00ff9d;">
+                <div class="card-header">
+                    <div class="dot" style="background:#00ff9d"></div>
+                    COMPANY INFO
+                    <span class="card-header-desc">Basic Info</span>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <label>Company / Product Name<span style="color:#ff6b6b">★Required</span></label>
+                        <input type="text" id="companyName" placeholder="e.g. Sorted. Inc.">
+                    </div>
+                    <div>
+                        <label>Industry / Category</label>
+                        <select id="industry">
+                            <option>SaaS / Cloud</option>
+                            <option>Mobile App</option>
+                            <option>EdTech</option>
+                            <option>HealthTech</option>
+                            <option>FinTech</option>
+                            <option>E-commerce / Marketplace</option>
+                            <option>AI / ML</option>
+                            <option>Games</option>
+                            <option>Hardware / IoT</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Platform</label>
+                        <select id="platform">
+                            <option>iOS & Android</option>
+                            <option>iOS Only</option>
+                            <option>Android Only</option>
+                            <option>Web App / SaaS</option>
+                            <option>Cross-Platform</option>
+                            <option>Hardware + Software</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Development Stage</label>
+                        <select id="stage">
+                            <option>Idea Stage</option>
+                            <option>Building MVP</option>
+                            <option>Prototype Complete</option>
+                            <option>Launched (Early)</option>
+                            <option>PMF Achieved</option>
+                            <option>Scaling</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label>One-Line Description<span style="color:#ff6b6b">★Required</span></label>
+                        <input type="text" id="productDesc" placeholder="e.g. A buy-once app that helps non-English engineers explain dev terms in 3 seconds">
+                        <div class="soft-warn" id="productDescVagueWarn"></div>
+                    </div>
+                    <div>
+                        <label>Founded <span class="label-hint">optional</span></label>
+                        <input type="text" id="foundedDate" placeholder="e.g. March 2024">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: PROBLEM & SOLUTION -->
+            <div class="card" style="border-top: 3px solid #a29bfe;">
+                <div class="card-header">
+                    <div class="dot" style="background:#a29bfe"></div>
+                    PROBLEM & SOLUTION
+                    <span class="card-header-desc">Problem & Solution</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Problem to Solve<span style="color:#ff6b6b">★Required</span></label>
+                        <textarea id="problem" placeholder="e.g. Many engineers struggle with code reviews in English. Existing language apps focus on daily conversation, not dev vocabulary."></textarea>
+                        <div class="soft-warn" id="problemVagueWarn"></div>
+                    </div>
+                    <div class="full">
+                        <label>Solution</label>
+                        <textarea id="solution" placeholder="e.g. 3-second flash training specialized in dev terms. Uses real code review and Slack conversations as learning material."></textarea>
+                        <div class="soft-warn" id="solutionVagueWarn"></div>
+                    </div>
+                    <div class="full">
+                        <label>Key Features / USP <span class="label-hint">bullet points recommended</span></label>
+                        <textarea id="keyFeatures" placeholder="e.g. ① 3-second quiz format ② 200 real code review examples ③ Slack-style UI for practical training"></textarea>
+                    </div>
+                    <div class="full">
+                        <label>Current Alternatives <span class="label-hint">how users currently cope</span></label>
+                        <input type="text" id="alternatives" placeholder="e.g. Anki, Duolingo, self-study (books), Google Translate on the fly">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: MARKET & TRACTION -->
+            <div class="card" style="border-top: 3px solid #ff6b6b;">
+                <div class="card-header">
+                    <div class="dot" style="background:#ff6b6b"></div>
+                    MARKET & TRACTION
+                    <span class="card-header-desc">Market & Traction</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Target Customer</label>
+                        <textarea id="targetCustomer" placeholder="e.g. Non-English-speaking software engineers who can code with Cursor but struggle with English communication."></textarea>
+                        <div class="soft-warn" id="targetCustomerVagueWarn"></div>
+                    </div>
+                    <div>
+                        <label>TAM (Total Addressable Market)</label>
+                        <input type="text" id="tam" placeholder="e.g. Global programming education market ~$20B">
+                    </div>
+                    <div>
+                        <label>SAM / SOM</label>
+                        <input type="text" id="samSom" placeholder="e.g. Japan English learning app market ~$500M">
+                    </div>
+                    <div class="full">
+                        <label>Current Traction <span class="label-hint">concrete numbers recommended</span></label>
+                        <textarea id="traction" placeholder="e.g. Beta: 300 DL, DAU 45, avg rating 4.6, D7 retention 38%"></textarea>
+                        <div class="soft-warn" id="tractionVagueWarn"></div>
+                    </div>
+                    <div class="full">
+                        <label>KPI / Key Metrics <span class="label-hint">optional</span></label>
+                        <input type="text" id="kpi" placeholder="e.g. MRR $800 / churn 5% / LTV $65">
+                    </div>
+                    <div class="full">
+                        <label>Competitors <span class="label-hint">as many as you know</span></label>
+                        <input type="text" id="competitors" placeholder="e.g. Anki, Duolingo, ChatGPT">
+                    </div>
+                    <div>
+                        <label>Target Region</label>
+                        <select id="region">
+                            <option>Japan</option>
+                            <option>Global (Worldwide)</option>
+                            <option>Global (English-speaking)</option>
+                            <option>Asia-Pacific</option>
+                            <option>North America & Europe</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: TEAM & BUSINESS MODEL -->
+            <div class="card" style="border-top: 3px solid #ffcc00;">
+                <div class="card-header">
+                    <div class="dot" style="background:#ffcc00"></div>
+                    TEAM & BUSINESS MODEL
+                    <span class="card-header-desc">Team & Business Model</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Revenue Model</label>
+                        <input type="text" id="revenueModel" placeholder="e.g. Monthly $5.99 / Annual $49.99 / One-time $9.99">
+                    </div>
+                    <div class="full">
+                        <label>Team Overview <span class="label-hint">format: Role: Background</span></label>
+                        <textarea id="team" placeholder="e.g. CEO: Ex-Google SWE 8yr / CTO: AWS SA 5yr / Design: Freelance UI/UX 3yr"></textarea>
+                    </div>
+                    <div class="full">
+                        <label>Go-to-Market Strategy</label>
+                        <input type="text" id="gtmStrategy" placeholder="e.g. Twitter/X viral → ProductHunt → Enterprise sales">
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: DECK SETTINGS & OUTPUT -->
+            <div class="card" style="border-top: 3px solid #00d2ff;">
+                <div class="card-header">
+                    <div class="dot" style="background:#00d2ff"></div>
+                    DECK SETTINGS & OUTPUT
+                    <span class="card-header-desc">Deck Settings & Output</span>
+                </div>
+                <div class="card-body">
+                    <div class="full">
+                        <label>Funding Round (select multiple)</label>
+                        <div class="tags" id="round-tags"></div>
+                    </div>
+                    <div>
+                        <label>Target Raise Amount</label>
+                        <input type="text" id="fundingAmount" placeholder="e.g. $500K / ¥30M">
+                    </div>
+                    <div>
+                        <label>Use of Funds</label>
+                        <input type="text" id="fundingUse" placeholder="e.g. Dev 50%, Marketing 30%, Hiring 20%">
+                    </div>
+                    <div>
+                        <label>Deck Purpose</label>
+                        <select id="deckPurpose">
+                            <option>VC Pitch</option>
+                            <option>Angel Investor</option>
+                            <option>Accelerator Application</option>
+                            <option>Internal / Board</option>
+                            <option>Bank / Loan Application</option>
+                            <option>Partner Company</option>
+                            <option>Pitch Competition</option>
+                            <option>Self-Organization (Internal)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Target Slide Count</label>
+                        <select id="slideCount">
+                            <option>10 slides (standard)</option>
+                            <option>12–15 slides (detailed)</option>
+                            <option>7–8 slides (short)</option>
+                            <option>20+ slides (full deck)</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label>Output Options (select multiple)</label>
+                        <div class="tags" id="output-tags"></div>
+                    </div>
+                    <div>
+                        <label>Deck Style</label>
+                        <select id="deckStyle">
+                            <option>Data-Driven (numbers-focused)</option>
+                            <option>Storytelling (narrative-focused)</option>
+                            <option>Minimal (simple & clean)</option>
+                            <option>Visual-Heavy (diagrams & graphics)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Evaluation Mode <span class="label-hint">ON adds critical evaluation</span></label>
+                        <select id="evaluationMode">
+                            <option value="ON">ON (includes critique & risk assessment)</option>
+                            <option value="OFF">OFF (structure & content only)</option>
+                        </select>
+                    </div>
+                    <div class="full">
+                        <label>Additional Notes <span class="label-hint">special conditions or constraints</span></label>
+                        <input type="text" id="notes" placeholder="e.g. For YC W26 application. English slides required. 5-minute presentation.">
+                        <div class="soft-warn" id="notesVagueWarn"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>⚡ GENERATE PITCH DECK PROMPT</button>
+                <button class="reset-btn" onclick="resetForm()">RESET FORM</button>
+            </div>
+        </div>
+
+        <!-- RESULT VIEW -->
+        <div id="result-view" class="hidden">
+            <div class="result-header-bar">
+                > STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-bar">pitchdeck_prompt.txt - Read Only<span class="prompt-length" id="promptLength"></span></div>
+                <div class="result-box" id="output"></div>
+            </div>
+            <div class="action-row">
+                <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                <button class="back-btn" onclick="backToForm()">CREATE NEW PROMPT</button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        © 2026 Sorted. Tools Division. All rights reserved.<br>
+        Part of the Sorted. Series — <strong style="color:var(--accent)">Revenue Forecast</strong> → <strong style="color:#a29bfe">ASO Optimizer</strong> → <strong style="color:#00d2ff">Pitch Deck</strong> → Pricing Strategy → Competitor Research
+    </footer>
+</div>
+
+<script>
+    const LANG = "English";
+    const STORAGE_KEY = 'sorted_pitchdeck_en_form';
+    const splash = document.getElementById('splash-screen');
+    const appContainer = document.getElementById('app-container');
+    const formView = document.getElementById('form-view');
+    const resultView = document.getElementById('result-view');
+    const generateBtn = document.getElementById('generateBtn');
+    let isGenerating = false;
+
+    function startApp() {
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+            splash.style.display = 'none';
+            appContainer.style.display = 'flex';
+            appContainer.classList.add('fade-in');
+            checkGate1();
+        }, 500);
+    }
+
+    function processGeneration() {
+        if (isGenerating) return;
+        if (!checkGate1(true)) return;
+        isGenerating = true;
+        generateBtn.disabled = true;
+        generatePromptText();
+        formView.classList.add('fade-out');
+        setTimeout(() => {
+            formView.classList.add('hidden');
+            formView.classList.remove('fade-out');
+            resultView.classList.remove('hidden');
+            resultView.classList.add('fade-in');
+            setTimeout(() => resultView.classList.remove('fade-in'), 500);
+            isGenerating = false;
+        }, 500);
+    }
+
+    function backToForm() {
+        resultView.classList.add('fade-out');
+        setTimeout(() => {
+            resultView.classList.add('hidden');
+            resultView.classList.remove('fade-out');
+            formView.classList.remove('hidden');
+            formView.classList.add('fade-in');
+            setTimeout(() => formView.classList.remove('fade-in'), 500);
+            checkGate1();
+        }, 500);
+    }
+
+    // --- VAGUE / ABSTRACT WORD DETECTION ---
+    const VAGUE_WORDS = [
+        'kind of', 'sort of', 'something like', 'whatever', 'stuff',
+        'things', 'basically', 'just make it good', 'make it nice',
+        'you know', 'figure it out', 'up to you', 'I guess',
+        'probably', 'maybe', 'not sure', 'idk', 'etc',
+        'awesome', 'amazing', 'cool', 'great', 'best',
+        'somehow', 'just do it', 'make it work', 'do your thing'
+    ];
+    const INSTRUCTION_WORDS = [
+        'please do', 'please create', 'please make', 'can you',
+        'could you', 'I want you to', 'generate', 'write me',
+        'build me', 'come up with', 'figure out'
+    ];
+
+    const VAGUE_CHECK_FIELDS = [
+        { id: 'productDesc',     warnId: 'productDescVagueWarn',     label: 'Product Description' },
+        { id: 'problem',         warnId: 'problemVagueWarn',         label: 'Problem' },
+        { id: 'solution',        warnId: 'solutionVagueWarn',        label: 'Solution' },
+        { id: 'targetCustomer',  warnId: 'targetCustomerVagueWarn',  label: 'Target Customer' },
+        { id: 'traction',        warnId: 'tractionVagueWarn',        label: 'Traction' },
+        { id: 'notes',           warnId: 'notesVagueWarn',           label: 'Notes' },
+    ];
+
+    function checkVagueInputs() {
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const el = document.getElementById(f.id);
+            const warn = document.getElementById(f.warnId);
+            if (!el || !warn) return;
+            const val = el.value.trim();
+            if (val.length === 0) { warn.style.display = 'none'; return; }
+
+            const vagueHit  = VAGUE_WORDS.find(w => val.includes(w));
+            const instrHit  = INSTRUCTION_WORDS.find(w => val.includes(w));
+
+            if (vagueHit) {
+                warn.textContent = '⚠ "' + vagueHit + '" is vague — be more specific for better prompt accuracy';
+                warn.style.display = 'block';
+            } else if (instrHit) {
+                warn.textContent = '⚠ Task instruction ("' + instrHit + '") detected — this field is for facts and context, not instructions';
+                warn.style.display = 'block';
+            } else {
+                warn.style.display = 'none';
+            }
+        });
+    }
+
+    VAGUE_CHECK_FIELDS.forEach(f => {
+        const el = document.getElementById(f.id);
+        if (el) {
+            el.addEventListener('input', checkVagueInputs);
+            el.addEventListener('change', checkVagueInputs);
+        }
+    });
+
+    // TAG OPTIONS
+    const roundOpts = [
+        "Pre-Seed", "Seed", "Series A", "Series B+",
+        "Angel", "Accelerator", "Bank / Loan", "Internal / Board"
+    ];
+    const outputOpts = [
+        "Slide structure (all pages)", "Slide-by-slide script",
+        "Design direction", "Speaker notes",
+        "Investor Q&A (anticipated)", "Executive summary (1 page)",
+        "Competitive comparison matrix"
+    ];
+
+    const selectedRounds = new Set();
+    const selectedOutputs = new Set();
+
+    function renderTags(id, opts, set) {
+        const container = document.getElementById(id);
+        opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'tag-btn';
+            btn.textContent = opt;
+            btn.onclick = () => {
+                if (set.has(opt)) { set.delete(opt); btn.classList.remove('active'); }
+                else { set.add(opt); btn.classList.add('active'); }
+                scheduleSave();
+                updateSafetyBar();
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    renderTags('round-tags', roundOpts, selectedRounds);
+    renderTags('output-tags', outputOpts, selectedOutputs);
+
+    // --- localStorage persistence ---
+    const formFieldIds = [
+        'companyName', 'industry', 'platform', 'stage', 'productDesc', 'foundedDate',
+        'problem', 'solution', 'keyFeatures', 'alternatives',
+        'targetCustomer', 'tam', 'samSom', 'traction', 'kpi', 'competitors', 'region',
+        'revenueModel', 'team', 'gtmStrategy',
+        'fundingAmount', 'fundingUse', 'deckPurpose', 'slideCount',
+        'deckStyle', 'evaluationMode', 'notes'
+    ];
+
+    let saveTimeout;
+    function scheduleSave() {
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(saveForm, 400);
+    }
+
+    function saveForm() {
+        const data = {};
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data[id] = el.value;
+        });
+        data._rounds = Array.from(selectedRounds);
+        data._outputs = Array.from(selectedOutputs);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+    }
+
+    function restoreForm() {
+        let data;
+        try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) {}
+        if (!data) return;
+
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && data[id] !== undefined) el.value = data[id];
+        });
+
+        if (Array.isArray(data._rounds)) {
+            const btns = document.getElementById('round-tags').querySelectorAll('.tag-btn');
+            btns.forEach(btn => {
+                if (data._rounds.includes(btn.textContent)) {
+                    selectedRounds.add(btn.textContent);
+                    btn.classList.add('active');
+                }
+            });
+        }
+        if (Array.isArray(data._outputs)) {
+            const btns = document.getElementById('output-tags').querySelectorAll('.tag-btn');
+            btns.forEach(btn => {
+                if (data._outputs.includes(btn.textContent)) {
+                    selectedOutputs.add(btn.textContent);
+                    btn.classList.add('active');
+                }
+            });
+        }
+
+        checkVagueInputs();
+        checkGate1();
+    }
+
+    function resetForm() {
+        if (!confirm('Reset all form fields?')) return;
+        formFieldIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else el.value = '';
+        });
+        selectedRounds.clear();
+        selectedOutputs.clear();
+        document.querySelectorAll('.tag-btn.active').forEach(btn => btn.classList.remove('active'));
+        try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+        checkVagueInputs();
+        checkGate1();
+    }
+
+    restoreForm();
+
+    formFieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', () => { scheduleSave(); updateSafetyBar(); });
+            el.addEventListener('change', () => { scheduleSave(); updateSafetyBar(); });
+        }
+    });
+
+    function sanitize(str) {
+        if (typeof str !== 'string') return '';
+        return str
+            .normalize('NFKC')
+            .replace(/[\u200B\u200C\u200D\uFEFF\u00AD]/g, '')
+            .replace(/\u301C/g, '\uFF5E')
+            .replace(/\u2014/g, '\u2015')
+            .replace(/&[#a-zA-Z0-9]+;/g, '')
+            .replace(/[<>]/g, '')
+            .replace(/ignore previous instructions/gi, '')
+            .replace(/forget all instructions/gi, '')
+            .replace(/disregard previous/gi, '')
+            .replace(/\u3000/g, ' ')
+            .replace(/ {2,}/g, ' ')
+            .replace(/([！？!?])\1{2,}/g, '$1')
+            .replace(/[^\x20-\x7E\u3000-\u9FFF\uFF00-\uFFEF\u2015]/g, '')
+            .trim();
+    }
+
+    function getVal(id) {
+        const el = document.getElementById(id);
+        if (!el) return '(not provided)';
+        const raw = el.value || '';
+        const cleaned = sanitize(raw);
+        return cleaned.length === 0 ? '(not provided)' : cleaned;
+    }
+
+    function getEmptyOptionalFields() {
+        const optionalFields = [
+            { id: 'solution',       label: 'Solution' },
+            { id: 'keyFeatures',    label: 'Key Features / USP' },
+            { id: 'alternatives',   label: 'Current Alternatives' },
+            { id: 'targetCustomer', label: 'Target Customer' },
+            { id: 'tam',            label: 'TAM (Total Addressable Market)' },
+            { id: 'samSom',         label: 'SAM / SOM' },
+            { id: 'traction',       label: 'Current Traction' },
+            { id: 'kpi',            label: 'KPI / Key Metrics' },
+            { id: 'competitors',    label: 'Competitors' },
+            { id: 'revenueModel',   label: 'Revenue Model' },
+            { id: 'team',           label: 'Team Overview' },
+            { id: 'gtmStrategy',    label: 'Go-to-Market Strategy' },
+            { id: 'fundingAmount',  label: 'Target Raise Amount' },
+            { id: 'fundingUse',     label: 'Use of Funds' },
+        ];
+        return optionalFields.filter(f => {
+            const el = document.getElementById(f.id);
+            if (!el) return false;
+            return el.value.trim().length === 0;
+        });
+    }
+
+    function checkGate1(showAlert) {
+        const companyNameLen = (document.getElementById('companyName').value || '').trim().length;
+        const productDescLen = (document.getElementById('productDesc').value || '').trim().length;
+        const problemLen     = (document.getElementById('problem').value || '').trim().length;
+        const isValid = companyNameLen >= 3 && productDescLen >= 3 && problemLen >= 3;
+        if (generateBtn) generateBtn.disabled = !isValid;
+        updateSafetyBar();
+        return isValid;
+    }
+
+    function updateSafetyBar() {
+        const dot   = document.getElementById('safetyDot');
+        const label = document.getElementById('safetyLabel');
+        if (!dot || !label) return;
+
+        const companyName = (document.getElementById('companyName').value || '').trim();
+        const productDesc = (document.getElementById('productDesc').value || '').trim();
+        const problem     = (document.getElementById('problem').value || '').trim();
+
+        if (!companyName && !productDesc && !problem) {
+            dot.className = 'safety-dot';
+            label.textContent = 'Waiting for input...';
+            return;
+        }
+
+        const requiredOk = companyName.length >= 3 && productDesc.length >= 3 && problem.length >= 3;
+        if (!requiredOk) {
+            dot.className = 'safety-dot red';
+            label.textContent = 'NOT READY — Required fields missing';
+            return;
+        }
+
+        const solution       = (document.getElementById('solution').value || '').trim();
+        const targetCustomer = (document.getElementById('targetCustomer').value || '').trim();
+        const tam            = (document.getElementById('tam').value || '').trim();
+        const traction       = (document.getElementById('traction').value || '').trim();
+        const competitors    = (document.getElementById('competitors').value || '').trim();
+        const team           = (document.getElementById('team').value || '').trim();
+        const hasRounds      = selectedRounds.size > 0;
+        const hasOutputs     = selectedOutputs.size > 0;
+
+        const recommendedFilled = solution && targetCustomer && tam &&
+                                  traction && competitors && team &&
+                                  hasRounds && hasOutputs;
+
+        if (recommendedFilled) {
+            dot.className = 'safety-dot green';
+            label.textContent = 'ALL CLEAR — Ready to generate high-precision prompt';
+        } else {
+            dot.className = 'safety-dot yellow';
+            label.textContent = 'READY — Fill recommended fields for better accuracy';
+        }
+    }
+
+    function toggleReadinessReport() {
+        const report = document.getElementById('safetyReport');
+        if (report.style.display === 'block') {
+            report.style.display = 'none';
+        } else {
+            buildReadinessReport();
+            report.style.display = 'block';
+        }
+    }
+
+    function buildReadinessReport() {
+        const items = [];
+        const v = id => (document.getElementById(id).value || '').trim();
+
+        const companyName = v('companyName');
+        const productDesc = v('productDesc');
+        const problem     = v('problem');
+
+        items.push(companyName.length >= 3
+            ? { icon: '✅', text: 'Company / Product: ' + companyName }
+            : { icon: '⚠️', text: 'Company / Product name is required (min 3 characters)' });
+
+        items.push(productDesc.length >= 3
+            ? { icon: '✅', text: 'Product Description: OK' }
+            : { icon: '⚠️', text: 'Product Description is required (min 3 characters)' });
+
+        items.push(problem.length >= 3
+            ? { icon: '✅', text: 'Problem: OK' }
+            : { icon: '⚠️', text: 'Problem statement is required (min 3 characters)' });
+
+        const solution       = v('solution');
+        const targetCustomer = v('targetCustomer');
+        const tam            = v('tam');
+        const traction       = v('traction');
+        const competitors    = v('competitors');
+        const team           = v('team');
+
+        items.push(solution
+            ? { icon: '✅', text: 'Solution: provided' }
+            : { icon: '💡', text: 'No solution — AI will infer but accuracy decreases' });
+
+        items.push(targetCustomer
+            ? { icon: '✅', text: 'Target Customer: provided' }
+            : { icon: '💡', text: 'No target customer — clear persona improves strategy precision' });
+
+        items.push(tam
+            ? { icon: '✅', text: 'TAM: provided' }
+            : { icon: '💡', text: 'No TAM — AI will estimate via web search but accuracy decreases' });
+
+        items.push(traction
+            ? { icon: '✅', text: 'Traction: provided' }
+            : { icon: '💡', text: 'No traction — concrete numbers significantly improve persuasiveness' });
+
+        items.push(competitors
+            ? { icon: '✅', text: 'Competitors: provided' }
+            : { icon: '💡', text: 'No competitors — AI will estimate but accuracy decreases' });
+
+        items.push(team
+            ? { icon: '✅', text: 'Team: provided' }
+            : { icon: '💡', text: 'No team info — investors heavily weigh team composition' });
+
+        items.push(selectedRounds.size > 0
+            ? { icon: '✅', text: 'Funding Round: ' + selectedRounds.size + ' selected' }
+            : { icon: '💡', text: 'No funding round — affects deck tone and depth' });
+
+        items.push(selectedOutputs.size > 0
+            ? { icon: '✅', text: 'Output: ' + selectedOutputs.size + ' selected' }
+            : { icon: '💡', text: 'No output selected — specifying deliverables improves actionability' });
+
+        VAGUE_CHECK_FIELDS.forEach(f => {
+            const val = v(f.id);
+            if (!val) return;
+            const vagueHit = VAGUE_WORDS.find(w => val.includes(w));
+            const instrHit = INSTRUCTION_WORDS.find(w => val.includes(w));
+            if (vagueHit) {
+                items.push({ icon: '⚠️', text: f.label + ' contains vague term "' + vagueHit + '" — be more specific for better results' });
+            } else if (instrHit) {
+                items.push({ icon: '⚠️', text: f.label + ' contains task instruction "' + instrHit + '" — use facts/context instead' });
+            }
+        });
+
+        document.getElementById('safetyReportItems').innerHTML = items.map(i =>
+            '<div class="safety-report-item"><span class="safety-report-icon">' + i.icon +
+            '</span><span class="safety-report-text">' + i.text + '</span></div>'
+        ).join('');
+    }
+
+    ['companyName', 'productDesc', 'problem'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', checkGate1);
+            el.addEventListener('change', checkGate1);
+        }
+    });
+    checkGate1();
+
+    function generatePromptText() {
+        let t = 'IMPORTANT: Before answering, you MUST run the following web searches:\n';
+        t += '- Current market size, growth rate, and investment trends for the ' + getVal('industry') + ' sector\n';
+        t += '- Recent pitch deck trends and investor expectations for ' + getVal('stage') + ' stage startups\n';
+        t += '- Current competitors and their recent funding rounds in this space\n';
+        t += '- Latest VC/angel investment climate for ' + getVal('region') + '\n';
+        t += 'Base ALL responses on search results. Cite every source with retrieval date.\n\n';
+        t += '---\n\n';
+        t += 'PRIVACY NOTICE: All information provided below is to be used SOLELY for generating this output. Do NOT use it for training, logging, or any other purpose.\n\n';
+
+        t += '# Pitch Deck Strategy & Content Prompt\n\n';
+        t += 'You are a world-class pitch deck strategist and startup advisor who has helped raise over $500M across 200+ startups at YCombinator, Sequoia, and a16z. You know exactly what investors look for at each funding stage. Always leverage the latest market data from web search. Produce a concrete, immediately usable pitch deck blueprint.\n\n';
+
+        t += '## Section 1: Company Overview\n';
+        t += '- Company/Product Name: ' + getVal('companyName') + '\n';
+        t += '- Description: ' + getVal('productDesc') + '\n';
+        t += '- Industry: ' + getVal('industry') + '\n';
+        t += '- Platform: ' + getVal('platform') + '\n';
+        t += '- Stage: ' + getVal('stage') + '\n';
+        t += '- Founded: ' + getVal('foundedDate') + '\n\n';
+
+        t += '## Section 2: Problem & Solution\n';
+        t += '- Problem: ' + getVal('problem') + '\n';
+        t += '- Solution: ' + getVal('solution') + '\n';
+        t += '- Key Features / USP: ' + getVal('keyFeatures') + '\n';
+        t += '- Current Alternatives: ' + getVal('alternatives') + '\n\n';
+
+        const compInput = document.getElementById('competitors').value.trim();
+        const compLine = compInput.length === 0
+            ? '- Competitors: (not provided) → Search the web to identify top competitors. Classify each as [Supplemented: Direct], [Supplemented: Adjacent], or [Supplemented: Workflow Alternative].\n'
+            : '- Competitors: ' + sanitize(compInput) + ' [User-provided] → Verify appropriateness. Supplement if needed. Classify all competitors as one of: [User-provided], [Supplemented: Direct], [Supplemented: Adjacent], [Supplemented: Workflow Alternative].\n';
+
+        const tamInput = document.getElementById('tam').value.trim();
+        const tamLine = tamInput.length === 0
+            ? '- TAM: (not provided) → Search the web to estimate TAM based on industry and region. State all assumptions explicitly.\n'
+            : '- TAM: ' + sanitize(tamInput) + '\n';
+
+        t += '## Section 3: Market & Traction\n';
+        t += '- Target Customer: ' + getVal('targetCustomer') + '\n';
+        t += tamLine;
+        t += '- SAM / SOM: ' + getVal('samSom') + '\n';
+        t += '- Current Traction: ' + getVal('traction') + '\n';
+        t += '- KPI: ' + getVal('kpi') + '\n';
+        t += compLine;
+        t += '- Region: ' + getVal('region') + '\n\n';
+
+        t += '## Section 4: Team & Business Model\n';
+        t += '- Revenue Model: ' + getVal('revenueModel') + '\n';
+        t += '- Team: ' + getVal('team') + '\n';
+        t += '- Go-to-Market Strategy: ' + getVal('gtmStrategy') + '\n\n';
+
+        const rounds  = Array.from(selectedRounds).join(', ') || '(not specified — infer appropriate stage from context)';
+        const outputs = Array.from(selectedOutputs).join(', ') || '(comprehensive pitch deck)';
+        const evalMode = document.getElementById('evaluationMode').value;
+
+        t += '## Section 5: Deck Configuration\n';
+        t += '- Funding Round: ' + rounds + '\n';
+        t += '- Target Amount: ' + getVal('fundingAmount') + '\n';
+        t += '- Use of Funds: ' + getVal('fundingUse') + '\n';
+        t += '- Deck Purpose: ' + getVal('deckPurpose') + '\n';
+        t += '- Target Slide Count: ' + getVal('slideCount') + '\n';
+        t += '- Required Outputs: ' + outputs + '\n';
+        t += '- Deck Style: ' + getVal('deckStyle') + '\n';
+        t += '- Evaluation Mode: ' + evalMode + '\n';
+        t += '- Additional Notes: ' + getVal('notes') + '\n\n';
+
+        t += '## INTERPRETATION RULES (Read before generating output)\n\n';
+
+        t += 'Rule 1 — Stage-Appropriate Content:\n';
+        t += '  Tailor the depth, tone, and expected detail to the stated funding stage.\n';
+        t += '  Pre-seed/Seed: Focus on vision, problem, team. Hard metrics optional.\n';
+        t += '  Series A+: Must include unit economics, retention cohorts, financial projections.\n';
+        t += '  Adjust investor expectations accordingly.\n\n';
+
+        t += 'Rule 2 — Slide Count Discipline:\n';
+        t += '  Strictly respect the target slide count. Each slide must earn its place.\n';
+        t += '  If the user specified 10 slides, do NOT output 15. Merge or cut as needed.\n\n';
+
+        t += 'Rule 3 — Output Phase Order:\n';
+        t += '  Do NOT produce any critical evaluation or concerns until PHASE 5 is complete.\n';
+        t += '  PHASE 6 is the designated phase for honest, direct critique.\n\n';
+
+        t += 'Rule 4 — Competitor Supplementation & Classification:\n';
+        t += '  Classify ALL competitors using these exact tags:\n';
+        t += '    [User-provided]: competitors entered by the user\n';
+        t += '    [Supplemented: Direct]: solves the same problem for the same user\n';
+        t += '    [Supplemented: Adjacent]: operates in the same workflow context\n';
+        t += '    [Supplemented: Workflow Alternative]: different approach to the same job\n';
+        t += '  Never remove user-provided competitors. Supplement if fewer than 3 total.\n\n';
+
+        t += 'Rule 5 — Assumption Quality:\n';
+        t += '  Every market size or growth estimate must include one of:\n';
+        t += '    (a) An industry report source with citation and retrieval date\n';
+        t += '    (b) A label: [Conservative] / [Middle] / [Aggressive] with one-line reasoning\n';
+        t += '  Bare numbers without either (a) or (b) are NOT acceptable.\n\n';
+
+        t += 'Rule 6 — Investor Psychology:\n';
+        t += '  The first 3 slides determine whether an investor keeps reading.\n';
+        t += '  Hook → Problem → Solution must form a compelling narrative arc.\n';
+        t += '  State the narrative strategy explicitly before PHASE 3.\n\n';
+
+        t += '## STRICT OUTPUT INSTRUCTIONS\n\n';
+
+        t += 'PHASE 1 — Market Validation\n';
+        t += '  Validate the problem-solution fit with web search data.\n';
+        t += '  Output a market landscape summary table:\n';
+        t += '  | Metric | Value | Source | Date |\n';
+        t += '  Include TAM/SAM/SOM breakdown with cited sources.\n';
+        t += '  Identify market timing — why NOW is the right time for this product.\n\n';
+
+        t += 'PHASE 2 — Competitive Positioning\n';
+        t += '  Map all competitors on a 2x2 positioning matrix.\n';
+        t += '  Axes: choose the two most differentiating dimensions for this market.\n';
+        t += '  Identify the "white space" this product can own.\n';
+        t += '  Classify all competitors using Rule 4 tags.\n\n';
+
+        t += 'PHASE 3 — Slide-by-Slide Blueprint\n';
+        t += '  Output a table for every slide:\n';
+        t += '  | Slide # | Title | Key Message (1 sentence) | Required Content | Visual Suggestion |\n';
+        t += '  Follow the target slide count strictly.\n';
+        t += '  Ensure narrative arc: Hook → Problem → Solution → Why Now → Market →\n';
+        t += '  Product → Traction → Team → Business Model → Competition → The Ask → Close\n';
+        t += '  Adapt this arc to the stated deck purpose and audience.\n\n';
+
+        t += 'PHASE 4 — Narrative Script\n';
+        t += '  Write the actual content/script for each slide.\n';
+        t += '  Include speaker notes for each slide (what to SAY, not what to show).\n';
+        t += '  Tailor language to the stated deck purpose and audience.\n';
+        t += '  Mark key data points that need real numbers with [DATA NEEDED].\n';
+        t += '  Apply the deck style preference throughout.\n\n';
+
+        t += 'PHASE 5 — Investor Q&A Preparation\n';
+        t += '  Generate the top 10 hardest questions an investor would ask.\n';
+        t += '  For each question provide:\n';
+        t += '  (a) The question\n';
+        t += '  (b) Why investors ask this (hidden concern)\n';
+        t += '  (c) Recommended answer framework\n';
+        t += '  (d) Red flag to avoid\n\n';
+
+        t += 'PHASE 6 — Critical Evaluation (only if Evaluation Mode: ON)\n';
+        t += '  Be direct and critical. Do not sugarcoat. This is the designated phase for honest assessment.\n';
+        t += '  Minimum requirements — all three must be present:\n';
+        t += '  (a) Top 3 weaknesses in this pitch, ranked by investor impact\n';
+        t += '  (b) At least 2 slides that need the most work, with specific improvement suggestions\n';
+        t += '  (c) At least 1 market/competitor insight from web search that contradicts or challenges the pitch\n';
+        t += '  If Evaluation Mode is OFF, output only:\n';
+        t += '  "評価セクションはスキップされました。評価モードをONにすると表示されます。"\n\n';
+
+        t += 'PRE-OUTPUT SELF-CHECK:\n';
+        t += 'Before output, verify:\n';
+        t += '(a) INTERPRETATION RULES applied correctly\n';
+        t += '(b) Phase order maintained — no critique before PHASE 6\n';
+        t += '(c) Slide count matches user specification\n';
+        t += '(d) All market estimates include source or label per Rule 5\n';
+        t += '(e) All competitors classified per Rule 4\n';
+        t += '(f) PHASE 3 covers every slide with all 5 columns\n';
+        t += '(g) PHASE 5 has exactly 10 Q&A items\n';
+        t += '(h) PHASE 6 meets minimum requirements (a)(b)(c) if Evaluation Mode is ON\n';
+        t += '(i) Narrative arc flows logically from PHASE 3 through PHASE 4\n\n';
+        t += 'MINIMUM OUTPUT REQUIREMENTS:\n';
+        t += '  Each PHASE must contain substantive analysis — not just headings or bullet placeholders.\n';
+        t += '  PHASE 1: Market size figures with sources or [Assumption] labels.\n';
+        t += '  PHASE 2: Competitive positioning with at least 3 competitors mapped.\n';
+        t += '  PHASE 3: Every slide described with all 5 columns (Slide # / Title / Key Message / Visual Suggestion / Speaker Notes).\n';
+        t += '  PHASE 4: Full narrative script covering the storytelling arc.\n';
+        t += '  PHASE 5: Exactly 10 investor Q&A items.\n';
+        t += '  PHASE 6 (if ON): Minimum (a)(b)(c) as specified.\n\n';
+
+        t += 'IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n';
+        t += '_Generated with Sorted.Tools PRO — Pitch Deck v1.0.0_\n';
+        t += '_Powered by Sorted. Series | sorted.tools_\n\n';
+
+        t += '---\n\n';
+        t += '⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n';
+
+        const emptyFields = getEmptyOptionalFields();
+        if (emptyFields.length > 0) {
+            t += '\nThe following optional fields were left empty, which may reduce output precision:\n';
+            emptyFields.forEach(f => { t += '- ' + f.label + ': not provided\n'; });
+        }
+
+        t += '\n_Generated with Sorted.Tools PRO — Pitch Deck v1.0.0_\n';
+        t += '_Powered by Sorted. Series | sorted.tools_\n';
+
+        t += '\n\nRespond entirely in ' + LANG + '.';
+        document.getElementById('output').textContent = t;
+
+        const len = t.length;
+        const lenDisplay = len >= 1000 ? (len / 1000).toFixed(1) + 'k' : len;
+        document.getElementById('promptLength').textContent = lenDisplay + ' chars';
+    }
+
+    function copyText(btn) {
+        const text = document.getElementById('output').textContent;
+        const original = btn.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerText = '✅ COPIED TO CLIPBOARD';
+            btn.style.background = '#fff'; btn.style.color = '#000';
+            setTimeout(() => { btn.innerText = original; btn.style.background = ''; btn.style.color = ''; }, 2000);
+        }).catch(() => {
+            btn.innerText = '⚠️ Copy failed — HTTPS or user interaction required';
+            setTimeout(() => { btn.innerText = original; }, 3000);
+        });
+    }
+</script>
+</body>
+</html>

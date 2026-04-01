@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuleForge | Sorted. Tools</title>
+    <meta name="description" content="Generate AI agent config prompts for CLAUDE.md, AGENTS.md, .cursorrules, and SKILL.md. Not a template ? a prompt forge.">
+    <link rel="canonical" href="https://yumakakuya.github.io/sorted-ruleforge/">
+    <!-- OGP -->
+    <meta property="og:title" content="RuleForge | Sorted. Tools">
+    <meta property="og:description" content="Generate AI agent config prompts for CLAUDE.md, AGENTS.md, .cursorrules, and SKILL.md. One form. Every agent config.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://yumakakuya.github.io/sorted-ruleforge/">
+    <meta property="og:image" content="https://yumakakuya.github.io/sorted-ruleforge/ogp.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Sorted. Tools">
+    <meta property="og:locale" content="en_US">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="RuleForge | Sorted. Tools">
+    <meta name="twitter:description" content="Generate AI agent config prompts for CLAUDE.md, AGENTS.md, .cursorrules, and SKILL.md. One form. Every agent config.">
+    <meta name="twitter:image" content="https://yumakakuya.github.io/sorted-ruleforge/ogp.png">
+    <meta name="twitter:creator" content="@null_founder">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f; --surface: #13131f; --surface-lighter: #1c1c2e;
+            --border: #2a2a3e; --accent: #ff9f43; --accent-dim: rgba(255,159,67,0.1);
+            --accent2: #ff6b35; --text: #e8e8f0; --muted: #666; --green: #00ff9d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+        body, html {
+            height: 100%; background-color: var(--bg); color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 14px; line-height: 1.5;
+            user-select: none; -webkit-user-select: none; overflow-x: hidden;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none; z-index: 9998;
+        }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeOut { from { opacity:1; transform:translateY(0); } to { opacity:0; transform:translateY(-10px); } }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+        @keyframes scanline { 0%{top:-10%} 100%{top:110%} }
+        .hidden { display: none !important; }
+
+        /* SPLASH */
+        #splash-screen {
+            position: fixed; top:0; left:0; width:100%; height:100%; background:var(--bg);
+            display:flex; flex-direction:column; justify-content:center; align-items:center;
+            z-index:9999; overflow:hidden;
+        }
+        .splash-scan {
+            position:absolute; top:-10%; left:0; right:0; height:80px;
+            background:linear-gradient(transparent,rgba(255,159,67,0.03),transparent);
+            animation:scanline 3s linear infinite;
+        }
+        .splash-brand { font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:4px; color:var(--muted); margin-bottom:16px; }
+        .splash-title { font-family:'IBM Plex Mono',monospace; font-size:28px; font-weight:700; letter-spacing:2px; color:#fff; margin-bottom:8px; }
+        .splash-title span { color:var(--accent); }
+        .splash-sub { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:3px; margin-bottom:8px; opacity:0.7; }
+        .splash-tagline { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#555; letter-spacing:2px; margin-bottom:48px; }
+        .splash-tagline em { color:#777; font-style:normal; }
+        .splash-cursor { display:inline-block; width:8px; height:14px; background:var(--accent); animation:blink 1s step-end infinite; vertical-align:middle; margin-left:4px; }
+        .splash-btn {
+            padding:14px 48px; background:transparent; border:1px solid var(--accent); color:var(--accent);
+            font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:3px;
+            cursor:pointer; transition:0.2s; position:relative; overflow:hidden;
+        }
+        .splash-btn::before {
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,159,67,0.1),transparent); transition:0.4s;
+        }
+        .splash-btn:hover::before { left:100%; }
+        .splash-btn:hover { background:rgba(255,159,67,0.08); box-shadow:0 0 20px rgba(255,159,67,0.2); }
+        .splash-version { position:absolute; bottom:24px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
+
+        /* APP */
+        #app-container { display:none; opacity:0; min-height:100vh; flex-direction:column; }
+        ::-webkit-scrollbar { width:4px; }
+        ::-webkit-scrollbar-track { background:var(--bg); }
+        ::-webkit-scrollbar-thumb { background:#222; border-radius:2px; }
+
+        header {
+            padding:14px 30px; border-bottom:1px solid var(--border);
+            background:rgba(10,10,15,0.9); position:sticky; top:0; z-index:100;
+            display:flex; justify-content:space-between; align-items:center;
+            backdrop-filter:blur(20px);
+        }
+        .brand { font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700; letter-spacing:1px; color:#fff; display:flex; align-items:center; gap:8px; }
+        .brand span { color:var(--accent); }
+        .brand-dot { width:6px; height:6px; border-radius:50%; background:var(--green); box-shadow:0 0 8px var(--green); animation:blink 2s ease-in-out infinite; }
+        .header-meta { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; }
+
+        .main-content { flex:1; max-width:820px; margin:0 auto; width:100%; padding:28px 20px; }
+
+        .series-nav { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 16px; margin-bottom:24px; display:flex; align-items:center; gap:8px; overflow-x:auto; }
+        .series-label { font-family:'IBM Plex Mono',monospace; font-size:9px; color:var(--muted); letter-spacing:2px; white-space:nowrap; }
+        .series-tag { font-size:10px; padding:5px 11px; border-radius:20px; white-space:nowrap; font-weight:600; border:1px solid var(--border); color:#444; font-family:'IBM Plex Mono',monospace; }
+        .series-tag.active { background:rgba(255,159,67,0.08); border-color:var(--accent); color:var(--accent); }
+        .series-arrow { color:#222; font-size:11px; flex-shrink:0; }
+
+        .card { background:var(--surface); border:1px solid var(--border); border-radius:10px; margin-bottom:16px; overflow:hidden; }
+        .card-header { padding:12px 18px; border-bottom:1px solid var(--border); font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+        .dot { width:6px; height:6px; border-radius:50%; }
+        .card-body { padding:16px 18px; display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .full { grid-column:1/-1; }
+
+        /* Card 7 sub-sections */
+        .subsection { grid-column:1/-1; border-top:1px solid var(--border); padding-top:14px; margin-top:2px; }
+        .subsection:first-child { border-top:none; padding-top:0; margin-top:0; }
+        .subsection-header { font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--accent); margin-bottom:12px; opacity:0.8; }
+        .subsection-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+        .full-sub { grid-column:1/-1; }
+
+        label { display:block; font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-bottom:6px; }
+        label .note { font-size:9px; color:#444; text-transform:none; letter-spacing:0; font-family:'Inter',sans-serif; margin-left:6px; }
+
+        input[type="text"], select, textarea {
+            width:100%; background:var(--bg); border:1px solid var(--border); border-radius:6px;
+            color:var(--text); padding:10px 12px; font-size:13px; font-family:'Inter',sans-serif; transition:border-color 0.2s;
+        }
+        textarea { resize:vertical; min-height:70px; user-select:text; -webkit-user-select:text; }
+        input[type="text"]:focus, select:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 2px rgba(255,159,67,0.08); }
+        input::placeholder, textarea::placeholder { color:#333; }
+        select option { background:var(--surface); }
+
+        .tags { display:flex; flex-wrap:wrap; gap:6px; }
+        .tag-btn { padding:6px 13px; border:1px solid var(--border); border-radius:4px; background:transparent; color:var(--muted); font-size:11px; font-family:'IBM Plex Mono',monospace; letter-spacing:1px; cursor:pointer; transition:0.15s; }
+        .tag-btn.selected { border-color:var(--accent); color:var(--accent); background:rgba(255,159,67,0.07); }
+        .tag-btn:hover:not(.selected) { border-color:#444; color:#aaa; }
+
+        /* Checkbox toggle (Card 7D) */
+        .checkbox-row { display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
+        .checkbox-box { width:16px; height:16px; border:1px solid var(--border); border-radius:3px; background:var(--bg); display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:0.15s; font-size:11px; color:transparent; }
+        .checkbox-box.checked { border-color:var(--accent); background:rgba(255,159,67,0.1); color:var(--accent); }
+        .checkbox-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; }
+
+        /* Info note (Card 5 tip) */
+        .info-note { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#555; letter-spacing:0.5px; line-height:1.5; }
+        .info-note em { color:#777; font-style:normal; }
+
+        .generate-btn {
+            width:100%; margin-top:8px; padding:16px; background:transparent;
+            border:1px solid var(--accent); color:var(--accent);
+            font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; letter-spacing:3px;
+            cursor:pointer; transition:0.2s; border-radius:8px; position:relative; overflow:hidden;
+        }
+        .generate-btn:disabled { border-color:#222; color:#333; cursor:not-allowed; }
+        .generate-btn:not(:disabled)::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,159,67,0.1),transparent); transition:0.5s; }
+        .generate-btn:not(:disabled):hover::before { left:100%; }
+        .generate-btn:not(:disabled):hover { background:rgba(255,159,67,0.06); box-shadow:0 0 20px rgba(255,159,67,0.15); }
+
+        /* Result view */
+        .result-header-bar { background:rgba(255,159,67,0.05); border:1px solid rgba(255,159,67,0.2); border-radius:8px; padding:10px 16px; margin-bottom:16px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:1px; }
+
+        /* Tab bar */
+        .tab-bar { display:flex; gap:0; margin-bottom:-1px; position:relative; z-index:1; flex-wrap:wrap; }
+        .tab-btn {
+            padding:10px 20px; background:var(--surface); border:1px solid var(--border);
+            border-bottom:1px solid var(--border); color:var(--muted);
+            font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:500;
+            letter-spacing:2px; cursor:pointer; transition:0.2s;
+        }
+        .tab-btn.active { background:var(--bg); border-bottom-color:var(--bg); color:var(--accent); }
+        .tab-btn:hover:not(.active) { color:var(--text); }
+
+        .terminal-window { background:#050508; border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+        .terminal-bar { background:var(--surface); padding:8px 14px; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; }
+        .terminal-bar::before { content:''; display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent); }
+        .result-box { padding:20px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; line-height:1.7; color:#c8d8e8; white-space:pre-wrap; word-break:break-word; max-height:520px; overflow-y:auto; user-select:text; -webkit-user-select:text; }
+        .action-row { display:flex; gap:10px; flex-direction:column; }
+        .copy-btn-large { width:100%; background:transparent; border:1px solid var(--accent); color:var(--accent); font-family:'IBM Plex Mono',monospace; padding:16px; border-radius:8px; cursor:pointer; font-weight:700; font-size:12px; letter-spacing:3px; transition:0.2s; }
+        .copy-btn-large:hover { background:rgba(255,159,67,0.06); box-shadow:0 0 20px rgba(255,159,67,0.15); }
+        .copy-all-btn { width:100%; background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'IBM Plex Mono',monospace; padding:13px; border-radius:8px; cursor:pointer; font-weight:700; font-size:11px; letter-spacing:2px; transition:0.2s; }
+        .copy-all-btn:hover { border-color:#444; color:#aaa; }
+        .back-btn { background:transparent; color:var(--muted); border:1px solid var(--border); padding:12px; border-radius:8px; cursor:pointer; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; letter-spacing:2px; width:100%; transition:0.2s; }
+        .back-btn:hover { border-color:#444; color:#aaa; }
+
+        footer { text-align:center; padding:28px; color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:10px; border-top:1px solid var(--border); margin-top:auto; letter-spacing:1px; }
+        .gate-hint { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--accent2); margin-top:8px; display:none; letter-spacing:1px; }
+
+        /* ONBOARD HINT */
+        .onboard-hint {
+            background:rgba(255,159,67,0.04); border:1px solid rgba(255,159,67,0.15);
+            border-radius:8px; padding:14px 16px; margin-bottom:20px;
+            font-family:'IBM Plex Mono',monospace; font-size:11px; color:#aaa;
+            line-height:1.7; position:relative; letter-spacing:0.3px;
+        }
+        .onboard-hint strong { color:var(--accent); }
+        .onboard-close { position:absolute; top:10px; right:14px; background:none; border:none; color:var(--muted); font-size:14px; cursor:pointer; padding:0 4px; }
+        .onboard-close:hover { color:var(--text); }
+
+        /* SOFT WARNINGS */
+        .soft-warn { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#ff9d3a; margin-top:5px; display:none; letter-spacing:0.5px; line-height:1.5; }
+
+        /* SAFETY BAR */
+        .safety-bar { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 16px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .safety-bar-left { display:flex; align-items:center; gap:10px; }
+        .safety-dot { width:9px; height:9px; border-radius:50%; background:#444; flex-shrink:0; transition:0.3s; }
+        .safety-dot.green  { background:var(--green);  box-shadow:0 0 8px var(--green); }
+        .safety-dot.yellow { background:#ffcc00; box-shadow:0 0 8px rgba(255,204,0,0.5); }
+        .safety-dot.red    { background:#ff4d4d; box-shadow:0 0 8px rgba(255,77,77,0.5); }
+        .safety-label { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; }
+        .safety-check-btn { background:transparent; border:1px solid var(--border); color:var(--muted); font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1px; padding:5px 10px; border-radius:4px; cursor:pointer; white-space:nowrap; transition:0.2s; }
+        .safety-check-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+        /* READINESS REPORT */
+        .safety-report { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:16px; display:none; }
+        .safety-report-header { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:2px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+        .safety-report-item { display:flex; gap:10px; margin-bottom:8px; align-items:flex-start; }
+        .safety-report-icon { font-size:13px; flex-shrink:0; margin-top:1px; }
+        .safety-report-text { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#aaa; letter-spacing:0.3px; line-height:1.5; }
+        .safety-report-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:12px; padding:0; }
+        .safety-report-close:hover { color:var(--text); }
+
+        @media (max-width:600px) {
+            .card-body { grid-template-columns:1fr; }
+            .subsection-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash-screen">
+        <div class="splash-scan"></div>
+        <div class="splash-brand fade-in">Sorted. Tools &#8212; RuleForge Series</div>
+        <div class="splash-title fade-in" style="animation-delay:0.1s">Rule<span>Forge</span><span class="splash-cursor"></span></div>
+        <div class="splash-sub fade-in" style="animation-delay:0.2s">AI AGENT CONFIG GENERATOR</div>
+        <div class="splash-tagline fade-in" style="animation-delay:0.25s">One form. <em>Every agent config.</em></div>
+        <button class="splash-btn fade-in" style="animation-delay:0.35s" onclick="startApp()">INITIALIZE</button>
+        <div class="splash-version">v1.0.0 &#8212; Sorted. Tools</div>
+    </div>
+
+    <div id="app-container">
+        <header>
+            <div class="brand"><div class="brand-dot"></div>Sorted<span>.</span>&nbsp;<span id="hBrandAccent"></span></div>
+            <div class="header-meta" id="hMeta"></div>
+        </header>
+
+        <main class="main-content">
+            <div id="form-view">
+
+                <div class="series-nav">
+                    <span class="series-label">RULEFORGE /</span>
+                    <span class="series-tag active">AGENTS.md &#9664;</span>
+                    <span class="series-arrow">&#8594;</span>
+                    <span class="series-tag">CLAUDE.md</span>
+                    <span class="series-arrow">&#8594;</span>
+                    <span class="series-tag">.cursorrules</span>
+                    <span class="series-arrow">&#8594;</span>
+                    <span class="series-tag">SKILL.md</span>
+                </div>
+
+                <div class="onboard-hint" id="onboardHint">
+                    <button class="onboard-close" onclick="document.getElementById('onboardHint').style.display='none'" title="Close">&#10005;</button>
+                    <strong>Quick tip.</strong> Fill in as much as you can &#8212; the more context, the more precise and immediately usable the generated config. Most fields are optional; only format, project name, description, and tech stack are required.
+                </div>
+
+                <div class="safety-bar" id="safetyBar">
+                    <div class="safety-bar-left">
+                        <div class="safety-dot" id="safetyDot"></div>
+                        <span class="safety-label" id="safetyLabel">Waiting for input...</span>
+                    </div>
+                    <button class="safety-check-btn" onclick="toggleReadinessReport()">READINESS CHECK &#9660;</button>
+                </div>
+
+                <div class="safety-report" id="safetyReport">
+                    <div class="safety-report-header">
+                        <span>READINESS REPORT</span>
+                        <button class="safety-report-close" onclick="toggleReadinessReport()">&#10005;</button>
+                    </div>
+                    <div id="safetyReportItems"></div>
+                </div>
+
+                <!-- CARD 1: OUTPUT FORMATS -->
+                <div class="card" style="border-top:3px solid #ff9f43;">
+                    <div class="card-header"><div class="dot" style="background:#ff9f43"></div>OUTPUT FORMATS</div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>Target Format(s) <span class="note">Select one or more &#8212; each generates a separate prompt</span></label>
+                            <div class="tags" id="format-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Recommended Model</label>
+                            <select id="recommendedModel">
+                                <option value="Claude Sonnet 4.6">Claude Sonnet 4.6 (default)</option>
+                                <option value="Claude Opus 4.6">Claude Opus 4.6 (recommended for complex projects)</option>
+                                <option value="Other">Other (GPT, Gemini, etc.)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: PROJECT IDENTITY -->
+                <div class="card" style="border-top:3px solid #00ff9d;">
+                    <div class="card-header"><div class="dot" style="background:#00ff9d"></div>PROJECT IDENTITY</div>
+                    <div class="card-body">
+                        <div>
+                            <label>Project Name <span class="note">Required</span></label>
+                            <input type="text" id="projectName" placeholder="e.g. ShopFront, MyApp, axion-app" oninput="checkGate()">
+                        </div>
+                        <div>
+                            <label>Monorepo?</label>
+                            <select id="isMonorepo" onchange="toggleMonorepo()">
+                                <option value="no">No (single project)</option>
+                                <option value="yes">Yes (monorepo &#8212; specify packages below)</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>One-Line Description <span class="note">Required &#8212; loaded into every AI session</span></label>
+                            <input type="text" id="oneLineDesc" placeholder="e.g. Next.js e-commerce app with Stripe payments and Prisma ORM" oninput="checkGate()">
+                            <div class="soft-warn" id="oneLineDescLenWarn">&#128172; Keep it concise &#8212; this is loaded into every session. Aim for under 150 characters.</div>
+                            <div class="soft-warn" id="oneLineDescVagueWarn">&#128172; Avoid vague adjectives &#8212; be specific about what this project does.</div>
+                        </div>
+                        <div class="full">
+                            <label>Project Purpose <span class="note">Optional &#8212; helps AI make better judgment calls</span></label>
+                            <textarea id="projectPurpose" placeholder="e.g. Teleprompter app for content creators. Core value: users recording within 10 seconds of opening."></textarea>
+                        </div>
+                        <div class="full hidden" id="packageListField">
+                            <label>Package List <span class="note">One per line or comma-separated</span></label>
+                            <textarea id="packageList" placeholder="e.g. apps/web, apps/mobile, packages/ui, packages/shared"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: TECH STACK -->
+                <div class="card" style="border-top:3px solid #fbbf24;">
+                    <div class="card-header"><div class="dot" style="background:#fbbf24"></div>TECH STACK</div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>Language <span class="note">Required &#8212; select all that apply</span></label>
+                            <div class="tags" id="language-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Framework <span class="note">Required &#8212; select all that apply</span></label>
+                            <div class="tags" id="framework-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Database <span class="note">Optional</span></label>
+                            <div class="tags" id="database-tags"></div>
+                        </div>
+                        <div>
+                            <label>Package Manager</label>
+                            <select id="packageManager">
+                                <option value="npm">npm</option>
+                                <option value="pnpm">pnpm</option>
+                                <option value="bun">bun</option>
+                                <option value="yarn">yarn</option>
+                                <option value="pip">pip</option>
+                                <option value="cargo">cargo</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Additional Tools <span class="note">Optional</span></label>
+                            <input type="text" id="additionalTools" placeholder="e.g. Stripe, RevenueCat, Resend, Tailwind, shadcn/ui">
+                        </div>
+                        <div class="full">
+                            <label>Deployment <span class="note">Optional</span></label>
+                            <div class="tags" id="deployment-tags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: COMMANDS & WORKFLOW -->
+                <div class="card" style="border-top:3px solid #f97316;">
+                    <div class="card-header"><div class="dot" style="background:#f97316"></div>COMMANDS &amp; WORKFLOW</div>
+                    <div class="card-body">
+                        <div class="soft-warn full" id="noCommandsWarn">&#128172; AI will guess commands without these &#8212; errors likely. Enter at least a dev and build command.</div>
+                        <div>
+                            <label>Dev Server</label>
+                            <input type="text" id="devServer" placeholder="e.g. npm run dev, bun dev, pnpm dev" oninput="checkGate()">
+                        </div>
+                        <div>
+                            <label>Build</label>
+                            <input type="text" id="buildCmd" placeholder="e.g. npm run build" oninput="checkGate()">
+                        </div>
+                        <div>
+                            <label>Test</label>
+                            <input type="text" id="testCmd" placeholder="e.g. npm test, bun test, pytest" oninput="checkGate()">
+                        </div>
+                        <div>
+                            <label>Lint / Format</label>
+                            <input type="text" id="lintCmd" placeholder="e.g. npm run lint, biome check" oninput="checkGate()">
+                        </div>
+                        <div>
+                            <label>Deploy</label>
+                            <input type="text" id="deployCmd" placeholder="e.g. vercel --prod, docker compose up" oninput="checkGate()">
+                            <div class="soft-warn" id="sudoWarn">&#128172; Avoid sudo in AI agent commands &#8212; use project-scoped tools instead.</div>
+                        </div>
+                        <div>
+                            <label>Type Check</label>
+                            <input type="text" id="typeCheckCmd" placeholder="e.g. npx tsc --noEmit, bun run typecheck" oninput="checkGate()">
+                        </div>
+                        <div class="full">
+                            <label>Other Commands <span class="note">Optional &#8212; key=value format</span></label>
+                            <textarea id="otherCommands" placeholder="e.g. db:migrate = npx prisma migrate dev&#10;db:seed = npx prisma db seed"></textarea>
+                        </div>
+                        <div class="full">
+                            <label>Verification Workflow</label>
+                            <select id="verificationWorkflow" onchange="toggleCustomVerification()">
+                                <option value="typecheck-test">Run typecheck + test after changes (recommended)</option>
+                                <option value="lint-test">Run lint + test</option>
+                                <option value="full-ci">Run full CI locally</option>
+                                <option value="none">No automated verification</option>
+                                <option value="custom">Custom (describe below)</option>
+                            </select>
+                        </div>
+                        <div class="full hidden" id="customVerificationField">
+                            <label>Custom Verification Steps</label>
+                            <textarea id="customVerification" placeholder="e.g. 1. typecheck 2. test 3. build"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 5: CODE STYLE & CONVENTIONS -->
+                <div class="card" style="border-top:3px solid #a855f7;">
+                    <div class="card-header"><div class="dot" style="background:#a855f7"></div>CODE STYLE &amp; CONVENTIONS</div>
+                    <div class="card-body">
+                        <div class="full info-note">&#128161; <em>Tip: Less is more. Only specify styles your linter doesn't catch.</em></div>
+                        <div>
+                            <label>Module System</label>
+                            <select id="moduleSystem">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="ES Modules (import/export)">ES Modules (import/export)</option>
+                                <option value="CommonJS (require)">CommonJS (require)</option>
+                                <option value="Both">Both</option>
+                                <option value="N/A">N/A</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Export Style</label>
+                            <select id="exportStyle">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="Named exports only">Named exports only</option>
+                                <option value="Default exports only">Default exports only</option>
+                                <option value="Mixed">Mixed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Indentation</label>
+                            <select id="indentation">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="2 spaces">2 spaces</option>
+                                <option value="4 spaces">4 spaces</option>
+                                <option value="Tabs">Tabs</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Quotes</label>
+                            <select id="quotes">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="Single quotes">Single quotes</option>
+                                <option value="Double quotes">Double quotes</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Semicolons</label>
+                            <select id="semicolons">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="Always">Always</option>
+                                <option value="Never (ASI)">Never (ASI)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Commit Format</label>
+                            <select id="commitFormat">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="Conventional Commits (feat:, fix:, etc.)">Conventional Commits (feat:, fix:, etc.)</option>
+                                <option value="Descriptive (no prefix)">Descriptive (no prefix)</option>
+                                <option value="Custom prefix">Custom prefix</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>Naming Convention <span class="note">Optional</span></label>
+                            <div class="tags" id="naming-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Linter / Formatter <span class="note">Optional</span></label>
+                            <div class="tags" id="linter-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Testing Framework <span class="note">Optional</span></label>
+                            <div class="tags" id="testing-tags"></div>
+                        </div>
+                        <div class="full">
+                            <label>Test Pattern <span class="note">Optional</span></label>
+                            <input type="text" id="testPattern" placeholder="e.g. ClassName_method_expectedResult, or describe/it blocks">
+                        </div>
+                        <div class="full">
+                            <label>Additional Style Notes <span class="note">Optional</span></label>
+                            <textarea id="styleNotes" placeholder="e.g. Prefer composition over inheritance. Use Zod for all input validation. No any types."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 6: ARCHITECTURE & BOUNDARIES -->
+                <div class="card" style="border-top:3px solid #ef4444;">
+                    <div class="card-header"><div class="dot" style="background:#ef4444"></div>ARCHITECTURE &amp; BOUNDARIES</div>
+                    <div class="card-body">
+                        <div class="full">
+                            <label>Key Directories <span class="note">Optional</span></label>
+                            <textarea id="keyDirectories" placeholder="e.g. /app = Next.js pages and layouts&#10;/components = Shared UI&#10;/lib = Utilities&#10;/prisma = DB schema"></textarea>
+                        </div>
+                        <div class="full">
+                            <label>Protected Files <span class="note">Files AI must NEVER modify</span></label>
+                            <textarea id="protectedFiles" placeholder="e.g. .env, prisma/schema.prisma (frozen), src/legacy/ (do not modify)" oninput="checkGate()"></textarea>
+                            <div class="soft-warn" id="protectedFilesWarn">&#128172; Consider protecting .env and config files &#8212; they're easy to accidentally modify.</div>
+                        </div>
+                        <div class="full">
+                            <label>Key Architectural Rules <span class="note">Optional</span></label>
+                            <textarea id="architecturalRules" placeholder="e.g. Domain layer must NOT import from infra. UI must only call API endpoints. No direct DB access from client."></textarea>
+                        </div>
+                        <div class="full">
+                            <label>Important Gotchas <span class="note">Optional &#8212; the more specific, the fewer AI mistakes</span></label>
+                            <textarea id="gotchas" placeholder="e.g. The Stripe webhook handler must validate signatures. Auth middleware requires specific header format."></textarea>
+                        </div>
+                        <div>
+                            <label>AI Permissions</label>
+                            <select id="aiPermissions">
+                                <option value="">&#9472;&#9472; No preference &#9472;&#9472;</option>
+                                <option value="Confirm before every action">Confirm before every action</option>
+                                <option value="Confirm destructive actions only">Confirm destructive actions only</option>
+                                <option value="Full autonomy (advanced)">Full autonomy (advanced)</option>
+                            </select>
+                        </div>
+                        <div class="full">
+                            <label>Forbidden Actions <span class="note">Optional</span></label>
+                            <div class="tags" id="forbidden-tags"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 7: FORMAT-SPECIFIC OPTIONS (conditional) -->
+                <div class="card hidden" id="card7" style="border-top:3px solid #06b6d4;">
+                    <div class="card-header"><div class="dot" style="background:#06b6d4"></div>FORMAT-SPECIFIC OPTIONS</div>
+                    <div class="card-body">
+
+                        <!-- 7A: CLAUDE.md -->
+                        <div class="subsection hidden" id="section7A">
+                            <div class="subsection-header">// CLAUDE.md</div>
+                            <div class="subsection-grid">
+                                <div>
+                                    <label>File Hierarchy</label>
+                                    <select id="fileHierarchy">
+                                        <option value="Root only (CLAUDE.md)">Root only (CLAUDE.md)</option>
+                                        <option value="Root + local (CLAUDE.md + CLAUDE.local.md)">Root + local (CLAUDE.md + CLAUDE.local.md)</option>
+                                        <option value="Root + scoped rules (.claude/rules/)">Root + scoped rules (.claude/rules/)</option>
+                                        <option value="Full hierarchy (all three)">Full hierarchy (all three)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Progressive Disclosure</label>
+                                    <select id="progressiveDisclosure">
+                                        <option value="All in one file">All in one file (&lt; 300 lines)</option>
+                                        <option value="Use @import references to docs/">Use @import references to docs/</option>
+                                        <option value="Use .claude/rules/ for scoped rules">Use .claude/rules/ for scoped rules</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Target Line Count</label>
+                                    <select id="targetLineCount">
+                                        <option value="60">Lean (&lt; 60 lines)</option>
+                                        <option value="150" selected>Standard (&lt; 150 lines)</option>
+                                        <option value="300">Comprehensive (&lt; 300 lines)</option>
+                                    </select>
+                                </div>
+                                <div></div>
+                                <div class="full-sub">
+                                    <label>Personal Preferences <span class="note">Optional</span></label>
+                                    <textarea id="personalPreferences" placeholder="e.g. Be concise. Show full diff before commit. I use VS Code terminal."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7B: .cursorrules -->
+                        <div class="subsection hidden" id="section7B">
+                            <div class="subsection-header">// .cursorrules</div>
+                            <div class="subsection-grid">
+                                <div>
+                                    <label>Format Version</label>
+                                    <select id="cursorFormatVersion" onchange="toggleCursorMDC()">
+                                        <option value=".cursorrules (legacy single file)">.cursorrules (legacy single file)</option>
+                                        <option value=".cursor/rules/*.mdc (modern scoped)">.cursor/rules/*.mdc (modern scoped)</option>
+                                        <option value="Both">Both</option>
+                                    </select>
+                                </div>
+                                <div id="cursorActivationField" class="hidden">
+                                    <label>Rule Activation Mode</label>
+                                    <select id="cursorActivationMode" onchange="toggleCursorGlob()">
+                                        <option value="alwaysApply">alwaysApply: true</option>
+                                        <option value="auto-attached">Auto Attached (glob pattern)</option>
+                                        <option value="agent-requested">Agent Requested</option>
+                                        <option value="manual">Manual</option>
+                                    </select>
+                                </div>
+                                <div id="globPatternsField" class="hidden">
+                                    <label>Glob Patterns</label>
+                                    <input type="text" id="globPatterns" placeholder="e.g. src/api/**/*.ts, **/*.test.ts">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7C: SKILL.md -->
+                        <div class="subsection hidden" id="section7C">
+                            <div class="subsection-header">// SKILL.md</div>
+                            <div class="subsection-grid">
+                                <div>
+                                    <label>Skill Name <span class="note">Required for SKILL.md</span></label>
+                                    <input type="text" id="skillName" placeholder="e.g. deploy-staging, review-pr, generate-tests" oninput="checkGate()">
+                                    <div class="soft-warn" id="skillNameWarn">&#128172; Skill name is required for SKILL.md generation.</div>
+                                </div>
+                                <div>
+                                    <label>Trigger Command <span class="note">Optional</span></label>
+                                    <input type="text" id="triggerCommand" placeholder="e.g. /deploy-staging, /review-pr">
+                                </div>
+                                <div class="full-sub">
+                                    <label>Skill Description <span class="note">Required for SKILL.md</span></label>
+                                    <textarea id="skillDescription" placeholder="e.g. Deploys the current branch to staging environment with automated smoke tests" oninput="checkGate()"></textarea>
+                                </div>
+                                <div class="full-sub">
+                                    <label>Skill Steps <span class="note">Optional</span></label>
+                                    <textarea id="skillSteps" placeholder="e.g. 1. Run typecheck&#10;2. Run tests&#10;3. Build&#10;4. Deploy to staging&#10;5. Run smoke tests"></textarea>
+                                </div>
+                                <div>
+                                    <label>Hooks</label>
+                                    <select id="hooks" onchange="toggleHookCommands()">
+                                        <option value="none">None</option>
+                                        <option value="pre">Pre-action hook (run before)</option>
+                                        <option value="post">Post-action hook (run after)</option>
+                                        <option value="both">Both</option>
+                                    </select>
+                                </div>
+                                <div id="hookCommandsField" class="hidden">
+                                    <label>Hook Commands</label>
+                                    <input type="text" id="hookCommands" placeholder="e.g. pre: lint:fix, post: notify-slack">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7D: AGENTS.md -->
+                        <div class="subsection hidden" id="section7D">
+                            <div class="subsection-header">// AGENTS.md</div>
+                            <div class="subsection-grid">
+                                <div class="full-sub">
+                                    <label>Cross-tool Compatibility <span class="note">Optional</span></label>
+                                    <div class="tags" id="crosstool-tags"></div>
+                                </div>
+                                <div class="full-sub">
+                                    <div class="checkbox-row" onclick="toggleSymlink()">
+                                        <div class="checkbox-box" id="symlinkBox">&#10003;</div>
+                                        <span class="checkbox-label">Add setup commands for syncing to other formats</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="gate-hint" id="gateHint"></div>
+                <button class="generate-btn" id="generateBtn" onclick="processGeneration()" disabled>GENERATE PROMPTS</button>
+
+            </div>
+
+            <div id="result-view" class="hidden">
+                <div class="result-header-bar" id="resultHeaderBar"></div>
+                <div class="tab-bar" id="tabBar"></div>
+                <div class="terminal-window">
+                    <div class="terminal-bar" id="terminalLabel">output &#8212; Read Only</div>
+                    <div class="result-box" id="output"></div>
+                </div>
+                <div class="action-row">
+                    <button class="copy-btn-large" id="copyBtn" onclick="copyCurrentTab(this)"></button>
+                    <button class="copy-all-btn hidden" id="copyAllBtn" onclick="copyAllFormats(this)"></button>
+                    <button class="back-btn" id="backBtn" onclick="backToForm()"></button>
+                </div>
+            </div>
+        </main>
+
+        <footer id="footerEl"></footer>
+    </div>
+
+    <script>
+        // -------------------------------------------------------
+        // UI_TEXT ? single source of truth for all user-facing strings
+        // -------------------------------------------------------
+        const UI_TEXT = {
+            splashBrand:      'Sorted. Tools \u2014 RuleForge Series',
+            splashTitle:      'RuleForge',
+            splashSub:        'AI AGENT CONFIG GENERATOR',
+            splashTagline:    'One form. Every agent config.',
+            splashBtn:        'INITIALIZE',
+            splashVersion:    'v1.0.0 \u2014 Sorted. Tools',
+            headerBrand:      'Sorted.',
+            headerBrandAccent:'RuleForge',
+            headerMeta:       'PROMPT GENERATOR',
+            card1Header:      'OUTPUT FORMATS',
+            card2Header:      'PROJECT IDENTITY',
+            card3Header:      'TECH STACK',
+            card4Header:      'COMMANDS & WORKFLOW',
+            card5Header:      'CODE STYLE & CONVENTIONS',
+            card6Header:      'ARCHITECTURE & BOUNDARIES',
+            card7Header:      'FORMAT-SPECIFIC OPTIONS',
+            gateHint:         '\u26A0 Select an output format, enter project name/description, and choose your tech stack to continue',
+            resultStatus:     '> STATUS: PROMPTS READY \u2014 PASTE INTO YOUR AI CODING TOOL.',
+            copyBtn:          '\uD83D\uDCCB COPY PROMPT TO CLIPBOARD',
+            copyAllBtn:       '\uD83D\uDCC4 COPY ALL FORMATS',
+            backBtn:          '\u2190 BUILD ANOTHER PROMPT',
+            copiedMsg:        '\u2705 COPIED \u2014 PASTE INTO YOUR AI TOOL',
+            copyAllMsg:       '\u2705 ALL FORMATS COPIED',
+            waitingMsg:       'Waiting for input...',
+            footer:           '\u00A9 2026 Sorted. Tools \u2014 RuleForge Series',
+        };
+
+        // Apply dynamic UI_TEXT values
+        document.getElementById('hBrandAccent').textContent    = UI_TEXT.headerBrandAccent;
+        document.getElementById('hMeta').textContent           = UI_TEXT.headerMeta;
+        document.getElementById('gateHint').textContent        = UI_TEXT.gateHint;
+        document.getElementById('resultHeaderBar').textContent  = UI_TEXT.resultStatus;
+        document.getElementById('copyBtn').textContent         = UI_TEXT.copyBtn;
+        document.getElementById('copyAllBtn').textContent      = UI_TEXT.copyAllBtn;
+        document.getElementById('backBtn').textContent         = UI_TEXT.backBtn;
+        document.getElementById('footerEl').textContent        = UI_TEXT.footer;
+        document.getElementById('safetyLabel').textContent     = UI_TEXT.waitingMsg;
+
+        // -------------------------------------------------------
+        // App state
+        // -------------------------------------------------------
+        const appContainer  = document.getElementById('app-container');
+        const formView      = document.getElementById('form-view');
+        const resultView    = document.getElementById('result-view');
+        const generateBtn   = document.getElementById('generateBtn');
+
+        let generatedPrompts = {};
+        let activeFormat     = '';
+        let symlinkEnabled   = false;
+
+        const selectedFormats           = new Set();
+        const selectedLanguages         = new Set();
+        const selectedFrameworks        = new Set();
+        const selectedDatabases         = new Set();
+        const selectedDeployments       = new Set();
+        const selectedNamingConventions = new Set();
+        const selectedLinters           = new Set();
+        const selectedTestingFrameworks = new Set();
+        const selectedForbiddenActions  = new Set();
+        const selectedCrossTools        = new Set();
+
+        // -------------------------------------------------------
+        // App flow
+        // -------------------------------------------------------
+        function startApp() {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('fade-out');
+            setTimeout(() => {
+                splash.style.display = 'none';
+                appContainer.style.display = 'flex';
+                appContainer.classList.add('fade-in');
+                checkGate();
+            }, 500);
+        }
+
+        function processGeneration() {
+            formView.classList.add('fade-out');
+            setTimeout(() => {
+                formView.classList.add('hidden');
+                formView.classList.remove('fade-out');
+                generateAllPrompts();
+                buildResultView();
+                resultView.classList.remove('hidden');
+                resultView.classList.add('fade-in');
+                window.scrollTo(0, 0);
+            }, 400);
+        }
+
+        function backToForm() {
+            resultView.classList.add('fade-out');
+            setTimeout(() => {
+                resultView.classList.add('hidden');
+                resultView.classList.remove('fade-out');
+                formView.classList.remove('hidden');
+                formView.classList.add('fade-in');
+                window.scrollTo(0, 0);
+            }, 400);
+        }
+
+        // -------------------------------------------------------
+        // renderTags
+        // -------------------------------------------------------
+        function renderTags(id, opts, set, cb) {
+            const c = document.getElementById(id);
+            c.innerHTML = '';
+            opts.forEach(o => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'tag-btn' + (set.has(o.value) ? ' selected' : '');
+                b.textContent = o.label;
+                b.onclick = () => {
+                    set.has(o.value) ? set.delete(o.value) : set.add(o.value);
+                    b.classList.toggle('selected');
+                    if (cb) cb();
+                };
+                c.appendChild(b);
+            });
+        }
+
+        // -------------------------------------------------------
+        // Tag definitions
+        // -------------------------------------------------------
+        selectedFormats.add('AGENTS.md');
+        renderTags('format-tags', [
+            { value: 'CLAUDE.md',    label: 'CLAUDE.md' },
+            { value: 'AGENTS.md',    label: 'AGENTS.md' },
+            { value: '.cursorrules', label: '.cursorrules' },
+            { value: 'SKILL.md',     label: 'SKILL.md' },
+        ], selectedFormats, () => { updateCard7Visibility(); checkGate(); });
+
+        renderTags('language-tags', [
+            { value: 'TypeScript', label: 'TypeScript' },
+            { value: 'JavaScript', label: 'JavaScript' },
+            { value: 'Python',     label: 'Python' },
+            { value: 'Rust',       label: 'Rust' },
+            { value: 'Go',         label: 'Go' },
+            { value: 'Java',       label: 'Java' },
+            { value: 'C#',         label: 'C#' },
+            { value: 'Swift',      label: 'Swift' },
+            { value: 'Kotlin',     label: 'Kotlin' },
+            { value: 'Other',      label: 'Other' },
+        ], selectedLanguages, checkGate);
+
+        renderTags('framework-tags', [
+            { value: 'Next.js',      label: 'Next.js' },
+            { value: 'React',        label: 'React' },
+            { value: 'Vue',          label: 'Vue' },
+            { value: 'Svelte',       label: 'Svelte' },
+            { value: 'Astro',        label: 'Astro' },
+            { value: 'Express',      label: 'Express' },
+            { value: 'FastAPI',      label: 'FastAPI' },
+            { value: 'Django',       label: 'Django' },
+            { value: 'Rails',        label: 'Rails' },
+            { value: 'Spring',       label: 'Spring' },
+            { value: 'Tauri',        label: 'Tauri' },
+            { value: 'Expo',         label: 'Expo' },
+            { value: 'React Native', label: 'React Native' },
+            { value: 'None',         label: 'None' },
+        ], selectedFrameworks, checkGate);
+
+        renderTags('database-tags', [
+            { value: 'PostgreSQL', label: 'PostgreSQL' },
+            { value: 'MySQL',      label: 'MySQL' },
+            { value: 'SQLite',     label: 'SQLite' },
+            { value: 'MongoDB',    label: 'MongoDB' },
+            { value: 'Supabase',   label: 'Supabase' },
+            { value: 'Firebase',   label: 'Firebase' },
+            { value: 'Prisma',     label: 'Prisma' },
+            { value: 'Drizzle',    label: 'Drizzle' },
+            { value: 'None',       label: 'None' },
+        ], selectedDatabases, () => {});
+
+        renderTags('deployment-tags', [
+            { value: 'Vercel',       label: 'Vercel' },
+            { value: 'Netlify',      label: 'Netlify' },
+            { value: 'AWS',          label: 'AWS' },
+            { value: 'GCP',          label: 'GCP' },
+            { value: 'Docker',       label: 'Docker' },
+            { value: 'GitHub Pages', label: 'GitHub Pages' },
+            { value: 'Self-hosted',  label: 'Self-hosted' },
+            { value: 'Other',        label: 'Other' },
+        ], selectedDeployments, () => {});
+
+        renderTags('naming-tags', [
+            { value: 'camelCase vars',            label: 'camelCase vars' },
+            { value: 'PascalCase components',     label: 'PascalCase components' },
+            { value: 'snake_case',                label: 'snake_case' },
+            { value: 'SCREAMING_SNAKE constants', label: 'SCREAMING_SNAKE constants' },
+            { value: '_prefix private',           label: '_prefix private' },
+        ], selectedNamingConventions, () => {});
+
+        renderTags('linter-tags', [
+            { value: 'ESLint',   label: 'ESLint' },
+            { value: 'Biome',    label: 'Biome' },
+            { value: 'Prettier', label: 'Prettier' },
+            { value: 'Ruff',     label: 'Ruff' },
+            { value: 'Black',    label: 'Black' },
+            { value: 'None',     label: 'None' },
+        ], selectedLinters, () => {});
+
+        renderTags('testing-tags', [
+            { value: 'Vitest',     label: 'Vitest' },
+            { value: 'Jest',       label: 'Jest' },
+            { value: 'Playwright', label: 'Playwright' },
+            { value: 'Cypress',    label: 'Cypress' },
+            { value: 'pytest',     label: 'pytest' },
+            { value: 'Other',      label: 'Other' },
+            { value: 'None',       label: 'None' },
+        ], selectedTestingFrameworks, () => {});
+
+        renderTags('forbidden-tags', [
+            { value: 'Never commit .env',                     label: 'Never commit .env' },
+            { value: 'Never delete files without asking',     label: 'Never delete files without asking' },
+            { value: 'Never modify locked files',             label: 'Never modify locked files' },
+            { value: 'Never install packages without asking', label: 'Never install packages without asking' },
+            { value: 'Never push to main',                    label: 'Never push to main' },
+        ], selectedForbiddenActions, () => {});
+
+        renderTags('crosstool-tags', [
+            { value: 'Claude Code',    label: 'Claude Code' },
+            { value: 'Cursor',         label: 'Cursor' },
+            { value: 'GitHub Copilot', label: 'GitHub Copilot' },
+            { value: 'Windsurf',       label: 'Windsurf' },
+            { value: 'Cline',          label: 'Cline' },
+            { value: 'Codex',          label: 'Codex' },
+        ], selectedCrossTools, () => {});
+
+        // -------------------------------------------------------
+        // Conditional visibility
+        // -------------------------------------------------------
+        function toggleMonorepo() {
+            document.getElementById('packageListField').classList.toggle('hidden',
+                document.getElementById('isMonorepo').value !== 'yes');
+        }
+
+        function toggleCustomVerification() {
+            document.getElementById('customVerificationField').classList.toggle('hidden',
+                document.getElementById('verificationWorkflow').value !== 'custom');
+        }
+
+        function toggleCursorMDC() {
+            const val   = document.getElementById('cursorFormatVersion').value;
+            const isMDC = val.includes('mdc') || val === 'Both';
+            document.getElementById('cursorActivationField').classList.toggle('hidden', !isMDC);
+            if (!isMDC) document.getElementById('globPatternsField').classList.add('hidden');
+            else toggleCursorGlob();
+        }
+
+        function toggleCursorGlob() {
+            const af = document.getElementById('cursorActivationField');
+            if (af.classList.contains('hidden')) {
+                document.getElementById('globPatternsField').classList.add('hidden');
+                return;
+            }
+            document.getElementById('globPatternsField').classList.toggle('hidden',
+                document.getElementById('cursorActivationMode').value !== 'auto-attached');
+        }
+
+        function toggleHookCommands() {
+            document.getElementById('hookCommandsField').classList.toggle('hidden',
+                document.getElementById('hooks').value === 'none');
+        }
+
+        function toggleSymlink() {
+            symlinkEnabled = !symlinkEnabled;
+            const box = document.getElementById('symlinkBox');
+            box.classList.toggle('checked', symlinkEnabled);
+            box.textContent = '\u2713';
+        }
+
+        function updateCard7Visibility() {
+            const has = selectedFormats.size > 0;
+            document.getElementById('card7').classList.toggle('hidden', !has);
+            document.getElementById('section7A').classList.toggle('hidden', !selectedFormats.has('CLAUDE.md'));
+            document.getElementById('section7B').classList.toggle('hidden', !selectedFormats.has('.cursorrules'));
+            document.getElementById('section7C').classList.toggle('hidden', !selectedFormats.has('SKILL.md'));
+            document.getElementById('section7D').classList.toggle('hidden', !selectedFormats.has('AGENTS.md'));
+        }
+
+        // -------------------------------------------------------
+        // Gate validation + safety bar
+        // -------------------------------------------------------
+        const DESC_VAGUE_WORDS = ['powerful', 'awesome', 'great', 'amazing', 'best', 'cool'];
+        const CMD_IDS = ['devServer', 'buildCmd', 'testCmd', 'lintCmd', 'deployCmd', 'typeCheckCmd'];
+
+        function checkGate() {
+            const projectName = document.getElementById('projectName').value.trim();
+            const oneLineDesc = document.getElementById('oneLineDesc').value.trim();
+            const oneLineLower = oneLineDesc.toLowerCase();
+
+            document.getElementById('oneLineDescLenWarn').style.display =
+                oneLineDesc.length > 150 ? 'block' : 'none';
+            document.getElementById('oneLineDescVagueWarn').style.display =
+                DESC_VAGUE_WORDS.some(w => oneLineLower.includes(w)) ? 'block' : 'none';
+
+            const hasCommands = CMD_IDS.some(id => document.getElementById(id).value.trim());
+            document.getElementById('noCommandsWarn').style.display = hasCommands ? 'none' : 'block';
+
+            const allCmdText = CMD_IDS.map(id => document.getElementById(id).value.toLowerCase()).join(' ');
+            document.getElementById('sudoWarn').style.display =
+                allCmdText.includes('sudo') ? 'block' : 'none';
+
+            const protectedFiles = document.getElementById('protectedFiles').value.trim();
+            document.getElementById('protectedFilesWarn').style.display = protectedFiles ? 'none' : 'block';
+
+            const skillNameWarn = document.getElementById('skillNameWarn');
+            if (selectedFormats.has('SKILL.md')) {
+                const ok = document.getElementById('skillName').value.trim() &&
+                           document.getElementById('skillDescription').value.trim();
+                skillNameWarn.style.display = ok ? 'none' : 'block';
+            } else {
+                skillNameWarn.style.display = 'none';
+            }
+
+            const skillOk = !selectedFormats.has('SKILL.md') || (
+                document.getElementById('skillName').value.trim() &&
+                document.getElementById('skillDescription').value.trim()
+            );
+            const gateOpen = selectedFormats.size >= 1 &&
+                projectName.length >= 1 &&
+                oneLineDesc.length >= 10 &&
+                selectedLanguages.size >= 1 &&
+                selectedFrameworks.size >= 1 &&
+                skillOk;
+
+            generateBtn.disabled = !gateOpen;
+            document.getElementById('gateHint').style.display = gateOpen ? 'none' : 'block';
+
+            updateSafetyBar(projectName, oneLineDesc, hasCommands, protectedFiles);
+        }
+
+        function updateSafetyBar(projectName, oneLineDesc, hasCommands, protectedFiles) {
+            const dot   = document.getElementById('safetyDot');
+            const label = document.getElementById('safetyLabel');
+
+            if (!projectName && !oneLineDesc) {
+                dot.className = 'safety-dot';
+                label.textContent = UI_TEXT.waitingMsg;
+                return;
+            }
+
+            const missingRequired = selectedFormats.size < 1 || !projectName ||
+                oneLineDesc.length < 10 || selectedLanguages.size < 1 || selectedFrameworks.size < 1;
+
+            if (missingRequired) {
+                dot.className = 'safety-dot red';
+                label.textContent = 'NOT READY \u2014 Missing required fields';
+                return;
+            }
+
+            if (!hasCommands || !protectedFiles) {
+                dot.className = 'safety-dot yellow';
+                label.textContent = 'READY \u2014 Some recommended fields are empty';
+            } else {
+                dot.className = 'safety-dot green';
+                label.textContent = 'ALL CLEAR \u2014 Ready to generate';
+            }
+        }
+
+        function toggleReadinessReport() {
+            const report = document.getElementById('safetyReport');
+            if (report.style.display === 'block') {
+                report.style.display = 'none';
+            } else {
+                buildReadinessReport();
+                report.style.display = 'block';
+            }
+        }
+
+        function buildReadinessReport() {
+            const projectName    = document.getElementById('projectName').value.trim();
+            const oneLineDesc    = document.getElementById('oneLineDesc').value.trim();
+            const hasCommands    = CMD_IDS.some(id => document.getElementById(id).value.trim());
+            const protectedFiles = document.getElementById('protectedFiles').value.trim();
+            const items = [];
+
+            if (selectedFormats.size >= 1) {
+                items.push({ icon: '\u2705', text: 'Output format: ' + Array.from(selectedFormats).join(', ') });
+            } else {
+                items.push({ icon: '\u26A0\uFE0F', text: 'No output format selected (required).' });
+            }
+            if (projectName) {
+                items.push({ icon: '\u2705', text: 'Project name: ' + projectName });
+            } else {
+                items.push({ icon: '\u26A0\uFE0F', text: 'Project name is required.' });
+            }
+            if (oneLineDesc.length >= 10) {
+                const vague = DESC_VAGUE_WORDS.some(w => oneLineDesc.toLowerCase().includes(w));
+                if (vague)                    items.push({ icon: '\u26A0\uFE0F', text: 'One-line description contains vague adjectives.' });
+                else if (oneLineDesc.length > 150) items.push({ icon: '\uD83D\uDCA1', text: 'One-line description is long \u2014 consider shortening.' });
+                else                          items.push({ icon: '\u2705', text: 'One-line description looks good.' });
+            } else {
+                items.push({ icon: '\u26A0\uFE0F', text: 'One-line description is required (min 10 chars).' });
+            }
+            if (selectedLanguages.size >= 1) {
+                items.push({ icon: '\u2705', text: 'Language: ' + Array.from(selectedLanguages).join(', ') });
+            } else {
+                items.push({ icon: '\u26A0\uFE0F', text: 'At least one language is required.' });
+            }
+            if (selectedFrameworks.size >= 1) {
+                items.push({ icon: '\u2705', text: 'Framework: ' + Array.from(selectedFrameworks).join(', ') });
+            } else {
+                items.push({ icon: '\u26A0\uFE0F', text: 'At least one framework is required.' });
+            }
+            items.push(hasCommands
+                ? { icon: '\u2705', text: 'Commands specified.' }
+                : { icon: '\uD83D\uDCA1', text: 'No commands entered \u2014 AI may guess incorrectly.' });
+            items.push(protectedFiles
+                ? { icon: '\u2705', text: 'Protected files specified.' }
+                : { icon: '\uD83D\uDCA1', text: 'Protected files not specified \u2014 consider adding .env and configs.' });
+
+            document.getElementById('safetyReportItems').innerHTML = items.map(i =>
+                '<div class="safety-report-item"><span class="safety-report-icon">' + i.icon +
+                '</span><span class="safety-report-text">' + i.text + '</span></div>'
+            ).join('');
+        }
+
+        // -------------------------------------------------------
+        // Prompt generation
+        // -------------------------------------------------------
+        const getVal   = id => { const e = document.getElementById(id); return e ? e.value.trim() : ''; };
+        const sanitize = s  => s ? s.replace(/[<>"']/g, '') : '';
+
+        const VERIFICATION_TEXT = {
+            'typecheck-test': 'After every change: run typecheck, then run tests.',
+            'lint-test':      'After every change: run lint, then run tests.',
+            'full-ci':        'After every change: run the full CI pipeline locally.',
+        };
+
+        function collectFormData() {
+            return {
+                formats:               Array.from(selectedFormats),
+                model:                 getVal('recommendedModel'),
+                projectName:           sanitize(getVal('projectName')),
+                oneLineDesc:           sanitize(getVal('oneLineDesc')),
+                projectPurpose:        sanitize(getVal('projectPurpose')),
+                isMonorepo:            getVal('isMonorepo'),
+                packageList:           sanitize(getVal('packageList')),
+                languages:             Array.from(selectedLanguages),
+                frameworks:            Array.from(selectedFrameworks),
+                databases:             Array.from(selectedDatabases),
+                packageManager:        getVal('packageManager'),
+                deployments:           Array.from(selectedDeployments),
+                additionalTools:       sanitize(getVal('additionalTools')),
+                devServer:             sanitize(getVal('devServer')),
+                build:                 sanitize(getVal('buildCmd')),
+                test:                  sanitize(getVal('testCmd')),
+                lint:                  sanitize(getVal('lintCmd')),
+                deploy:                sanitize(getVal('deployCmd')),
+                typeCheck:             sanitize(getVal('typeCheckCmd')),
+                otherCommands:         sanitize(getVal('otherCommands')),
+                verification:          getVal('verificationWorkflow'),
+                customVerification:    sanitize(getVal('customVerification')),
+                moduleSystem:          getVal('moduleSystem'),
+                exportStyle:           getVal('exportStyle'),
+                indentation:           getVal('indentation'),
+                quotes:                getVal('quotes'),
+                semicolons:            getVal('semicolons'),
+                commitFormat:          getVal('commitFormat'),
+                namingConventions:     Array.from(selectedNamingConventions),
+                linters:               Array.from(selectedLinters),
+                testingFrameworks:     Array.from(selectedTestingFrameworks),
+                testPattern:           sanitize(getVal('testPattern')),
+                styleNotes:            sanitize(getVal('styleNotes')),
+                keyDirectories:        sanitize(getVal('keyDirectories')),
+                protectedFiles:        sanitize(getVal('protectedFiles')),
+                architecturalRules:    sanitize(getVal('architecturalRules')),
+                gotchas:               sanitize(getVal('gotchas')),
+                aiPermissions:         getVal('aiPermissions'),
+                forbiddenActions:      Array.from(selectedForbiddenActions),
+                fileHierarchy:         getVal('fileHierarchy'),
+                progressiveDisclosure: getVal('progressiveDisclosure'),
+                targetLineCount:       getVal('targetLineCount') || '150',
+                personalPreferences:   sanitize(getVal('personalPreferences')),
+                cursorFormatVersion:   getVal('cursorFormatVersion'),
+                cursorActivationMode:  getVal('cursorActivationMode'),
+                globPatterns:          sanitize(getVal('globPatterns')),
+                skillName:             sanitize(getVal('skillName')),
+                skillDescription:      sanitize(getVal('skillDescription')),
+                triggerCommand:        sanitize(getVal('triggerCommand')),
+                skillSteps:            sanitize(getVal('skillSteps')),
+                hooks:                 getVal('hooks'),
+                hookCommands:          sanitize(getVal('hookCommands')),
+                crossTools:            Array.from(selectedCrossTools),
+                includeSymlink:        symlinkEnabled,
+            };
+        }
+
+        function buildPrompt(format, d) {
+            let p = '';
+            p += '# ' + format + ' GENERATION PROMPT\n';
+            p += '# Generated by Sorted. RuleForge v1.0.0\n';
+            p += '# Recommended model: ' + d.model + '\n';
+            p += '# -------------------------------------------------------\n\n';
+            p += '## ROLE\n';
+            p += 'You are an expert AI development environment architect. Generate a ' + format + ' file for the following project. Follow the latest best practices as of 2026.\n\n';
+            p += '## PROJECT CONTEXT\n';
+            p += '- Name: ' + d.projectName + '\n';
+            p += '- Description: ' + d.oneLineDesc + '\n';
+            if (d.projectPurpose)                        p += '- Purpose: ' + d.projectPurpose + '\n';
+            if (d.isMonorepo === 'yes' && d.packageList) p += '- Structure: Monorepo with packages: ' + d.packageList + '\n';
+            p += '\n';
+            p += '## TECH STACK\n';
+            p += '- Language: ' + d.languages.join(', ') + '\n';
+            p += '- Framework: ' + d.frameworks.join(', ') + '\n';
+            const dbs = d.databases.filter(x => x !== 'None');
+            if (dbs.length)          p += '- Database: ' + dbs.join(', ') + '\n';
+            p += '- Package Manager: ' + d.packageManager + '\n';
+            const deps = d.deployments.filter(x => x !== 'Other');
+            if (deps.length)         p += '- Deployment: ' + deps.join(', ') + '\n';
+            if (d.additionalTools)   p += '- Additional: ' + d.additionalTools + '\n';
+            p += '\n';
+            const cmds = [];
+            if (d.devServer)  cmds.push('- Dev: `' + d.devServer + '`');
+            if (d.build)      cmds.push('- Build: `' + d.build + '`');
+            if (d.test)       cmds.push('- Test: `' + d.test + '`');
+            if (d.lint)       cmds.push('- Lint: `' + d.lint + '`');
+            if (d.deploy)     cmds.push('- Deploy: `' + d.deploy + '`');
+            if (d.typeCheck)  cmds.push('- Type Check: `' + d.typeCheck + '`');
+            if (cmds.length) {
+                p += '## COMMANDS\n' + cmds.join('\n') + '\n';
+                if (d.otherCommands) p += d.otherCommands + '\n';
+                p += '\n';
+            }
+            if (d.verification && d.verification !== 'none') {
+                p += '## VERIFICATION (run after every change)\n';
+                p += (d.verification === 'custom'
+                    ? (d.customVerification || 'See custom verification steps.')
+                    : (VERIFICATION_TEXT[d.verification] || '')) + '\n\n';
+            }
+            const styleLines = [];
+            if (d.moduleSystem)  styleLines.push('- Module System: ' + d.moduleSystem);
+            if (d.exportStyle)   styleLines.push('- Export Style: ' + d.exportStyle);
+            if (d.indentation)   styleLines.push('- Indentation: ' + d.indentation);
+            if (d.quotes)        styleLines.push('- Quotes: ' + d.quotes);
+            if (d.semicolons)    styleLines.push('- Semicolons: ' + d.semicolons);
+            if (d.commitFormat)  styleLines.push('- Commit Format: ' + d.commitFormat);
+            if (d.namingConventions.length) styleLines.push('- Naming: ' + d.namingConventions.join(', '));
+            const lnts = d.linters.filter(x => x !== 'None');
+            if (lnts.length)     styleLines.push('- Linter/Formatter: ' + lnts.join(', '));
+            const tfw = d.testingFrameworks.filter(x => x !== 'None');
+            if (tfw.length)      styleLines.push('- Testing: ' + tfw.join(', '));
+            if (d.testPattern)   styleLines.push('- Test Pattern: ' + d.testPattern);
+            if (styleLines.length || d.styleNotes) {
+                p += '## CODE STYLE\n' + styleLines.join('\n') + '\n';
+                if (d.styleNotes) p += '\nAdditional: ' + d.styleNotes + '\n';
+                p += '\n';
+            }
+            const hasArch = d.keyDirectories || d.protectedFiles || d.architecturalRules || d.gotchas;
+            if (hasArch) {
+                p += '## ARCHITECTURE\n';
+                if (d.keyDirectories)     p += '### Directory Structure\n' + d.keyDirectories + '\n\n';
+                if (d.protectedFiles)     p += '### Protected Files (NEVER modify)\n' + d.protectedFiles + '\n\n';
+                if (d.architecturalRules) p += '### Rules\n' + d.architecturalRules + '\n\n';
+                if (d.gotchas)            p += '### Critical Gotchas\n' + d.gotchas + '\n\n';
+            }
+            const constraintLines = [];
+            if (d.aiPermissions) constraintLines.push('- AI Permissions: ' + d.aiPermissions);
+            d.forbiddenActions.forEach(a => constraintLines.push('- ' + a));
+            if (constraintLines.length) p += '## CONSTRAINTS\n' + constraintLines.join('\n') + '\n\n';
+            p += buildFormatSpecificBlock(format, d);
+            p += '## OUTPUT REQUIREMENTS\n';
+            p += '- Output ONLY the raw markdown content of the ' + format + ' file\n';
+            p += '- No explanations, no code fences wrapping the entire output\n';
+            p += '- Keep total length under ' + d.targetLineCount + ' lines\n';
+            p += '- Every line must earn its place\n';
+            p += '- Use progressive disclosure: point to docs instead of inlining everything\n\n';
+            p += '# -------------------------------------------------------\n';
+            p += '# Generated with Sorted. RuleForge v1.0.0\n';
+            p += '# sorted.tools\n';
+            return p;
+        }
+
+        function buildFormatSpecificBlock(format, d) {
+            let p = '';
+            if (format === 'CLAUDE.md') {
+                p += '## CLAUDE.md SPECIFIC REQUIREMENTS\n';
+                p += '- Follow the WHAT/WHY/HOW framework\n';
+                p += '- File hierarchy: ' + (d.fileHierarchy || 'Root only (CLAUDE.md)') + '\n';
+                p += '- Progressive disclosure: ' + (d.progressiveDisclosure || 'All in one file') + '\n';
+                if (d.progressiveDisclosure && d.progressiveDisclosure.includes('@import'))
+                    p += '- Use @import for referenced docs\n';
+                p += '- Include CLAUDE.local.md separately if requested\n';
+                p += '- Remember: Claude Code\'s system prompt uses ~50 instructions already\n';
+                p += '- Prioritize critical instructions at the beginning and end of the file\n';
+                if (d.personalPreferences) p += '- Personal preferences: ' + d.personalPreferences + '\n';
+                p += '\n';
+            } else if (format === 'AGENTS.md') {
+                const ct = d.crossTools.length ? d.crossTools.join(', ') : 'Claude Code, Cursor, GitHub Copilot, Windsurf, Cline';
+                p += '## AGENTS.md SPECIFIC REQUIREMENTS\n';
+                p += '- This file must be tool-agnostic (compatible with: ' + ct + ')\n';
+                p += '- Follow the AGENTS.md open standard format\n';
+                p += '- Include: environment setup, build steps, testing, code conventions, security\n';
+                p += '- Do NOT include tool-specific syntax (@import, globs, YAML frontmatter)\n';
+                if (d.includeSymlink) p += '- Append symlink setup commands for cross-tool sync at the end\n';
+                p += '\n';
+            } else if (format === '.cursorrules') {
+                const fv    = d.cursorFormatVersion || '.cursorrules (legacy single file)';
+                const isMDC = fv.includes('mdc') || fv === 'Both';
+                p += '## .CURSORRULES SPECIFIC REQUIREMENTS\n';
+                p += '- Format: ' + fv + '\n';
+                if (isMDC) {
+                    p += '- Include YAML frontmatter with:\n';
+                    p += '  - description: concise rule description\n';
+                    if (d.globPatterns) p += '  - globs: ' + d.globPatterns + '\n';
+                    p += '  - alwaysApply: ' + (d.cursorActivationMode === 'alwaysApply' ? 'true' : 'false') + '\n';
+                }
+                p += '- Keep under 1000 tokens (~750 words) per file\n';
+                p += '- Optimize for Cursor\'s context window usage\n';
+                p += '\n';
+            } else if (format === 'SKILL.md') {
+                p += '## SKILL.MD SPECIFIC REQUIREMENTS\n';
+                p += '- Skill name: ' + d.skillName + '\n';
+                p += '- Description: ' + d.skillDescription + '\n';
+                if (d.triggerCommand) p += '- Trigger command: ' + d.triggerCommand + '\n';
+                p += '- This is a dynamic-loading skill (not always-on)\n';
+                p += '- Include clear step-by-step procedure\n';
+                p += '- Define what success looks like (exit criteria)\n';
+                if (d.skillSteps) p += '\nSteps:\n' + d.skillSteps + '\n';
+                if (d.hooks !== 'none' && d.hookCommands) {
+                    const parts = d.hookCommands.split(',');
+                    if (d.hooks === 'pre'  || d.hooks === 'both') p += '- Pre-action hook: '  + (parts[0] || d.hookCommands).trim() + '\n';
+                    if (d.hooks === 'post' || d.hooks === 'both') p += '- Post-action hook: ' + (parts[1] || d.hookCommands).trim() + '\n';
+                }
+                p += '\n';
+            }
+            return p;
+        }
+
+        function generateAllPrompts() {
+            const d = collectFormData();
+            generatedPrompts = {};
+            d.formats.forEach(fmt => { generatedPrompts[fmt] = buildPrompt(fmt, d); });
+        }
+
+        // -------------------------------------------------------
+        // Result view ? tabbed output
+        // -------------------------------------------------------
+        function buildResultView() {
+            const formats    = Object.keys(generatedPrompts);
+            const tabBar     = document.getElementById('tabBar');
+            const copyAllBtn = document.getElementById('copyAllBtn');
+            tabBar.innerHTML = '';
+
+            if (formats.length >= 2) {
+                copyAllBtn.classList.remove('hidden');
+                formats.forEach(fmt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'tab-btn';
+                    btn.textContent = fmt;
+                    btn.setAttribute('data-format', fmt);
+                    btn.onclick = () => switchTab(fmt);
+                    tabBar.appendChild(btn);
+                });
+            } else {
+                copyAllBtn.classList.add('hidden');
+            }
+
+            if (formats.length > 0) {
+                activeFormat = formats[0];
+                if (formats.length >= 2) {
+                    tabBar.querySelector('[data-format="' + activeFormat + '"]').classList.add('active');
+                }
+                document.getElementById('output').textContent       = generatedPrompts[activeFormat];
+                document.getElementById('terminalLabel').textContent = activeFormat + ' \u2014 Read Only';
+            }
+        }
+
+        function switchTab(format) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-format="' + format + '"]').classList.add('active');
+            activeFormat = format;
+            document.getElementById('output').textContent       = generatedPrompts[format];
+            document.getElementById('terminalLabel').textContent = format + ' \u2014 Read Only';
+        }
+
+        function copyCurrentTab(btn) {
+            const text = generatedPrompts[activeFormat] || '';
+            const orig = btn.innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerText = UI_TEXT.copiedMsg;
+                btn.style.cssText = 'background:rgba(0,255,157,0.1);border-color:#00ff9d;color:#00ff9d';
+                setTimeout(() => { btn.innerText = orig; btn.style.cssText = ''; }, 2500);
+            }).catch(() => {
+                btn.innerText = '\u26A0\uFE0F Copy failed \u2014 please use HTTPS';
+                setTimeout(() => { btn.innerText = orig; }, 3000);
+            });
+        }
+
+        function copyAllFormats(btn) {
+            const allText = Object.entries(generatedPrompts)
+                .map(([fmt, prompt]) => '# ===== ' + fmt + ' =====\n\n' + prompt)
+                .join('\n\n---\n\n');
+            const orig = btn.innerText;
+            navigator.clipboard.writeText(allText).then(() => {
+                btn.innerText = UI_TEXT.copyAllMsg;
+                btn.style.cssText = 'background:rgba(0,255,157,0.1);border-color:#00ff9d;color:#00ff9d';
+                setTimeout(() => { btn.innerText = orig; btn.style.cssText = ''; }, 2500);
+            }).catch(() => {
+                btn.innerText = '\u26A0\uFE0F Copy failed \u2014 please use HTTPS';
+                setTimeout(() => { btn.innerText = orig; }, 3000);
+            });
+        }
+
+        // -------------------------------------------------------
+        // Initialize
+        // -------------------------------------------------------
+        updateCard7Visibility();
+        checkGate();
+    </script>
+</body>
+</html>
