@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pricing Strategy PRO | Sorted. Tools</title>
+    <title>Pricing Strategy | Sorted. Tools</title>
     <meta property="og:image" content="https://yumakakuya.github.io/ogp-tools.png" />
     <meta property="og:title" content="Pricing Strategist | Sorted. Tools" />
     <meta property="og:description" content="Free AI prompt generator for competitive pricing strategy." />
@@ -817,6 +817,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../../sorted-common.css">
 </head>
 <body>
 
@@ -836,7 +837,7 @@
 
     <!-- HEADER -->
     <header>
-        <div class="brand">Sorted<span class="dot">.</span> Tools <span class="badge">PRO</span></div>
+        <div class="brand">Sorted<span class="dot">.</span> Tools <span class="badge">FREE</span></div>
         <div class="header-right">
             <span class="header-tool-name">PRICING STRATEGIST</span>
             <span class="header-version">v1.0.0</span>
@@ -937,11 +938,13 @@
                 <div class="full">
                     <label>Planned Price <span class="req">&#9733;Required</span></label>
                     <div class="price-row">
+                        <label class="sorted-sr-only" for="priceCurrency">Price currency</label>
                         <select id="priceCurrency">
                             <option value="$">$ USD</option>
                             <option value="&yen;">&yen; JPY</option>
                             <option value="&euro;">&euro; EUR</option>
                         </select>
+                        <label class="sorted-sr-only" for="price">Price amount</label>
                         <input type="text" id="price" placeholder="e.g. 4.99">
                     </div>
                     <div class="soft-warn" id="priceValidWarn"></div>
@@ -1091,7 +1094,7 @@
          RESULT VIEW
          ============================================ -->
     <main class="main" id="resultView">
-        <div class="result-status">STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.</div>
+        <div class="result-status">STATUS: PROMPT READY — REVIEW BEFORE USE.</div>
 
         <div class="terminal">
             <div class="terminal-bar">
@@ -1741,7 +1744,7 @@
 
         /* --- CREDIT LINE --- */
         p += `IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n`;
-        p += `_Generated with Sorted.Tools PRO — Pricing Strategy v1.0.0_\n`;
+        p += `_Generated with Sorted. Tools — Pricing Strategy v1.0.0_\n`;
         p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
 
         p += `---\n\n`;
@@ -1754,7 +1757,7 @@
             p += `\n[Ambiguity warning: The following optional fields were left empty. The AI will make assumptions for these: ${empties.join(', ')}]\n`;
         }
 
-        p += `\n_Generated with Sorted.Tools PRO — Pricing Strategy v1.0.0_\n`;
+        p += `\n_Generated with Sorted. Tools — Pricing Strategy v1.0.0_\n`;
         p += `_Powered by Sorted. Series | sorted.tools_\n\n`;
         p += `Respond entirely in English.\n`;
 
@@ -1841,5 +1844,6 @@
        ========================================== */
     updateSafetyBar();
 </script>
+    <script src="../../sorted-common.js"></script>
 </body>
 </html>

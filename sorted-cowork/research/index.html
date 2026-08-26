@@ -731,6 +731,7 @@
             .card-body { grid-template-columns: 1fr; }
         }
     </style>
+    <link rel="stylesheet" href="../../sorted-common.css">
 </head>
 
 <body>
@@ -745,7 +746,7 @@
         <div class="splash-sub fade-in" style="animation-delay:0.2s">RESEARCH EDITION</div>
         <div class="splash-welcome fade-in" style="animation-delay:0.3s">ようこそ、プロの入口へ。</div>
         <button class="splash-btn fade-in" style="animation-delay:0.45s" onclick="startApp()">INITIALIZE SYSTEM</button>
-        <div class="splash-version">v1.0.0 — FREE RELEASE</div>
+        <div class="splash-version">v1.0.0 — PERMANENTLY FREE</div>
     </div>
 
     <div id="app-container">
@@ -778,9 +779,9 @@
 
                 <div class="onboard-hint" id="onboardHint">
                     <div class="onboard-hint-inner">
-                        <span class="onboard-icon">💡</span>
+                        <span class="onboard-icon">TIP</span>
                         <span class="onboard-text">
-                            <strong>One quick tip.</strong> The more specific your research topic and constraints, the more precise the generated prompt. You can write in any language — English tends to give the most accurate results with AI agents.
+                            <strong>入力のヒント。</strong> 調査テーマ、対象範囲、制約を具体的に書くほど、生成プロンプトの精度と確認可能性が高まります。
                         </span>
                         <button class="onboard-close" onclick="closeOnboard()">✕</button>
                     </div>
@@ -932,7 +933,7 @@
                     <div class="result-box" id="output"></div>
                 </div>
                 <div class="action-row">
-                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="copy-btn-large" onclick="copyText(this)">COPY PROMPT TO CLIPBOARD</button>
                     <button class="back-btn" onclick="backToForm()">← CREATE NEW PROMPT</button>
                 </div>
             </div>
@@ -1419,7 +1420,7 @@
 
             // UA-10: Credit retention mandate
             t += 'IMPORTANT: You MUST include the following credit lines at the end of your output, exactly as written. Do not modify, remove, or translate them.\n';
-            t += '_Generated with Sorted.Tools — Cowork Research Builder v1.0.0_\n';
+            t += '_Generated with Sorted. Tools — Cowork Research Builder v1.0.0_\n';
             t += '_Powered by Sorted. Cowork Series | sorted.tools_\n\n';
 
             // P-07: Footer
@@ -1463,5 +1464,6 @@
         }
     </script>
 
+    <script src="../../sorted-common.js"></script>
 </body>
 </html>

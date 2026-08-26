@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Forecast PRO | Sorted. Tools</title>
+    <title>Revenue Forecast | Sorted. Tools</title>
     <meta property="og:image" content="https://yumakakuya.github.io/ogp-tools.png" />
     <meta property="og:title" content="Revenue Forecast | Sorted. Tools" />
     <meta property="og:description" content="Free AI prompt generator for indie app revenue forecasting." />
@@ -454,12 +454,13 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="../../sorted-common.css">
 </head>
 
 <body>
 
     <div id="splash-screen">
-        <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
         <div class="fade-in"
             style="color:var(--muted); font-size:12px; letter-spacing:1px; margin-bottom: 20px; animation-delay: 0.2s;">
             REVENUE FORECAST GENERATOR</div>
@@ -469,7 +470,7 @@
 
     <div id="app-container">
         <header>
-            <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+            <div class="brand">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
             <div style="font-size:11px; color:var(--muted); font-family:'JetBrains Mono', monospace;">v1.0.0</div>
         </header>
 
@@ -559,8 +560,10 @@
                             <label>Pricing<span
                                     style="font-size:10px;color:#555;font-weight:400;text-transform:none;letter-spacing:0;">Enter per revenue model. e.g. $9.99/mo, $79.99/yr, $29.99 one-time</span></label>
                             <div style="display:flex;gap:8px;align-items:center;">
+                                <label class="sorted-sr-only" for="price">Price amount</label>
                                 <input type="text" id="price" placeholder="e.g. 9.99 / 79.99 / 29.99 (numbers only; select currency on the right)"
                                     style="flex:1;">
+                                <label class="sorted-sr-only" for="priceCurrency">Price currency</label>
                                 <select id="priceCurrency" style="width:90px;flex-shrink:0;">
                                     <option value="$">$ USD</option>
                                     <option value="¥">¥ JPY</option>
@@ -663,14 +666,14 @@
 
             <div id="result-view" class="view-container hidden">
                 <div class="result-header-bar">
-                    > STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.
+                    &gt; STATUS: PROMPT READY — REVIEW BEFORE USE.
                 </div>
                 <div class="terminal-window">
                     <div class="terminal-bar">generated_prompt.txt - Read Only</div>
                     <div class="result-box" id="output"></div>
                 </div>
                 <div class="action-row">
-                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="copy-btn-large" onclick="copyText(this)">COPY PROMPT TO CLIPBOARD</button>
                     <button class="back-btn" onclick="backToForm()">CREATE NEW FORECAST</button>
                 </div>
             </div>
@@ -994,7 +997,7 @@
 
             // --- UA-10: Credit retention command ---
             t += `IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n`;
-            t += `_Generated with Sorted.Tools PRO — Revenue Forecast v1.0.0_\n`;
+            t += `_Generated with Sorted. Tools — Revenue Forecast v1.0.0_\n`;
             t += `_Powered by Sorted. Series | sorted.tools_\n\n`;
 
             // --- P-07: Output structure enforcement ---
@@ -1008,7 +1011,7 @@
                 emptyFields.forEach(f => { t += `- ${f.label}: not provided\n`; });
             }
 
-            t += `\n_Generated with Sorted.Tools PRO — Revenue Forecast v1.0.0_\n`;
+            t += `\n_Generated with Sorted. Tools — Revenue Forecast v1.0.0_\n`;
             t += `_Powered by Sorted. Series | sorted.tools_\n`;
 
             // --- Language directive ---
@@ -1034,6 +1037,7 @@
         }
     </script>
 
+    <script src="../../sorted-common.js"></script>
 </body>
 
 </html>

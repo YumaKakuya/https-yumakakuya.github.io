@@ -200,6 +200,7 @@
         .safety-report-close { background:none; border:none; color:var(--muted); cursor:pointer; font-size:12px; padding:0; }
         .safety-report-close:hover { color:var(--text); }
     </style>
+    <link rel="stylesheet" href="../../sorted-common.css">
 </head>
 <body>
 
@@ -210,7 +211,7 @@
         <div class="splash-sub fade-in" style="animation-delay:0.2s">FILE ORGANIZATION EDITION</div>
         <div class="splash-tagline fade-in" style="animation-delay:0.25s">Not a prompt list. <em>A prompt builder.</em></div>
         <button class="splash-btn fade-in" style="animation-delay:0.35s" onclick="startApp()">INITIALIZE SYSTEM</button>
-        <div class="splash-version">v1.0.0 — FREE RELEASE</div>
+        <div class="splash-version">v1.0.0 — PERMANENTLY FREE</div>
     </div>
 
     <div id="app-container">
@@ -365,7 +366,7 @@
                     <div class="result-box" id="output"></div>
                 </div>
                 <div class="action-row">
-                    <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                    <button class="copy-btn-large" onclick="copyText(this)">COPY PROMPT TO CLIPBOARD</button>
                     <button class="back-btn" onclick="backToForm()">← BUILD ANOTHER PROMPT</button>
                 </div>
             </div>
@@ -725,5 +726,6 @@
             });
         }
     </script>
+    <script src="../../sorted-common.js"></script>
 </body>
 </html>

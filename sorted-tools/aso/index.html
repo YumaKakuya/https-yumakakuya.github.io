@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ASO Optimizer PRO | Sorted. Tools</title>
+    <title>ASO Optimizer | Sorted. Tools</title>
     <meta property="og:image" content="https://yumakakuya.github.io/ogp-tools.png" />
     <meta property="og:title" content="ASO Optimizer | Sorted. Tools" />
     <meta property="og:description" content="Free AI prompt generator for App Store keyword strategy." />
@@ -243,18 +243,19 @@
 
         @media (max-width: 600px) { .card-body { grid-template-columns: 1fr; } }
     </style>
+    <link rel="stylesheet" href="../../sorted-common.css">
 </head>
 <body>
 
 <div id="splash-screen">
-    <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+    <div class="splash-brand fade-in">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
     <div class="splash-sub fade-in" style="animation-delay:0.1s">ASO OPTIMIZER</div>
     <button class="splash-btn fade-in" style="animation-delay: 0.3s;" onclick="startApp()">INITIALIZE SYSTEM</button>
 </div>
 
 <div id="app-container">
     <header>
-        <div class="brand">Sorted<span>.</span> Tools <span class="badge">PRO</span></div>
+        <div class="brand">Sorted<span>.</span> Tools <span class="badge">FREE</span></div>
         <div class="header-right">
             <div class="tool-name">ASO OPTIMIZER</div>
             <div class="version">v1.0.0</div>
@@ -461,14 +462,14 @@
         <!-- RESULT VIEW -->
         <div id="result-view" class="hidden">
             <div class="result-header-bar">
-                > STATUS: GENERATION COMPLETE. READY FOR DEPLOYMENT.
+                &gt; STATUS: PROMPT READY — REVIEW BEFORE USE.
             </div>
             <div class="terminal-window">
                 <div class="terminal-bar">aso_prompt.txt - Read Only<span class="prompt-length" id="promptLength"></span></div>
                 <div class="result-box" id="output"></div>
             </div>
             <div class="action-row">
-                <button class="copy-btn-large" onclick="copyText(this)">📋 COPY PROMPT TO CLIPBOARD</button>
+                <button class="copy-btn-large" onclick="copyText(this)">COPY PROMPT TO CLIPBOARD</button>
                 <button class="back-btn" onclick="backToForm()">CREATE NEW PROMPT</button>
             </div>
         </div>
@@ -1033,7 +1034,7 @@
         t += '(f) Character counts provided for all title/subtitle proposals\n';
         t += '(g) PHASE 4 meets minimum requirements (a)(b)(c)\n\n';
         t += 'IMPORTANT: Your response MUST end with the following credit line exactly as written. Do not remove, modify, or translate it:\n';
-        t += '_Generated with Sorted.Tools PRO — ASO Optimizer v1.0.0_\n';
+        t += '_Generated with Sorted. Tools — ASO Optimizer v1.0.0_\n';
         t += '_Powered by Sorted. Series | sorted.tools_\n\n';
         t += '---\n\n';
         t += '⚠️ This information is AI-generated and not guaranteed to be accurate. Always verify against actual market data.\n';
@@ -1044,7 +1045,7 @@
             emptyFields.forEach(f => { t += '- ' + f.label + ': not provided\n'; });
         }
 
-        t += '\n_Generated with Sorted.Tools PRO — ASO Optimizer v1.0.0_\n';
+        t += '\n_Generated with Sorted. Tools — ASO Optimizer v1.0.0_\n';
         t += '_Powered by Sorted. Series | sorted.tools_\n';
 
         t += '\n\nRespond entirely in ' + LANG + '.';
@@ -1068,5 +1069,6 @@
         });
     }
 </script>
+    <script src="../../sorted-common.js"></script>
 </body>
 </html>
